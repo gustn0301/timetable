@@ -6,720 +6,170 @@
     <title>1학년 4반 2학기 실시간 시간표</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-start-color: #f0f4f8;
-            --bg-end-color: #e6e9f0;
-            --main-color: #2c3e50;
-            --accent-color: #4299e1;
-        }
-
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            color: var(--main-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: background 1s ease;
-            background: linear-gradient(to bottom right, var(--bg-start-color), var(--bg-end-color));
-            position: relative;
-            overflow-x: hidden; /* Prevent horizontal scroll on body */
-        }
-
-        /* Weather effects layer */
-        .weather-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Rain effect */
-        .rain {
-            position: absolute;
-            width: 1px;
-            height: 20px;
-            background: rgba(174, 194, 224, 0.6);
-            animation: rain-fall 1s linear infinite;
-        }
-
-        @keyframes rain-fall {
-            from {
-                transform: translateY(-20px);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(100vh);
-                opacity: 0;
-            }
-        }
-
-        /* Cloud effect */
-        .cloud {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            opacity: 0;
-            animation: move-cloud 20s linear infinite;
-        }
-
-        .cloud::before,
-        .cloud::after {
-            content: '';
-            position: absolute;
-            background: inherit;
-            border-radius: 50%;
-        }
-
-        .cloud::before {
-            width: 80%;
-            height: 80%;
-            top: -20%;
-            left: -30%;
-        }
-
-        .cloud::after {
-            width: 120%;
-            height: 120%;
-            bottom: -20%;
-            right: -30%;
-        }
-
-        @keyframes move-cloud {
-            from {
-                transform: translateX(-100vw);
-                opacity: 0.5;
-            }
-            to {
-                transform: translateX(100vw);
-                opacity: 0.5;
-            }
-        }
-
-        .container {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            width: 95%;
-            max-width: 1400px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                width: 100%;
-            }
-        }
-
-        .left-section {
-            flex: 1;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            padding: 0;
+            background: #f4f6f9;
             text-align: center;
-            background: white;
-            color: var(--main-color);
-            transition: background 1s ease;
         }
-
-        .left-section h2 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
-
-        .left-section h1 {
-            font-size: 5em;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: -2px;
-        }
-
-        .current-class-info {
-            margin-top: 30px;
-            font-size: 1.3em;
-            background-color: rgba(0, 0, 0, 0.05);
-            padding: 25px;
-            border-radius: 10px;
-            width: 100%;
-            box-sizing: border-box;
-            line-height: 1.6;
-        }
-
-        .current-class-info p {
-            margin: 5px 0;
-        }
-        
-        #class-name {
-            font-size: 1.5em;
-            font-weight: bold;
-            display: block;
-        }
-
-        .right-section {
-            flex: 2;
-            padding: 40px;
-            overflow-x: auto;
-        }
-
-        .right-section h2 {
-            text-align: center;
-            font-size: 2em;
-            color: var(--main-color);
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 1em;
-            text-align: center;
-            table-layout: fixed; /* Fix table layout to prevent stretching */
-        }
-
-        th, td {
-            border: 1px solid #e0e6ed;
-            padding: 8px 5px; /* Reduced padding for more space */
-        }
-
-        th {
-            background-color: var(--main-color);
+        h1 {
+            background: #4CAF50;
             color: white;
-            font-weight: bold;
+            padding: 20px;
+            margin: 0;
         }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        
-        td.highlight {
-            background-color: #f7d794 !important;
-            font-weight: bold;
-            color: #a05a00;
-            border: 2px solid #e2a03d !important;
-            transition: background-color 0.3s ease;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
         }
-
-        .class-cell-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.2;
+        th {
+            background: #4CAF50;
+            color: white;
         }
-
-        .class-name {
-            font-weight: bold;
-            margin-bottom: 3px;
-            font-size: 0.9em;
+        tr:nth-child(even) {background: #f9f9f9;}
+        tr:hover {background: #f1f1f1;}
+        #notice {
+            margin: 20px auto;
+            padding: 15px;
+            width: 90%;
+            max-width: 800px;
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 5px;
+            text-align: left;
         }
-
-        .class-details {
-            font-size: 0.7em;
-            color: #555;
+        #adminPanel {
+            margin: 20px auto;
+            padding: 15px;
+            width: 90%;
+            max-width: 800px;
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            display: none;
         }
-
-        @media (max-width: 768px) {
-            .left-section {
-                padding: 20px;
-            }
-
-            .left-section h1 {
-                font-size: 3em;
-            }
-
-            .current-class-info {
-                padding: 15px;
-                font-size: 1em;
-            }
-
-            .right-section {
-                padding: 20px 10px;
-            }
-
-            .right-section h2 {
-                font-size: 1.5em;
-            }
-            
-            table {
-                font-size: 0.7em;
-            }
-
-            th, td {
-                padding: 5px 3px;
-            }
-            
-            .class-name {
-                font-size: 0.9em;
-                margin-bottom: 2px;
-            }
-
-            .class-details {
-                font-size: 0.6em;
-            }
+        #adminPanel textarea {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+        #adminPanel button {
+            padding: 8px 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="weather-layer" id="weather-layer"></div>
-    <div class="container">
-        <!-- 왼쪽 섹션: 현재 시간 및 수업 정보 -->
-        <div class="left-section">
-            <h2 id="current-date"></h2>
-            <h1 id="current-time"></h1>
-            <div class="current-class-info">
-                <span id="class-name"></span>
-                <p id="teacher-name-p">선생님: <span id="teacher-name"></span></p>
-                <p>장소: <span id="location"></span></p>
-            </div>
-            <p id="special-message" style="margin-top: 20px; font-size: 1.1em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);"></p>
-        </div>
+    <h1>1학년 4반 2학기 실시간 시간표</h1>
+    
+    <div id="notice"><strong>📢 공지사항:</strong> 아직 등록된 공지사항이 없습니다.</div>
 
-        <!-- 오른쪽 섹션: 전체 시간표 -->
-        <div class="right-section">
-            <h2>주간 시간표</h2>
-            <div style="overflow-x: auto;">
-                <table id="timetable">
-                    <thead>
-                        <tr>
-                            <th>교시</th>
-                            <th>월</th>
-                            <th>화</th>
-                            <th>수</th>
-                            <th>목</th>
-                            <th>금</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- JavaScript가 여기에 시간표 내용을 생성합니다 -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div id="adminLogin">
+        <input type="password" id="adminCode" placeholder="관리자 코드를 입력하세요">
+        <button onclick="checkAdmin()">확인</button>
     </div>
 
+    <div id="adminPanel">
+        <h3>공지사항 작성</h3>
+        <textarea id="noticeInput" placeholder="공지사항을 입력하세요..."></textarea>
+        <button onclick="updateNotice()">공지 등록</button>
+    </div>
+
+    <table>
+        <tr>
+            <th>교시</th>
+            <th>월요일</th>
+            <th>화요일</th>
+            <th>수요일</th>
+            <th>목요일</th>
+            <th>금요일</th>
+        </tr>
+        <tr>
+            <td>1교시</td>
+            <td>국어</td>
+            <td>영어</td>
+            <td>수학</td>
+            <td>사회</td>
+            <td>과학</td>
+        </tr>
+        <tr>
+            <td>2교시</td>
+            <td>수학</td>
+            <td>과학</td>
+            <td>국어</td>
+            <td>영어</td>
+            <td>사회</td>
+        </tr>
+        <tr>
+            <td>3교시</td>
+            <td>영어</td>
+            <td>사회</td>
+            <td>체육</td>
+            <td>국어</td>
+            <td>수학</td>
+        </tr>
+        <tr>
+            <td>4교시</td>
+            <td>과학</td>
+            <td>국어</td>
+            <td>영어</td>
+            <td>수학</td>
+            <td>미술</td>
+        </tr>
+        <tr>
+            <td>5교시</td>
+            <td>사회</td>
+            <td>체육</td>
+            <td>과학</td>
+            <td>미술</td>
+            <td>국어</td>
+        </tr>
+        <tr>
+            <td>6교시</td>
+            <td>체육</td>
+            <td>미술</td>
+            <td>사회</td>
+            <td>과학</td>
+            <td>영어</td>
+        </tr>
+    </table>
+
     <script>
-        // 이 부분에 본인의 시간표 데이터를 입력하세요.
-        // name: 과목 이름, teacher: 선생님 이름, location: 장소
-        const timetableData = {
-            '월': [
-                { name: '통합과학2', teacher: '이현우T', location: '1학년 3반 교실' },
-                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지움' },
-                { name: '통합사회2', teacher: '김형석T', location: '1학년 7반 교실' },
-                { name: '공강 모의고사', teacher: '이지연T', location: '1학년 4반 교실' },
-                { name: '공통수학2', teacher: '유지현T', location: '1학년 5반 교실' },
-                { name: '공통국어2', teacher: '이정원T', location: '1학년 1반 교실' },
-                { name: '공통영어2', teacher: '이지연T', location: '1학년 4반 교실' }
-            ],
-            '화': [
-                { name: '종교', teacher: '김동해 신부님', location: 'J301' },
-                { name: '통합과학2', teacher: '홍소영T', location: '3학년 6반 교실' },
-                { name: '스포츠과학', teacher: '은현진T', location: '마리아홀' },
-                { name: '공통영어2', teacher: '김영미T', location: '1학년 6반 교실' },
-                { name: '공통국어2', teacher: '전민지T', location: 'AI 인텔리랩' },
-                { name: '한국사2', teacher: '한우진T', location: '사회교과실' },
-                { name: '공통수학2', teacher: '유지현T', location: '1학년 5반 교실' }
-            ],
-            '수': [
-                { name: '공통수학2', teacher: '유지현T', location: '1학년 5반 교실' },
-                { name: '통합과학2', teacher: '이현우T', location: '1학년 3반 교실' },
-                { name: '한국사2', teacher: '한우진T', location: '사회교과실' },
-                { name: '공통국어2', teacher: '이정원T', location: '1학년 1반 교실' },
-                { name: '과학탐구실험2', teacher: '김보련T', location: '3층 화학실험실' },
-                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지움' },
-                { name: '통합사회2', teacher: '김형석T', location: '1학년 7반 교실' }
-            ],
-            '목': [
-                { name: '통합과학2', teacher: '이윤숙T', location: '3층 물리학 실험실' },
-                { name: '종교', teacher: '김동해 신부님', location: 'J301' },
-                { name: '진로', teacher: '한상무T', location: '진로실' },
-                { name: '한국사2', teacher: '정기엽T', location: '3학년 3반 교실' },
-                { name: '통합사회2', teacher: '김기모T', location: '2학년 7반 교실(3층)' },
-                { name: '공통영어2', teacher: '이지연T', location: '1학년 4반 교실' },
-                { name: '통합사회2', teacher: '서정석T', location: '2학년 6반 교실(3층)' }
-            ],
-            '금': [
-                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지움' },
-                { name: '공통수학2', teacher: '유지현T', location: '1학년 5반 교실' },
-                { name: '공통영어2', teacher: '김영미T', location: '1학년 6반 교실' },
-                { name: '공통국어2', teacher: '전민지T', location: 'AI 인텔리랩' },
-                { name: '창체', teacher: '', location: '' },
-                { name: '창체', teacher: '', location: '' },
-                { name: '창체', teacher: '', location: '' }
-            ]
-        };
+        const ADMIN_PASSWORD = "1234"; // 관리자 코드
 
-        // 교시별 시작 및 종료 시간 설정 (교시 인덱스 추가)
-        const classTimes = [
-            { start: '06:30', end: '07:49', name: '아침 시간', special: true, message: '오늘도 멋진 하루를 시작해볼까요!' },
-            { start: '07:50', end: '08:30', name: '아침 활동', special: true, message: '월,수,금: 달리기 및 줄넘기 / 화,목: 영어 듣기 평가' },
-            { start: '08:31', end: '08:40', name: '쉬는 시간', special: true, message: '1교시 수업을 준비하세요.', nextPeriod: 0 },
-            { start: '08:41', end: '09:30', name: '1교시', special: false, period: 0 },
-            { start: '09:31', end: '09:40', name: '쉬는 시간', special: true, message: '2교시 수업을 준비하세요.', nextPeriod: 1 },
-            { start: '09:41', end: '10:30', name: '2교시', special: false, period: 1 },
-            { start: '10:31', end: '10:40', name: '쉬는 시간', special: true, message: '3교시 수업을 준비하세요.', nextPeriod: 2 },
-            { start: '10:41', end: '11:30', name: '3교시', special: false, period: 2 },
-            { start: '11:31', end: '11:40', name: '쉬는 시간', special: true, message: '4교시 수업을 준비하세요.', nextPeriod: 3 },
-            { start: '11:41', end: '12:30', name: '4교시', special: false, period: 3 },
-            { start: '12:31', end: '13:30', name: '점심시간', special: true, message: '맛있는 점심, 행복한 시간 보내세요!', nextPeriod: 4 },
-            { start: '13:31', end: '14:20', name: '5교시', special: false, period: 4 },
-            { start: '14:21', end: '14:30', name: '쉬는 시간', special: true, message: '6교시 수업을 준비하세요.', nextPeriod: 5 },
-            { start: '14:31', end: '15:20', name: '6교시', special: false, period: 5 },
-            { start: '15:21', end: '15:40', name: '청소 시간', special: true, message: '7교시 수업을 준비하세요.', nextPeriod: 6 },
-            { start: '15:41', end: '16:30', name: '7교시', special: false, period: 6 },
-            { start: '16:31', end: '16:40', name: '쉬는 시간', special: true, message: '자습(방과후) 준비 시간입니다.', nextPeriod: 6 },
-            { start: '16:41', end: '17:30', name: '자습(방과후)', special: true, message: '자율적으로 학습하는 시간입니다.' },
-            { start: '17:31', end: '19:00', name: '저녁 시간', special: true, message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!' },
-            { start: '18:45', end: '18:59', name: '자습 준비', special: true, message: '자습을 준비하세요.' },
-            { start: '19:01', end: '20:20', name: '자습 시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '20:21', end: '20:40', name: '쉬는 시간', special: true, message: '잠시 쉬면서 다음 자습 시간을 준비하세요.' },
-            { start: '20:41', end: '21:50', name: '자습 시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '21:51', end: '22:00', name: '쉬는 시간', special: true, message: '잠시 쉬면서 다음 자습 시간을 준비하세요.' },
-            { start: '22:01', end: '23:00', name: '자습 시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '23:01', end: '24:00', name: '수고하셨습니다.', special: true, message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!' }
-        ];
-
-        function updateTimeAndClass() {
-            const now = new Date();
-            const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const currentDate = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 (${dayOfWeek})`;
-            const currentTime = `${hours}:${minutes}:${seconds}`;
-
-            document.getElementById('current-date').textContent = currentDate;
-            document.getElementById('current-time').textContent = currentTime;
-
-            const teacherNameP = document.getElementById('teacher-name-p');
-            const specialMessageEl = document.getElementById('special-message');
-            const classNameEl = document.getElementById('class-name');
-
-            let currentClass = '';
-            let currentTeacher = '없음';
-            let currentLocation = '없음';
-            let currentMessage = '';
-            let isTeacherHidden = false;
-            let currentPeriodIndex = -1;
-
-            if (dayOfWeek !== '토' && dayOfWeek !== '일') {
-                for (let i = 0; i < classTimes.length; i++) {
-                    const classTime = classTimes[i];
-                    const [startHours, startMinutes] = classTime.start.split(':').map(Number);
-                    const [endHours, endMinutes] = classTime.end.split(':').map(Number);
-                    const nowHours = now.getHours();
-                    const nowMinutes = now.getMinutes();
-                    const nowInMinutes = nowHours * 60 + nowMinutes;
-                    const startInMinutes = startHours * 60 + startMinutes;
-                    const endInMinutes = endHours * 60 + endMinutes;
-
-                    if (nowInMinutes >= startInMinutes && nowInMinutes < endInMinutes) {
-                        // Check if it's a special time period
-                        if (classTime.special) {
-                            currentClass = classTime.name;
-                            currentTeacher = '없음';
-                            currentLocation = '없음';
-                            currentMessage = classTime.message;
-                            isTeacherHidden = true;
-                            
-                            // Check for next class info on break times
-                            if (classTime.name.includes('쉬는 시간') || classTime.name.includes('준비')) {
-                                const nextPeriodIndex = classTime.nextPeriod;
-                                if (timetableData[dayOfWeek] && typeof nextPeriodIndex !== 'undefined') {
-                                    const nextClassInfo = timetableData[dayOfWeek][nextPeriodIndex];
-                                    if (nextClassInfo) {
-                                        currentClass = `${nextPeriodIndex + 1}교시 수업`;
-                                        currentTeacher = nextClassInfo.teacher;
-                                        currentLocation = nextClassInfo.location;
-                                        currentMessage = `다음 수업: ${nextClassInfo.name}`;
-                                        isTeacherHidden = false;
-                                    }
-                                }
-                            }
-                            // Handle the specific 13:15-13:30 case for lunch break
-                            if (classTime.name === '점심시간' && nowHours === 13 && nowMinutes >= 15) {
-                                const nextPeriodIndex = classTime.nextPeriod;
-                                if (timetableData[dayOfWeek] && typeof nextPeriodIndex !== 'undefined') {
-                                    const nextClassInfo = timetableData[dayOfWeek][nextPeriodIndex];
-                                    if (nextClassInfo) {
-                                        currentClass = `5교시 수업`;
-                                        currentTeacher = nextClassInfo.teacher;
-                                        currentLocation = nextClassInfo.location;
-                                        currentMessage = `다음 수업: ${nextClassInfo.name}`;
-                                        isTeacherHidden = false;
-                                    }
-                                }
-                            }
-                            // Handle the specific 15:20-15:40 case for cleaning break
-                            if (classTime.name === '청소 시간' && nowHours === 15 && nowMinutes >= 20) {
-                                const nextPeriodIndex = classTime.nextPeriod;
-                                if (timetableData[dayOfWeek] && typeof nextPeriodIndex !== 'undefined') {
-                                    const nextClassInfo = timetableData[dayOfWeek][nextPeriodIndex];
-                                    if (nextClassInfo) {
-                                        currentClass = `7교시 수업`;
-                                        currentTeacher = nextClassInfo.teacher;
-                                        currentLocation = nextClassInfo.location;
-                                        currentMessage = `다음 수업: ${nextClassInfo.name}`;
-                                        isTeacherHidden = false;
-                                    }
-                                }
-                            }
-
-                        } else {
-                            // Regular class time
-                            // timetableData에 접근하기 위한 올바른 교시 인덱스를 사용
-                            if (timetableData[dayOfWeek] && typeof classTime.period !== 'undefined') {
-                                const classInfo = timetableData[dayOfWeek][classTime.period];
-                                if (classInfo) {
-                                    currentClass = classInfo.name;
-                                    currentTeacher = classInfo.teacher;
-                                    currentLocation = classInfo.location;
-                                    if (currentClass === '창체') {
-                                        isTeacherHidden = true;
-                                        currentTeacher = '';
-                                        currentLocation = '';
-                                    }
-                                } else {
-                                     // 데이터가 없는 경우를 대비
-                                    currentClass = classTime.name;
-                                    currentTeacher = '정보 없음';
-                                    currentLocation = '정보 없음';
-                                    isTeacherHidden = true;
-                                }
-                            } else {
-                                currentClass = classTime.name;
-                                currentTeacher = '없음';
-                                currentLocation = '없음';
-                                isTeacherHidden = true;
-                            }
-                        }
-                        if (!classTime.special && typeof classTime.period !== 'undefined') {
-                            currentPeriodIndex = classTime.period;
-                        }
-                        break;
-                    }
-                }
+        function checkAdmin() {
+            const inputCode = document.getElementById("adminCode").value;
+            if (inputCode === ADMIN_PASSWORD) {
+                document.getElementById("adminPanel").style.display = "block";
+                document.getElementById("adminLogin").style.display = "none";
             } else {
-                currentClass = '오늘은 주말입니다';
-                currentTeacher = '없음';
-                currentLocation = '없음';
-                currentMessage = '주말은 평일과 다른 시간표로 운영됩니다.';
-            }
-
-            classNameEl.textContent = currentClass;
-            document.getElementById('teacher-name').textContent = currentTeacher;
-            document.getElementById('location').textContent = currentLocation;
-            specialMessageEl.textContent = currentMessage;
-
-            if (isTeacherHidden) {
-                teacherNameP.style.display = 'none';
-            } else {
-                teacherNameP.style.display = 'block';
-            }
-
-            // 시간표에 현재 수업 하이라이트 표시
-            const cells = document.querySelectorAll('#timetable td');
-            cells.forEach(cell => cell.classList.remove('highlight'));
-            if (currentPeriodIndex !== -1) {
-                const dayIndex = now.getDay();
-                const rowToHighlight = document.querySelector(`#timetable tbody tr:nth-child(${currentPeriodIndex + 1})`);
-                const cellToHighlight = rowToHighlight.querySelector(`td:nth-child(${dayIndex + 1})`);
-                if (cellToHighlight) {
-                    cellToHighlight.classList.add('highlight');
-                }
+                alert("관리자 코드가 틀렸습니다.");
             }
         }
 
-        // 전체 시간표를 동적으로 생성하는 함수
-        function generateTimetable() {
-            const tableBody = document.querySelector('#timetable tbody');
-            const days = ['월', '화', '수', '목', '금'];
-            
-            for (let i = 0; i < 7; i++) {
-                const row = document.createElement('tr');
-                const periodCell = document.createElement('td');
-                periodCell.textContent = `${i + 1}교시`;
-                row.appendChild(periodCell);
-
-                days.forEach(day => {
-                    const classInfo = timetableData[day] && timetableData[day][i];
-                    const cell = document.createElement('td');
-                    if (classInfo) {
-                        const contentDiv = document.createElement('div');
-                        contentDiv.className = 'class-cell-content';
-
-                        const nameSpan = document.createElement('span');
-                        nameSpan.className = 'class-name';
-                        nameSpan.textContent = classInfo.name;
-                        contentDiv.appendChild(nameSpan);
-
-                        const detailsDiv = document.createElement('div');
-                        detailsDiv.className = 'class-details';
-                        detailsDiv.innerHTML = `<span>${classInfo.teacher}</span><br><span>${classInfo.location}</span>`;
-                        contentDiv.appendChild(detailsDiv);
-
-                        cell.appendChild(contentDiv);
-                    } else {
-                        cell.textContent = '없음';
-                    }
-                    row.appendChild(cell);
-                });
-                tableBody.appendChild(row);
+        function updateNotice() {
+            const noticeText = document.getElementById("noticeInput").value;
+            if (noticeText.trim() === "") {
+                alert("공지사항을 입력하세요.");
+                return;
             }
+            document.getElementById("notice").innerHTML = "<strong>📢 공지사항:</strong> " + noticeText;
+            document.getElementById("noticeInput").value = "";
         }
-        
-        // 현재 시간대에 맞는 배경 색상을 설정하는 함수
-        function setTimeBasedBackground() {
-            const now = new Date();
-            const hour = now.getHours();
-            const root = document.documentElement;
-
-            if (hour >= 6 && hour < 12) {
-                // 오전 (밝고 활기찬 분위기)
-                root.style.setProperty('--bg-start-color', '#fffde4');
-                root.style.setProperty('--bg-end-color', '#c6ffdd');
-                root.style.setProperty('--accent-color', '#a5d6a7');
-            } else if (hour >= 12 && hour < 18) {
-                // 오후 (따뜻하고 부드러운 분위기)
-                root.style.setProperty('--bg-start-color', '#f7d794');
-                root.style.setProperty('--bg-end-color', '#f8a5c2');
-                root.style.setProperty('--accent-color', '#f58220');
-            } else {
-                // 밤 (차분하고 어두운 분위기)
-                root.style.setProperty('--bg-start-color', '#091e3a');
-                root.style.setProperty('--bg-end-color', '#2f5a89');
-                root.style.setProperty('--accent-color', '#3498db');
-            }
-        }
-
-        // 날씨에 맞는 배경 및 효과를 설정하는 함수
-        function setWeatherBasedBackground(weatherDescription) {
-            const root = document.documentElement;
-            const weatherMap = {
-                // 날씨 키워드를 추가하고 배경색과 효과를 매핑할 수 있습니다.
-                'clear': { start: '#87ceeb', end: '#e0f7fa', accent: '#ffeb3b', effect: 'none' }, // 맑음
-                'cloud': { start: '#bdc3c7', end: '#ecf0f1', accent: '#95a5a6', effect: 'clouds' }, // 구름
-                'rain': { start: '#6a82fb', end: '#16a085', accent: '#34495e', effect: 'rain' }, // 비
-                'drizzle': { start: '#6a82fb', end: '#16a085', accent: '#34495e', effect: 'rain' }, // 이슬비
-                'thunderstorm': { start: '#34495e', end: '#2c3e50', accent: '#e74c3c', effect: 'rain' }, // 천둥 번개
-                'snow': { start: '#f0f4f8', end: '#e6e9f0', accent: '#87cefa', effect: 'snow' }, // 눈
-                'mist': { start: '#a8a8a8', end: '#e0e0e0', accent: '#95a5a6', effect: 'clouds' }, // 안개
-            };
-
-            let matchedWeather = null;
-            // API 응답의 설명(description)을 기반으로 날씨 매칭
-            for (const key in weatherMap) {
-                if (weatherDescription.includes(key)) {
-                    matchedWeather = weatherMap[key];
-                    break;
-                }
-            }
-
-            if (matchedWeather) {
-                root.style.setProperty('--bg-start-color', matchedWeather.start);
-                root.style.setProperty('--bg-end-color', matchedWeather.end);
-                root.style.setProperty('--accent-color', matchedWeather.accent);
-                createWeatherEffect(matchedWeather.effect);
-            } else {
-                // 일치하는 날씨가 없을 경우 시간대별 배경 유지
-                setTimeBasedBackground();
-                createWeatherEffect('none');
-            }
-        }
-
-        // 날씨에 맞는 효과를 생성하는 함수
-        function createWeatherEffect(weather) {
-            const weatherLayer = document.getElementById('weather-layer');
-            weatherLayer.innerHTML = ''; // 기존 효과 제거
-            
-            if (weather === 'rain') {
-                for (let i = 0; i < 100; i++) {
-                    const rainDrop = document.createElement('div');
-                    rainDrop.className = 'rain';
-                    rainDrop.style.left = `${Math.random() * 100}vw`;
-                    rainDrop.style.animationDelay = `${Math.random()}s`;
-                    rainDrop.style.animationDuration = `${0.5 + Math.random() * 1.5}s`;
-                    weatherLayer.appendChild(rainDrop);
-                }
-            } else if (weather === 'clouds') {
-                for (let i = 0; i < 5; i++) {
-                    const cloud = document.createElement('div');
-                    cloud.className = 'cloud';
-                    cloud.style.width = `${100 + Math.random() * 200}px`;
-                    cloud.style.height = `${50 + Math.random() * 100}px`;
-                    cloud.style.top = `${Math.random() * 80}%`;
-                    cloud.style.animationDelay = `${Math.random() * 10}s`;
-                    weatherLayer.appendChild(cloud);
-                }
-            }
-        }
-
-        // OpenWeatherMap API를 사용하여 날씨 정보를 가져오는 비동기 함수
-        async function fetchWeather() {
-            // 여기에 본인의 OpenWeatherMap API 키를 입력하세요.
-            // https://openweathermap.org/api 에서 키를 발급받을 수 있습니다.
-            const apiKey = 'YOUR_API_KEY'; 
-            
-            const specialMessageEl = document.getElementById('special-message');
-            
-            if (apiKey === 'YOUR_API_KEY' || !apiKey) {
-                specialMessageEl.textContent = '날씨 정보를 사용하려면 OpenWeatherMap API 키를 입력해주세요.';
-                console.error('API 키가 설정되지 않았습니다. ' + 'timetable.html 파일에서 apiKey 변수를 업데이트해주세요.');
-                // API 키가 없으므로 시간대별 배경으로 대체
-                setTimeBasedBackground();
-                return; 
-            }
-
-            const city = 'Nonsan';
-            const countryCode = 'KR';
-            const lang = 'kr';
-            const unit = 'metric';
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city},${countryCode}&appid=${apiKey}&units=${unit}&lang=${lang}`;
-
-            specialMessageEl.textContent = '날씨 정보를 불러오는 중...';
-
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (response.ok) {
-                    const weatherDescription = data.weather[0].description.toLowerCase();
-                    setWeatherBasedBackground(weatherDescription);
-                    console.log('날씨 정보:', weatherDescription);
-                    specialMessageEl.textContent = `현재 논산 날씨: ${data.weather[0].description}, 기온: ${data.main.temp.toFixed(1)}°C`;
-                } else {
-                    console.error('날씨 정보를 불러오는 데 실패했습니다:', data.message);
-                    setWeatherBasedBackground('error');
-                    specialMessageEl.textContent = `날씨 정보를 불러올 수 없습니다. 기본 시간대 배경을 사용합니다. 오류: ${data.message}`;
-                    setTimeBasedBackground(); // 오류 시 시간대별 배경으로 복귀
-                }
-            } catch (error) {
-                console.error('API 호출 중 오류 발생:', error);
-                setWeatherBasedBackground('error');
-                specialMessageEl.textContent = '네트워크 오류로 날씨 정보를 불러올 수 없습니다. 네트워크 연결을 확인해주세요.';
-                setTimeBasedBackground(); // 오류 시 시간대별 배경으로 복귀
-            }
-        }
-
-        // 페이지가 로드되면 실행
-        window.onload = function () {
-            generateTimetable();
-            fetchWeather(); // 날씨 정보 먼저 불러오기
-            updateTimeAndClass(); // 초기 시간표 업데이트
-            setInterval(updateTimeAndClass, 1000); // 1초마다 시간 및 수업 정보 업데이트
-        };
     </script>
 </body>
 </html>
