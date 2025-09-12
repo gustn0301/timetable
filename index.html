@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1학년 4반 2학기 시간표</title>
+    <title>나의 주간 시간표</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -308,16 +308,35 @@
         ];
 
         // 이 부분에 공지사항 내용을 직접 입력하고, 여러 줄로 작성할 수 있습니다.
-        const announcementText = `드디어 만
-들
-엇노
+        const announcementText = `
+<!-- 여기에 공지사항을 입력하세요.
+
+예시:
+<2025학년도 2학기 시간표>
+1. 2학기에는 새로운 선생님들과 함께 공부합니다.
+2. 학년별 모의고사가 매월 둘째 주 월요일에 있습니다.
+3. 과학실험은 3층 화학실험실에서 진행됩니다.
+-->
 `;
 
         // 교시 번호에 맞는 시간 범위를 찾아 반환하는 함수
         function getClassTimeRange(period) {
             const timeInfo = classTimes.find(t => !t.special && t.period === period);
             if (timeInfo) {
-                return `${timeInfo.start}~${timeInfo.end}`;
+                // 끝나는 시간에 1분을 더해서 표시하도록 수정합니다.
+                const [endHour, endMinute] = timeInfo.end.split(':').map(Number);
+                let newEndHour = endHour;
+                let newEndMinute = endMinute + 1;
+
+                if (newEndMinute === 60) {
+                    newEndMinute = 0;
+                    newEndHour = newEndHour + 1;
+                }
+
+                const formattedEndHour = String(newEndHour).padStart(2, '0');
+                const formattedEndMinute = String(newEndMinute).padStart(2, '0');
+                
+                return `${timeInfo.start}~${formattedEndHour}:${formattedEndMinute}`;
             }
             return '';
         }
