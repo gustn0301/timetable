@@ -32,11 +32,13 @@
             position: relative;
             z-index: 2;
             display: flex;
+            flex-direction: column;
             width: 95%;
             max-width: 1400px;
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
         @media (max-width: 768px) {
@@ -45,7 +47,20 @@
                 width: 100%;
             }
         }
+        
+        /* 상단 섹션을 감싸는 새로운 div 추가 */
+        .top-sections {
+            display: flex;
+            width: 100%;
+        }
 
+        @media (max-width: 768px) {
+            .top-sections {
+                flex-direction: column;
+            }
+        }
+
+        /* 왼쪽 섹션: 현재 시간 및 수업 정보 (flex: 1로 더 작게) */
         .left-section {
             flex: 1;
             padding: 40px;
@@ -57,6 +72,12 @@
             background: white;
             color: black;
             transition: background 1s ease;
+        }
+
+        /* 오른쪽 섹션: 시간표 (flex: 2로 더 넓게) */
+        .right-section {
+            flex: 2;
+            padding: 20px;
         }
 
         .left-section h2 {
@@ -100,12 +121,7 @@
             font-weight: bold;
             display: block;
         }
-
-        .right-section {
-            flex: 2;
-            padding: 20px;
-        }
-
+        
         .right-section h2 {
             text-align: center;
             font-size: 2em;
@@ -116,20 +132,20 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85em;
+            font-size: 0.8em; /* 글씨 크기 전체적으로 줄임 */
             text-align: center;
             table-layout: fixed;
         }
 
         th, td {
             border: 1px solid #e0e6ed;
-            padding: 8px 4px;
+            padding: 6px 3px; /* 좌우 여백 조정 */
             white-space: normal;
-            word-break: break-word;
+            word-break: normal;
         }
         
         td div {
-            font-size: 0.8em;
+            font-size: 0.75em; /* 글씨 크기 전체적으로 줄임 */
             color: #555;
             margin-top: 5px;
         }
@@ -152,8 +168,7 @@
 
         .announcement-section {
             margin-top: 30px;
-            text-align: left;
-            width: 100%;
+            width: 100%; /* 전체 폭을 차지하도록 변경 */
         }
 
         .announcement-section h3 {
@@ -164,56 +179,59 @@
         
         #announcement-display {
             margin-top: 15px;
-            background-color: #f0f0f0;
+            background-color: white; /* 배경색을 흰색으로 변경 */
             padding: 15px;
             border-radius: 8px;
-            white-space: pre-wrap;
+            white-space: normal;
+            word-break: break-all;
             min-height: 50px;
             border: 1px dashed #ccc;
         }
-        
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 왼쪽 섹션: 현재 시간 및 수업 정보 -->
-        <div class="left-section">
-            <h2 id="current-date"></h2>
-            <h1 id="current-time"></h1>
-            <div class="current-class-info">
-                <span id="class-name"></span>
-                <p id="teacher-name-p">선생님: <span id="teacher-name"></span></p>
-                <p id="location-p">장소: <span id="location"></span></p>
+        <!-- 상단 섹션: 현재 시간/정보(왼쪽)와 시간표(오른쪽) -->
+        <div class="top-sections">
+            <!-- 왼쪽 섹션: 현재 시간 및 수업 정보 -->
+            <div class="left-section">
+                <h2 id="current-date"></h2>
+                <h1 id="current-time"></h1>
+                <div class="current-class-info">
+                    <span id="class-name"></span>
+                    <p id="teacher-name-p">선생님: <span id="teacher-name"></span></p>
+                    <p id="location-p">장소: <span id="location"></span></p>
+                </div>
+                <p id="special-message" style="margin-top: 20px; font-size: 1.1em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);"></p>
             </div>
-            <p id="special-message" style="margin-top: 20px; font-size: 1.1em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);"></p>
-
-            <!-- 공지사항 섹션 -->
-            <div class="announcement-section">
-                <h3>📢 공지사항</h3>
-                <div id="announcement-display"></div>
+            
+            <!-- 오른쪽 섹션: 전체 시간표 -->
+            <div class="right-section">
+                <h2>주간 시간표</h2>
+                <div style="overflow-x: auto;">
+                    <table id="timetable">
+                        <thead>
+                            <tr>
+                                <th>교시</th>
+                                <th>월</th>
+                                <th>화</th>
+                                <th>수</th>
+                                <th>목</th>
+                                <th>금</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JavaScript가 여기에 시간표 내용을 생성합니다 -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- 오른쪽 섹션: 전체 시간표 -->
-        <div class="right-section">
-            <h2>주간 시간표</h2>
-            <div style="overflow-x: auto;">
-                <table id="timetable">
-                    <thead>
-                        <tr>
-                            <th>교시</th>
-                            <th>월</th>
-                            <th>화</th>
-                            <th>수</th>
-                            <th>목</th>
-                            <th>금</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- JavaScript가 여기에 시간표 내용을 생성합니다 -->
-                    </tbody>
-                </table>
-            </div>
+        <!-- 공지사항 섹션 (아래에 길게 위치) -->
+        <div class="announcement-section">
+            <h3>📢 공지사항</h3>
+            <div id="announcement-display"></div>
         </div>
     </div>
 
@@ -308,13 +326,15 @@
         ];
 
         // 이 부분에 공지사항 내용을 직접 입력하고, 여러 줄로 작성할 수 있습니다.
-        const announcementText = `9/12 (금) 자감 - 유지현T
-        마타수학(집합) 풀기 - 이번주 토요일 까지
-        수학 심화탐구 발표 PPT 제출 - 이번주 일요일 까지
-        인공기 수행은 나도 모름 ㅋ
+        const announcementText = `9/12(금)
+자감 - 유지현T
+마타수학(집합) 풀기 - 이번주 토요일 까지
+수학 심화탐구 발표 PPT 제출 - 이번주 일요일 까지
+인공기 수행은 나도 모름 ㅋ
         
-        2학기 중간고사 D-12 
-        피드백은 yhs1302asdf@pess.cnehs.kr로 구글챗
+2학기 중간고사 D-12 
+
+피드백은 yhs1302asdf@pess.cnehs.kr로 구글챗
 `;
 
         // 교시 번호에 맞는 시간 범위를 찾아 반환하는 함수
