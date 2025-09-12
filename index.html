@@ -161,34 +161,6 @@
             font-size: 1.2em;
             color: var(--main-color);
         }
-
-        .announcement-input {
-            width: 100%;
-            height: 80px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            resize: vertical;
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 1em;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
-
-        .announcement-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-        .announcement-btn:hover {
-            background-color: #2b6cb0;
-        }
         
         #announcement-display {
             margin-top: 15px;
@@ -215,12 +187,10 @@
             </div>
             <p id="special-message" style="margin-top: 20px; font-size: 1.1em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);"></p>
 
-            <!-- 공지사항 섹션 추가 -->
+            <!-- 공지사항 섹션 -->
             <div class="announcement-section">
                 <h3>📢 공지사항</h3>
-                <textarea id="announcement-input" class="announcement-input" placeholder="여기에 공지사항을 입력하세요..."></textarea>
-                <button id="save-announcement-btn" class="announcement-btn">공지사항 저장</button>
-                <div id="announcement-display">저장된 공지사항이 없습니다.</div>
+                <div id="announcement-display"></div>
             </div>
         </div>
 
@@ -336,6 +306,12 @@
             { start: '22:00', end: '22:59', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
             { start: '23:00', end: '24:00', name: '수고하셨습니다.', special: true, message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!' }
         ];
+
+        // 이 부분에 공지사항 내용을 직접 입력하고, 여러 줄로 작성할 수 있습니다.
+        const announcementText = `드디어 만
+들
+엇노
+`;
 
         // 교시 번호에 맞는 시간 범위를 찾아 반환하는 함수
         function getClassTimeRange(period) {
@@ -494,39 +470,15 @@
             }
         }
 
-        // 공지사항 기능을 위한 함수
-        function setupAnnouncementFeature() {
-            const announcementInput = document.getElementById('announcement-input');
-            const saveBtn = document.getElementById('save-announcement-btn');
-            const announcementDisplay = document.getElementById('announcement-display');
-
-            // 저장된 공지사항을 불러오는 함수
-            function loadAnnouncement() {
-                const savedText = localStorage.getItem('savedAnnouncement');
-                if (savedText) {
-                    announcementDisplay.innerText = savedText;
-                } else {
-                    announcementDisplay.innerText = '저장된 공지사항이 없습니다.';
-                }
-            }
-
-            // 버튼 클릭 시 공지사항을 저장하는 이벤트 리스너
-            saveBtn.addEventListener('click', () => {
-                const newText = announcementInput.value.trim();
-                localStorage.setItem('savedAnnouncement', newText);
-                loadAnnouncement(); // 화면 업데이트
-            });
-
-            // 페이지 로드 시 공지사항 불러오기
-            loadAnnouncement();
-        }
-
         // 페이지가 로드되면 실행
         window.onload = function () {
             generateTimetable();
             setTimeBasedBackground();
             updateTimeAndClass();
-            setupAnnouncementFeature(); // 공지사항 기능 초기화
+            
+            // 코드 내부의 공지사항 변수를 화면에 표시
+            document.getElementById('announcement-display').innerText = announcementText;
+            
             setInterval(() => {
                 updateTimeAndClass();
             }, 1000);   
