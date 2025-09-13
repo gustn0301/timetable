@@ -262,6 +262,10 @@
     <script>
         // 공지사항 내용을 여기에 직접 입력하세요
         const ANNOUNCEMENT_TEXT = `9/13(토)
+ 시간표 수정사항 : 주말 시간도 시계에 뜨도록 수정되었습니다.
+                시간표 내에서 AI 심포지움이 AI 심포지엄으로 변경되었습니다.
+                1-4반에 수업이 있는 때를 시간표에 표시 했습니다.
+                
 자감 - 이정원T, 김형석T + 강아지, 이현우T
 마타수학(집합) 기본 실력 풀기 - 오늘까지
 수학 심화탐구 발표 PPT 제출 - 내일 까지
@@ -270,63 +274,6 @@
 2학기 중간고사 D-11
 
 피드백은 yhs1302asdf@pess.cnehs.kr로 구글챗`;
-        
-        // 날씨 정보를 가져오는 함수 (JSON 파싱 개선)
-        async function fetchWeather() {
-            try {
-                const userQuery = "현재 논산시 날씨 정보를 JSON 객체 형식으로 알려줘. `weatherStatus` 필드에는 날씨 상태를 한글 한 단어로, `icon` 필드에는 해당하는 이모티콘을 넣어줘.";
-                const apiKey = "AIzaSyBHsUURXf5VrymMZcdjkxaCGnY4vcMIYcM" // If you want to use models other than gemini-2.5-flash-preview-05-20 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-                const payload = {
-                    contents: [{ parts: [{ text: userQuery }] }],
-                    tools: [{ "google_search": {} }],
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "weatherStatus": { "type": "STRING" },
-                                "icon": { "type": "STRING" }
-                            },
-                            "propertyOrdering": ["weatherStatus", "icon"]
-                        }
-                    }
-                };
-                console.log('Fetching weather with structured JSON request...');
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('API response:', result);
-
-                const candidate = result.candidates?.[0];
-
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    const text = candidate.content.parts[0].text;
-                    const weatherData = JSON.parse(text);
-                    
-                    const icon = weatherData.icon;
-                    const weatherStatus = weatherData.weatherStatus;
-
-                    document.getElementById('weather-display').textContent = `${icon} ${weatherStatus}`;
-                } else {
-                    document.getElementById('weather-display').textContent = '날씨 정보 없음';
-                }
-
-            } catch (e) {
-                console.error("날씨 정보 가져오기 실패:", e);
-                document.getElementById('weather-display').textContent = '날씨 정보를 불러올 수 없습니다';
-            }
-        }
 
         // 이 부분에 본인의 시간표 데이터를 입력하세요.
         // name: 과목 이름, teacher: 선생님 이름, location: 장소
