@@ -270,18 +270,30 @@
 2학기 중간고사 D-11
 
 피드백은 yhs1302asdf@pess.cnehs.kr로 구글챗`;
-
-        // 날씨 정보를 가져오는 함수
+        
+        // 날씨 정보를 가져오는 함수 (JSON 파싱 개선)
         async function fetchWeather() {
             try {
-                const userQuery = "현재 논산시 날씨를 알려주고, 날씨 상태를 설명하는 이모티콘과 한 단어(예: 맑음, 흐림)로 알려줘.";
-                const apiKey = "AIzaSyBbqk50T9kojjceFhZgVPu229RGrPhw2uE" 
+                const userQuery = "현재 논산시 날씨 정보를 JSON 객체 형식으로 알려줘. `weatherStatus` 필드에는 날씨 상태를 한글 한 단어로, `icon` 필드에는 해당하는 이모티콘을 넣어줘.";
+                const apiKey = "AIzaSyBHsUURXf5VrymMZcdjkxaCGnY4vcMIYcM" // If you want to use models other than gemini-2.5-flash-preview-05-20 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
                 const payload = {
                     contents: [{ parts: [{ text: userQuery }] }],
                     tools: [{ "google_search": {} }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                "weatherStatus": { "type": "STRING" },
+                                "icon": { "type": "STRING" }
+                            },
+                            "propertyOrdering": ["weatherStatus", "icon"]
+                        }
+                    }
                 };
+                console.log('Fetching weather with structured JSON request...');
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -294,15 +306,18 @@
                 }
 
                 const result = await response.json();
+                console.log('API response:', result);
+
                 const candidate = result.candidates?.[0];
 
                 if (candidate && candidate.content?.parts?.[0]?.text) {
-                    const text = candidate.content.parts[0].text.trim();
-                    const parts = text.split(" ");
-                    const icon = parts[0];
-                    const weatherText = parts[1];
+                    const text = candidate.content.parts[0].text;
+                    const weatherData = JSON.parse(text);
+                    
+                    const icon = weatherData.icon;
+                    const weatherStatus = weatherData.weatherStatus;
 
-                    document.getElementById('weather-display').textContent = `${icon} ${weatherText}`;
+                    document.getElementById('weather-display').textContent = `${icon} ${weatherStatus}`;
                 } else {
                     document.getElementById('weather-display').textContent = '날씨 정보 없음';
                 }
