@@ -15,7 +15,7 @@
         }
 
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Noto+Sans+KR', sans-serif;
             color: var(--main-color);
             display: flex;
             justify-content: center;
@@ -49,7 +49,6 @@
             }
         }
         
-        /* 상단 섹션을 감싸는 새로운 div 추가 */
         .top-sections {
             display: flex;
             width: 100%;
@@ -61,7 +60,6 @@
             }
         }
 
-        /* 왼쪽 섹션: 현재 시간 및 수업 정보 (flex: 1로 더 작게) */
         .left-section {
             flex: 1;
             padding: 40px;
@@ -75,7 +73,6 @@
             transition: background 1s ease;
         }
 
-        /* 오른쪽 섹션: 시간표 (flex: 2로 더 넓게) */
         .right-section {
             flex: 2;
             padding: 20px;
@@ -133,20 +130,20 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.8em; /* 글씨 크기 전체적으로 줄임 */
+            font-size: 0.8em;
             text-align: center;
             table-layout: fixed;
         }
 
         th, td {
             border: 1px solid #e0e6ed;
-            padding: 6px 3px; /* 좌우 여백 조정 */
+            padding: 6px 3px;
             white-space: normal;
             word-break: normal;
         }
         
         td div {
-            font-size: 0.75em; /* 글씨 크기 전체적으로 줄임 */
+            font-size: 0.75em;
             color: #555;
             margin-top: 5px;
         }
@@ -169,7 +166,7 @@
 
         .announcement-section {
             margin-top: 30px;
-            width: 100%; /* 전체 폭을 차지하도록 변경 */
+            width: 100%;
         }
         
         .announcement-header {
@@ -184,14 +181,9 @@
             color: var(--main-color);
             margin: 0;
         }
-        
-        #weather-display {
-            font-size: 1.2em;
-            font-weight: bold;
-        }
 
         #announcement-display {
-            background-color: white; /* 배경색을 흰색으로 변경 */
+            background-color: white;
             padding: 15px;
             border-radius: 8px;
             white-space: pre-wrap;
@@ -253,7 +245,6 @@
         <div class="announcement-section">
             <div class="announcement-header">
                 <h3>📢 공지사항</h3>
-                <div id="weather-display"></div>
             </div>
             <div id="announcement-display"></div>
         </div>
@@ -262,12 +253,12 @@
     <script>
         // 공지사항 내용을 여기에 직접 입력하세요
         const ANNOUNCEMENT_TEXT = `9/13(토)
- 시간표 수정사항 : 주말 시간도 시계에 뜨도록 수정되었습니다.
-                시간표 내에서 AI 심포지움이 AI 심포지엄으로 변경되었습니다.
-                1-4반에 수업이 있는 때를 시간표에 표시 했습니다.
-                
+
+ 시간표 수정사항 : 주말 시간도 시계에 뜨도록 수정되었습니다.
+                시간표 내에서 AI 심포지움이 AI 심포지엄으로 변경되었습니다.
+                1-4반에 수업이 있는 때를 시간표에 표시 했습니다.       
 자감 - 이정원T, 김형석T + 강아지, 이현우T
-마타수학(집합) 기본 실력 풀기 - 오늘까지
+마타수학(집합) 기본 실력 풀기 - 오늘까
 수학 심화탐구 발표 PPT 제출 - 내일 까지
 인공기 수행이 언제까지임?
 
@@ -280,7 +271,7 @@
         const timetableData = {
             '월': [
                 { name: '통합과학2', teacher: '이현우T', location: '1학년 3반 교실' },
-                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지움' },
+                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지엄' },
                 { name: '통합사회2', teacher: '김형석T', location: '1학년 7반 교실' },
                 { name: '공강 모의고사', teacher: '이지연T', location: '1학년 4반 교실' },
                 { name: '공통수학2', teacher: '유지현T', location: '1학년 5반 교실' },
@@ -302,7 +293,7 @@
                 { name: '한국사2', teacher: '한우진 T', location: '사회교과실' },
                 { name: '공통국어2', teacher: '이정원T', location: '1학년 1반 교실' },
                 { name: '과학탐구실험2', teacher: '김보련T', location: '3층 화학실험실' },
-                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지움' },
+                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지엄' },
                 { name: '통합사회2', teacher: '김형석T', location: '1학년 7반 교실' }
             ],
             '목': [
@@ -315,7 +306,7 @@
                 { name: '통합사회2', teacher: '서정석T', location: '2학년 6반 교실(3층)' }
             ],
             '금': [
-                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지움' },
+                { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지엄' },
                 { name: '공통수학2', teacher: '유지현T', location: '1학년 5반 교실' },
                 { name: '공통영어2', teacher: '김영미T', location: '1학년 6반 교실' },
                 { name: '공통국어2', teacher: '전민지T', location: 'AI 인텔리랩' },
@@ -403,7 +394,6 @@
         function getClassTimeRange(period) {
             const timeInfo = weekdayClassTimes.find(t => !t.special && t.period === period);
             if (timeInfo) {
-                // 끝나는 시간에 1분을 더해서 표시하도록 수정합니다.
                 const [endHour, endMinute] = timeInfo.end.split(':').map(Number);
                 let newEndHour = endHour;
                 let newEndMinute = endMinute + 1;
@@ -535,7 +525,6 @@
                         cell.textContent = '정보 없음';
                     }
 
-                    // 우리 반에 수업이 있는 시간인지 확인하여 클래스 추가
                     const currentPeriod = i + 1;
                     const cleanupDays = cleanupSchedule[day];
                     if (cleanupDays && cleanupDays.includes(currentPeriod)) {
@@ -571,7 +560,6 @@
             generateTimetable();
             setTimeBasedBackground();
             updateTimeAndClass();
-            fetchWeather();
             
             // 공지사항 설정
             document.getElementById('announcement-display').innerText = ANNOUNCEMENT_TEXT;
