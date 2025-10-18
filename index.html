@@ -34,10 +34,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 뷰포트 높이에 맞춤 */
-            min-height: 100vh; 
+            min-height: 10vh;
             margin: 0;
-            padding: 10px; /* 전체 패딩 축소 */
+            padding: 20px;
             box-sizing: border-box;
             transition: background 1s ease;
             background: linear-gradient(to bottom right, var(--bg-start-color), var(--bg-end-color));
@@ -54,18 +53,30 @@
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 15px; /* 컨테이너 내부 패딩 축소 */
-            box-sizing: border-box;
+            padding: 20px;
         }
 
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+        
         .top-sections {
             display: flex;
             width: 100%;
         }
 
+        @media (max-width: 768px) {
+            .top-sections {
+                flex-direction: column;
+            }
+        }
+
         .left-section {
             flex: 1;
-            padding: 20px; /* 왼쪽 섹션 패딩 축소 */
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -75,110 +86,82 @@
             color: black;
             transition: background 1s ease;
         }
-        
-        /* [스크롤 방지 핵심] 시계 글자 크기 조정 */
+
+        .right-section {
+            flex: 2;
+            padding: 20px;
+        }
+
+        .left-section h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
         .left-section h1 {
-            font-size: 4.5em; /* 데스크톱에서 크기 축소 (기존 6em) */
+            font-size: 6em;
             font-weight: 700;
             margin: 0;
             letter-spacing: -2px;
         }
         
+        #current-date {
+            color: #808080;
+        }
+
+        #current-time {
+            color: #0a1c3d;
+        }
+        
         .current-class-info {
-            margin-top: 15px; /* 여백 축소 */
-            font-size: 1.1em; /* 글자 크기 축소 */
+            margin-top: 30px;
+            font-size: 1.3em;
             background-color: rgba(0, 0, 0, 0.05);
-            padding: 15px; /* 내부 패딩 축소 */
+            padding: 25px;
             border-radius: 10px;
             width: 100%;
             box-sizing: border-box;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
-        .right-section {
-            flex: 2;
-            padding: 10px; /* 오른쪽 섹션 패딩 축소 */
+        .current-class-info p {
+            margin: 5px 0;
         }
-
+        
+        #class-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: block;
+        }
+        
         .right-section h2 {
-            font-size: 1.8em; /* 헤더 크기 축소 */
-            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2em;
+            color: var(--main-color);
+            margin-bottom: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75em; /* 테이블 전체 글자 크기 축소 */
+            font-size: 0.8em;
             text-align: center;
             table-layout: fixed;
         }
 
         th, td {
             border: 1px solid #e0e6ed;
-            padding: 3px 1px; /* 테이블 셀 패딩 최소화 */
+            padding: 6px 3px;
             white-space: normal;
             word-break: normal;
         }
         
         td div {
-            font-size: 0.65em; /* 부가 정보 글자 크기 축소 */
+            font-size: 0.75em;
             color: #555;
-            margin-top: 3px;
+            margin-top: 5px;
         }
 
-        .announcement-section {
-            margin-top: 20px; /* 공지사항 상단 여백 축소 */
-            width: 100%;
-        }
-        
-        #announcement-display {
-            padding: 10px; /* 공지사항 내부 패딩 축소 */
-            min-height: 40px;
-            font-size: 1em;
-        }
-
-
-        /* 모바일 최적화 (768px 이하) */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                width: 100%;
-                padding: 10px;
-            }
-            
-            .top-sections {
-                flex-direction: column;
-            }
-
-            .left-section {
-                padding: 15px 10px; /* 모바일 왼쪽 섹션 패딩 최소화 */
-            }
-
-            .left-section h1 {
-                font-size: 3.5em; /* 모바일에서 시계 글자 크기 최소화 */
-            }
-
-            .left-section h2 {
-                font-size: 1.5em; /* 모바일에서 날짜 글자 크기 최소화 */
-            }
-
-            .current-class-info {
-                padding: 10px;
-                font-size: 1em;
-                margin-top: 10px;
-            }
-
-            .right-section {
-                padding: 10px 0; /* 모바일 오른쪽 섹션 패딩 최소화 */
-            }
-            
-            th, td {
-                padding: 2px 0; /* 모바일에서 테이블 셀 패딩 극단적으로 최소화 */
-                font-size: 0.6em; 
-            }
-        }
-        
-        /* 나머지 스타일 유지 */
         th {
             background-color: var(--main-color);
             color: white;
@@ -193,6 +176,36 @@
             background-color: #f7d794 !important;
             font-weight: bold;
             color: #a05a00;
+        }
+
+        .announcement-section {
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .announcement-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .announcement-header h3 {
+            font-size: 1.2em;
+            color: var(--main-color);
+            margin: 0;
+        }
+
+        #announcement-display {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            min-height: 50px;
+            border: 1px dashed #ccc;
+            font-size: 1.1em;
+            line-height: 1.6;
         }
 
         .cleanup-time {
@@ -214,7 +227,7 @@
                     <p id="teacher-name-p">선생님: <span id="teacher-name"></span></p>
                     <p id="location-p">장소: <span id="location"></span></p>
                 </div>
-                <p id="special-message" style="margin-top: 10px; font-size: 1em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);"></p>
+                <p id="special-message" style="margin-top: 20px; font-size: 1.1em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);"></p>
             </div>
             
             <!-- 오른쪽 섹션: 전체 시간표 -->
@@ -237,7 +250,7 @@
                         </tbody>
                     </table>
                 </div>
-                <p style="text-align: center; margin-top: 5px; font-size: 0.8em; color: #555;">
+                <p style="text-align: center; margin-top: 10px; font-size: 0.9em; color: #555;">
                     <span style="background-color: #e0f7fa; padding: 2px 6px; border-radius: 4px; border: 1px solid #b2ebf2; display: inline-block;"></span>
                     <span style="vertical-align: middle;">색깔로 표시된 부분은 우리반에 수업이 있는 시간이니 참고하시기 바랍니다.</span>
                 </p>
