@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1학년 4반 2학기 시간표</title>
+    <title>나의 주간 시간표</title>
     
     <!-- === 웹 아이콘 (Favicon) 설정 시작 === -->
     <!-- [중요] 아래 href 속성의 주소를 사용자님의 아이콘 파일이 저장된 실제 웹 주소로 변경해야 합니다. -->
     
     <!-- 1. 모든 브라우저용 표준 아이콘 (32x32 PNG 권장) -->
-    <link rel="icon" type="image/png" href="https://placehold.co/32x32/ffffff/00a3d2?text=1-4" sizes="32x32">
+    <link rel="icon" type="image/png" href="[여기에 실제 32x32 PNG 파일의 웹 주소를 입력하세요]" sizes="32x32">
     
     <!-- 2. iOS 홈 화면 아이콘 (180x180 권장) -->
-    <link rel="apple-touch-icon" href="https://placehold.co/180x180/ffffff/00a3d2?text=1-4">
+    <link rel="apple-touch-icon" href="[여기에 실제 180x180 PNG 파일의 웹 주소를 입력하세요]">
     
     <!-- 3. Android/Chrome용 테마 색상 (브라우저 주소창 색상) -->
-    <meta name="theme-color" content="#00a3d2">
+    <meta name="theme-color" content="#2c3e50">
     <!-- === 웹 아이콘 (Favicon) 설정 끝 === -->
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
@@ -201,17 +201,84 @@
             padding: 15px;
             border-radius: 8px;
             white-space: pre-wrap;
-            word-break: break-all;
+            word-break: break-word;
             min-height: 50px;
             border: 1px dashed #ccc;
             font-size: 1.1em;
             line-height: 1.6;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .cleanup-time {
             background-color: #e0f7fa !important;
         }
 
+        /* 관리자 UI CSS */
+        .admin-btn {
+            background-color: #5DADE2; /* 밝은 파랑 */
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-btn:hover {
+            background-color: #2C78BA;
+        }
+
+        .admin-login-btn, .admin-save-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .admin-login-btn:hover, .admin-save-btn:hover {
+            background-color: #3182CE;
+        }
+
+        .admin-input, .admin-textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .admin-textarea {
+            resize: vertical;
+        }
+
+        /* 모바일 최적화 (768px 이하) */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 100%;
+                padding: 10px;
+            }
+            .left-section h1 {
+                font-size: 5em;
+            }
+            .current-class-info {
+                font-size: 1.1em;
+            }
+            th, td {
+                padding: 4px 1px;
+                font-size: 0.7em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -261,21 +328,210 @@
         <div class="announcement-section">
             <div class="announcement-header">
                 <h3>📢 공지사항</h3>
+                <button id="admin-toggle-btn" class="admin-btn">관리자 모드</button>
             </div>
-            <div id="announcement-display"></div>
+            <div id="announcement-display">📢 데이터 로딩 중...</div>
+            
+            <!-- 관리자 모드 패널 (초기에는 숨김) -->
+            <div id="admin-panel" style="display: none; margin-top: 15px; padding: 15px; background-color: #f0f4f8; border-radius: 8px;">
+                <h4>관리자 로그인</h4>
+                <input type="password" id="admin-code-input" placeholder="관리자 코드 입력" class="admin-input">
+                <button id="admin-login-btn" class="admin-login-btn">로그인</button>
+                <p id="admin-error-message" style="color: red; margin-top: 10px; display: none; font-weight: bold;"></p>
+
+                <div id="announcement-editor" style="display: none; margin-top: 20px;">
+                    <h4>📢 공지사항 편집</h4>
+                    <textarea id="announcement-textarea" class="admin-textarea" rows="10" placeholder="새로운 공지사항을 입력하세요."></textarea>
+                    <button id="save-announcement-btn" class="admin-save-btn">공지사항 저장</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script>
-        // 공지사항 내용을 학교 관련 일반 공지사항으로 변경했습니다.
-        const ANNOUNCEMENT_TEXT = `12/11(목)
+    <script type="module">
+        // Firebase 모듈 임포트
+        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-자감 : 권민영T
+        // === Firebase 및 전역 변수 설정 ===
+        let app;
+        let db;
+        let auth;
+        let userId;
+        const ADMIN_CODE = "0301"; // 관리자 코드
+        
+        // 데이터베이스 설정: 파이어스토어에서 데이터가 로드되기 전의 기본 메시지
+        const DEFAULT_ANNOUNCEMENT_TEXT = `📢 데이터베이스에 연결 중입니다. 잠시만 기다려주세요...`;
 
-피드백은 yhs1302asdf@pess.cnehs.kr로 구글챗`;
+        // Firebase 설정 값을 가져오는 함수 (Canvas 환경 필수 사용)
+        const getFirebaseConfig = () => {
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                try {
+                    return JSON.parse(__firebase_config);
+                } catch (e) {
+                    console.error("Error parsing __firebase_config:", e);
+                }
+            }
+            return null;
+        };
 
-        // 이 부분에 본인의 시간표 데이터를 입력하세요.
-        // name: 과목 이름, teacher: 선생님 이름, location: 장소
+        // Firebase 초기화 및 인증 설정
+        async function setupFirebaseAndAuth(firebaseConfig) {
+            if (!firebaseConfig) {
+                console.error("Firebase configuration is missing.");
+                document.getElementById('announcement-display').innerText = '데이터베이스 연결 실패: 설정이 올바르지 않습니다.';
+                return false;
+            }
+
+            try {
+                // setLogLevel('Debug'); // 디버그 모드 활성화
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // 필수: Canvas 환경 인증
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                return true;
+            } catch (error) {
+                console.error("Firebase setup or sign-in failed:", error);
+                document.getElementById('announcement-display').innerText = `데이터베이스 연결 오류: ${error.message}`;
+                return false;
+            }
+        }
+
+        // 공지사항 문서 참조 (DocRef) 생성
+        function getAnnouncementDocRef() {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            // 공용 데이터 경로: /artifacts/{appId}/public/data/announcements/current_announcement
+            const docPath = `artifacts/${appId}/public/data/announcements/current_announcement`;
+            return doc(db, docPath);
+        }
+
+        // 공지사항 실시간 수신 리스너
+        function listenForAnnouncement() {
+            if (!db) return;
+
+            const docRef = getAnnouncementDocRef();
+            const announcementDisplay = document.getElementById('announcement-display');
+
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists() && docSnap.data().content) {
+                    const announcement = docSnap.data().content;
+                    announcementDisplay.innerText = announcement;
+                    document.getElementById('announcement-textarea').value = announcement; // 에디터에도 반영
+                } else {
+                    announcementDisplay.innerText = '등록된 공지사항이 없습니다.';
+                    document.getElementById('announcement-textarea').value = '';
+                }
+            }, (error) => {
+                console.error("Error listening to announcement:", error);
+                announcementDisplay.innerText = '공지사항을 불러오는 중 오류가 발생했습니다.';
+            });
+        }
+
+        // 공지사항 저장 함수
+        async function saveAnnouncement() {
+            if (!db || !auth.currentUser) {
+                document.getElementById('admin-error-message').textContent = '인증 또는 DB 연결 상태를 확인하세요.';
+                document.getElementById('admin-error-message').style.display = 'block';
+                return;
+            }
+            
+            const newContent = document.getElementById('announcement-textarea').value.trim();
+            const saveButton = document.getElementById('save-announcement-btn');
+            const originalText = saveButton.textContent;
+            saveButton.textContent = '저장 중...';
+            saveButton.disabled = true;
+
+            try {
+                const docRef = getAnnouncementDocRef();
+                await setDoc(docRef, {
+                    content: newContent,
+                    lastUpdated: new Date().toISOString(),
+                    updatedBy: auth.currentUser.uid 
+                }, { merge: true });
+
+                console.log("Announcement successfully written by", auth.currentUser.uid);
+                saveButton.textContent = '저장 완료!';
+                document.getElementById('admin-error-message').textContent = '공지사항이 성공적으로 저장되었습니다.';
+                document.getElementById('admin-error-message').style.color = 'green';
+                document.getElementById('admin-error-message').style.display = 'block';
+
+                setTimeout(() => {
+                    saveButton.textContent = originalText;
+                    saveButton.disabled = false;
+                    document.getElementById('admin-error-message').style.display = 'none';
+                }, 2000);
+
+            } catch (e) {
+                console.error("Error saving document: ", e);
+                document.getElementById('admin-error-message').textContent = `🚫 저장 실패: ${e.message}`;
+                document.getElementById('admin-error-message').style.color = 'red';
+                document.getElementById('admin-error-message').style.display = 'block';
+                saveButton.textContent = originalText;
+                saveButton.disabled = false;
+            }
+        }
+
+        // 관리자 UI 리스너 설정
+        function setupAdminListeners() {
+            const adminToggleBtn = document.getElementById('admin-toggle-btn');
+            const adminPanel = document.getElementById('admin-panel');
+            const adminLoginBtn = document.getElementById('admin-login-btn');
+            const adminCodeInput = document.getElementById('admin-code-input');
+            const adminErrorMessage = document.getElementById('admin-error-message');
+            const announcementEditor = document.getElementById('announcement-editor');
+            const saveBtn = document.getElementById('save-announcement-btn');
+            
+            // 관리자 패널 토글
+            adminToggleBtn.addEventListener('click', () => {
+                const isVisible = adminPanel.style.display !== 'none';
+                adminPanel.style.display = isVisible ? 'none' : 'block';
+                
+                // 패널이 열릴 때 초기화
+                adminErrorMessage.style.display = 'none';
+                if (!isVisible) {
+                    announcementEditor.style.display = 'none';
+                    adminCodeInput.value = '';
+                    adminCodeInput.style.display = 'block';
+                    adminLoginBtn.style.display = 'block';
+                    adminErrorMessage.textContent = '';
+                }
+            });
+
+            // 관리자 로그인 로직 (코드 0301 검증)
+            adminLoginBtn.addEventListener('click', () => {
+                const code = adminCodeInput.value.trim();
+                adminErrorMessage.style.display = 'none';
+                
+                if (code === ADMIN_CODE) {
+                    adminCodeInput.style.display = 'none';
+                    adminLoginBtn.style.display = 'none';
+                    announcementEditor.style.display = 'block';
+                    adminErrorMessage.textContent = '✅ 관리자 모드가 활성화되었습니다. 내용을 수정하고 저장하세요.';
+                    adminErrorMessage.style.color = 'green';
+                    adminErrorMessage.style.display = 'block';
+                } else {
+                    adminErrorMessage.textContent = '🚫 관리자 코드가 틀렸습니다.';
+                    adminErrorMessage.style.color = 'red';
+                    adminErrorMessage.style.display = 'block';
+                }
+            });
+            
+            // 저장 버튼 리스너
+            saveBtn.addEventListener('click', saveAnnouncement);
+        }
+
+
+        // === 기존 시간표 및 시간 관련 로직 ===
+
+        // 이 부분에 본인의 시간표 데이터를 입력하세요. (변경 없음)
         const timetableData = {
             '월': [
                 { name: '통합과학2', teacher: '이현우T', location: '1학년 3반 교실' },
@@ -299,8 +555,8 @@
                 { name: '공통수학2', teacher: '유지현T', location: '1학년 5반 교실' },
                 { name: '통합과학2', teacher: '이현우T', location: '1학년 3반 교실' },
                 { name: '한국사2', teacher: '한우진 T', location: '사회교과실' },
-                { name: '과학탐구실험2', teacher: '김보련T', location: '3층 화학실험실' }, // 4교시 (변경됨)
-                { name: '공통국어2', teacher: '이정원T', location: '1학년 1반 교실' }, // 5교시 (변경됨)
+                { name: '과학탐구실험2', teacher: '김보련T', location: '3층 화학실험실' },
+                { name: '공통국어2', teacher: '이정원T', location: '1학년 1반 교실' },
                 { name: '인공지능기초', teacher: '김용상T, 하미경T', location: 'AI 심포지엄' },
                 { name: '통합사회2', teacher: '김형석T', location: '1학년 7반 교실' }
             ],
@@ -344,67 +600,66 @@
         // 주말 시간표 데이터
         const weekendTimetable = {
             '토': [
-                { start: '09:00', end: '10:40', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '10:40', end: '11:00', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
-                { start: '11:00', end: '12:30', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '12:30', end: '14:00', name: '점심시간', message: '맛있는 점심, 행복한 시간 보내세요!', special: true },
-                { start: '14:00', end: '15:40', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '15:40', end: '16:00', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
-                { start: '16:00', end: '17:30', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '17:30', end: '19:00', name: '저녁시간', message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!', special: true },
-                { start: '19:00', end: '21:00', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '09:00', end: '10:39', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '10:40', end: '10:59', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
+                { start: '11:00', end: '12:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '12:30', end: '13:59', name: '점심시간', message: '맛있는 점심, 행복한 시간 보내세요!', special: true },
+                { start: '14:00', end: '15:39', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '15:40', end: '15:59', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
+                { start: '16:00', end: '17:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '17:30', end: '18:59', name: '저녁시간', message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!', special: true },
+                { start: '19:00', end: '20:59', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
                 { start: '21:00', end: '23:59', name: '수고하셨습니다.', message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!', special: true },
             ],
             '일': [
-                { start: '11:00', end: '12:30', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '12:30', end: '14:00', name: '점심시간', message: '맛있는 점심, 행복한 시간 보내세요!', special: true },
-                { start: '14:00', end: '15:40', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '15:40', end: '16:00', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
-                { start: '16:00', end: '17:30', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '17:30', end: '19:00', name: '저녁시간', message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!', special: true },
-                { start: '19:00', end: '21:00', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '11:00', end: '12:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '12:30', end: '13:59', name: '점심시간', message: '맛있는 점심, 행복한 시간 보내세요!', special: true },
+                { start: '14:00', end: '15:39', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '15:40', end: '15:59', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
+                { start: '16:00', end: '17:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
+                { start: '17:30', end: '18:59', name: '저녁시간', message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!', special: true },
+                { start: '19:00', end: '20:59', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
                 { start: '21:00', end: '23:59', name: '수고하셨습니다.', message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!', special: true },
             ]
         };
         
         // 교시별 시작 및 종료 시간 설정 (평일)
         const weekdayClassTimes = [
-            { start: '06:30', end: '07:50', name: '아침 시간', special: true, type: 'morning_message' },
-            { start: '07:50', end: '08:30', name: '아침 활동', special: true, type: 'morning_activity_message' },
-            { start: '08:30', end: '08:40', name: '쉬는 시간', special: true, message: '1교시 수업을 준비하세요.' },
-            { start: '08:40', end: '09:30', name: '1교시', special: false, period: 1 },
-            { start: '09:30', end: '09:40', name: '쉬는 시간', special: true, message: '2교시 수업을 준비하세요.' },
-            { start: '09:40', end: '10:30', name: '2교시', special: false, period: 2 },
-            { start: '10:30', end: '10:40', name: '쉬는 시간', special: true, message: '3교시 수업을 준비하세요.' },
-            { start: '10:40', end: '11:30', name: '3교시', special: false, period: 3 },
-            { start: '11:30', end: '11:40', name: '쉬는 시간', special: true, message: '4교시 수업을 준비하세요.' },
-            { start: '11:40', end: '12:30', name: '4교시', special: false, period: 4 },
-            { start: '12:30', end: '13:10', name: '점심시간', special: true, message: '맛있는 점심, 행복한 시간 보내세요!' },
-            { start: '13:10', end: '13:30', name: '5교시 준비', special: true, message: '5교시 수업을 준비하세요.' },
-            { start: '13:30', end: '14:20', name: '5교시', special: false, period: 5 },
-            { start: '14:20', end: '14:30', name: '쉬는 시간', special: true, message: '6교시 수업을 준비하세요.' },
-            { start: '14:30', end: '15:20', name: '6교시', special: false, period: 6 },
-            { start: '15:20', end: '15:40', name: '청소시간', special: true, message: '7교시 수업을 준비하세요.' },
-            { start: '15:40', end: '16:30', name: '7교시', special: false, period: 7 },
-            { start: '16:30', end: '16:40', name: '자습(방과후) 준비', special: true, message: '자습(방과후) 준비 시간입니다.' },
-            { start: '16:40', end: '17:30', name: '자습(방과후)', special: true, message: '자율적으로 학습하는 시간입니다.' },
-            { start: '17:30', end: '18:45', name: '저녁시간', special: true, message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!' },
-            { start: '18:45', end: '19:00', name: '자습 준비', special: true, message: '자습을 준비하세요.' },
-            { start: '19:00', end: '20:40', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '20:40', end: '21:00', name: '쉬는 시간', special: true, message: '잠시 쉬면서 다음 자습 시간을 준비하세요.' },
-            { start: '21:00', end: '22:30', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '22:30', end: '24:00', name: '수고하셨습니다.', special: true, message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!' }
+            { start: '06:30', end: '07:49', name: '아침 시간', special: true, type: 'morning_message' },
+            { start: '07:50', end: '08:29', name: '아침 활동', special: true, type: 'morning_activity_message' },
+            { start: '08:30', end: '08:39', name: '쉬는 시간', special: true, message: '1교시 수업을 준비하세요.' },
+            { start: '08:40', end: '09:29', name: '1교시', special: false, period: 1 },
+            { start: '09:30', end: '09:39', name: '쉬는 시간', special: true, message: '2교시 수업을 준비하세요.' },
+            { start: '09:40', end: '10:29', name: '2교시', special: false, period: 2 },
+            { start: '10:30', end: '10:39', name: '쉬는 시간', special: true, message: '3교시 수업을 준비하세요.' },
+            { start: '10:40', end: '11:29', name: '3교시', special: false, period: 3 },
+            { start: '11:30', end: '11:39', name: '쉬는 시간', special: true, message: '4교시 수업을 준비하세요.' },
+            { start: '11:40', end: '12:29', name: '4교시', special: false, period: 4 },
+            { start: '12:30', end: '13:09', name: '점심시간', special: true, message: '맛있는 점심, 행복한 시간 보내세요!' },
+            { start: '13:10', end: '13:29', name: '5교시 준비', special: true, message: '5교시 수업을 준비하세요.' },
+            { start: '13:30', end: '14:19', name: '5교시', special: false, period: 5 },
+            { start: '14:20', end: '14:29', name: '쉬는 시간', special: true, message: '6교시 수업을 준비하세요.' },
+            { start: '14:30', end: '15:19', name: '6교시', special: false, period: 6 },
+            { start: '15:20', end: '15:39', name: '청소시간', special: true, message: '7교시 수업을 준비하세요.' },
+            { start: '15:40', end: '16:29', name: '7교시', special: false, period: 7 },
+            { start: '16:30', end: '16:39', name: '자습(방과후) 준비', special: true, message: '자습(방과후) 준비 시간입니다.' },
+            { start: '16:40', end: '17:29', name: '자습(방과후)', special: true, message: '자율적으로 학습하는 시간입니다.' },
+            { start: '17:30', end: '18:44', name: '저녁시간', special: true, message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!' },
+            { start: '18:45', end: '18:59', name: '자습 준비', special: true, message: '자습을 준비하세요.' },
+            { start: '19:00', end: '20:19', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
+            { start: '20:20', end: '20:39', name: '쉬는 시간', special: true, message: '잠시 쉬면서 다음 자습 시간을 준비하세요.' },
+            { start: '20:40', end: '21:49', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
+            { start: '21:50', end: '21:59', name: '쉬는 시간', special: true, message: '잠시 쉬면서 다음 자습 시간을 준비하세요.' },
+            { start: '22:00', end: '22:59', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
+            { start: '23:00', end: '24:00', name: '수고하셨습니다.', special: true, message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!' }
         ];
 
         /**
          * 주어진 교시 번호의 정확한 시간 범위 (시작~종료+1분)를 반환합니다.
-         * @param {number} period 교시 번호 (1~7)
-         * @returns {string} 시간 범위 문자열 (HH:MM~HH:MM)
          */
         function getClassTimeRange(period) {
             const timeInfo = weekdayClassTimes.find(t => !t.special && t.period === period);
             if (timeInfo) {
-                // 종료 시간에 1분을 더하여 (쉬는 시간 포함) 범위를 표시합니다.
                 const [endHour, endMinute] = timeInfo.end.split(':').map(Number);
                 const endDate = new Date(1970, 0, 1, endHour, endMinute);
                 endDate.setMinutes(endDate.getMinutes() + 1);
@@ -441,7 +696,7 @@
             let currentTeacher = '';
             let currentLocation = '';
             let currentMessage = '';
-            let currentClassIndex = -1; // 현재 교시 번호 (하이라이트용)
+            let currentClassIndex = -1; 
             let currentClassTimeRange = '';
 
             const currentDayTimetable = (dayOfWeek === '토' || dayOfWeek === '일') ? weekendTimetable[dayOfWeek] : weekdayClassTimes;
@@ -459,16 +714,13 @@
 
                 if (nowInMinutes >= startInMinutes && nowInMinutes < endInMinutes) {
                     
-                    // --- 1. 평일 쉬는 시간/준비 시간 로직 (다음 수업 표시) ---
                     if (isWeekday && classTime.special) {
-                        // 다음 수업 정보를 표시해야 하는 시간대: '쉬는 시간', 'XX교시 준비', '청소시간'
                         const showNextClass = classTime.name.includes('쉬는 시간') || classTime.name.includes('준비') || classTime.name.includes('청소시간');
 
                         if (showNextClass) {
                             let nextClassInfo = null;
                             let nextPeriod = -1;
                             
-                            // 다음 일반 수업(special: false)을 찾습니다.
                             for (let j = i + 1; j < currentDayTimetable.length; j++) {
                                 if (!currentDayTimetable[j].special) {
                                     nextPeriod = currentDayTimetable[j].period;
@@ -483,23 +735,17 @@
                                 currentLocation = nextClassInfo.location;
                                 currentClassTimeRange = getClassTimeRange(nextPeriod); 
                                 currentMessage = `${classTime.name} 중입니다. ${nextPeriod}교시 장소로 이동하세요.`;
-                                
-                                // 하이라이트는 현재 시간대가 아니라 다음 수업 시간대를 기준으로 해야 하지만,
-                                // 이 경우 현재는 쉬는 시간 자체에 대한 하이라이트가 필요하지 않으므로 currentClassIndex는 -1 유지.
                             } else {
-                                // 다음 정규 수업이 없는 경우 (예: 7교시 이후 자습 준비 시간 등)
                                 currentClass = classTime.name;
                                 currentMessage = classTime.message;
                             }
 
                         } else {
-                            // 기타 특별 활동 시간 (아침 활동, 점심/저녁, 수고하셨습니다 등)
                             currentClass = classTime.name;
                             currentTeacher = '';
                             currentLocation = '';
                             currentMessage = classTime.message;
                             
-                            // Handle custom messages based on type
                             if (classTime.type === 'morning_message') {
                                 const dayIndex = now.getDay();
                                 const randomMessageIndex = (dayIndex % morningMessages.length);
@@ -513,7 +759,6 @@
                             }
                         }
                     } 
-                    // --- 2. 평일 정규 수업 로직 ---
                     else if (isWeekday && !classTime.special) {
                         const classInfo = timetableData[dayOfWeek] && timetableData[dayOfWeek][classTime.period - 1];
                         if (classInfo) {
@@ -525,7 +770,6 @@
                         currentClassTimeRange = getClassTimeRange(currentClassIndex);
                         currentMessage = '지금 수업 중입니다. 집중하세요!';
                     } 
-                    // --- 3. 주말 시간표 로직 ---
                     else if (!isWeekday) {
                         currentClass = classTime.name;
                         currentTeacher = '';
@@ -533,20 +777,19 @@
                         currentMessage = classTime.message;
                     }
 
-                    break; // 시간대가 발견되면 루프를 종료합니다.
+                    break; 
                 }
             }
 
             // UI 업데이트
             classNameEl.textContent = currentClass;
-            // 다음 수업 시간대 및 메시지 표시 (다음 수업일 경우 nextPeriod의 time range, 현재 수업일 경우 currentClassIndex의 time range)
             specialMessageEl.textContent = (currentClassTimeRange ? `(${currentClassTimeRange}) ` : '') + currentMessage;
 
             if (currentTeacher || currentLocation) {
-                document.getElementById('teacher-name').textContent = currentTeacher;
-                document.getElementById('location').textContent = currentLocation;
-                teacherNameP.style.display = 'block';
-                locationP.style.display = 'block';
+                document.getElementById('teacher-name').textContent = currentTeacher || '';
+                document.getElementById('location').textContent = currentLocation || '';
+                teacherNameP.style.display = currentTeacher ? 'block' : 'none';
+                locationP.style.display = currentLocation ? 'block' : 'none';
             } else {
                 teacherNameP.style.display = 'none';
                 locationP.style.display = 'none';
@@ -557,7 +800,6 @@
             cells.forEach(cell => cell.classList.remove('highlight'));
             if (dayOfWeek !== '토' && dayOfWeek !== '일' && currentClassIndex !== -1) {
                 const colIndex = now.getDay() + 1;
-                // currentClassIndex는 1부터 시작하므로 tr:nth-child는 그대로 사용
                 const cellToHighlight = document.querySelector(`#timetable tr:nth-child(${currentClassIndex}) td:nth-child(${colIndex})`);
                 if (cellToHighlight) {
                     cellToHighlight.classList.add('highlight');
@@ -618,19 +860,34 @@
             }
         }
 
-        // 페이지가 로드되면 실행
-        window.onload = function () {
+        // 페이지 로드 시 실행
+        window.onload = async function () {
+            // 초기 UI 설정
             generateTimetable();
             setTimeBasedBackground();
-            updateTimeAndClass();
-            
-            // 공지사항 설정
-            document.getElementById('announcement-display').innerText = ANNOUNCEMENT_TEXT;
+            document.getElementById('announcement-display').innerText = DEFAULT_ANNOUNCEMENT_TEXT;
 
-            // 1초마다 시간 및 수업 정보 업데이트
+            // 1. Firebase 설정 및 인증 시도
+            const firebaseConfig = getFirebaseConfig();
+            if (firebaseConfig) {
+                const isReady = await setupFirebaseAndAuth(firebaseConfig);
+                if (isReady) {
+                    // 2. 인증 완료 후 데이터 리스너 시작
+                    listenForAnnouncement();
+                } else {
+                    document.getElementById('announcement-display').innerText = '데이터베이스 연결 실패. 관리자에게 문의하세요.';
+                }
+            } else {
+                document.getElementById('announcement-display').innerText = '데이터베이스 설정을 찾을 수 없습니다.';
+            }
+
+            // 3. 관리자 UI 리스너 설정
+            setupAdminListeners();
+
+            // 4. 1초마다 시간 및 수업 정보 업데이트
             setInterval(() => {
                 updateTimeAndClass();
-                setTimeBasedBackground(); // 배경색도 주기적으로 확인
+                setTimeBasedBackground();
             }, 1000);   
         };
     </script>
