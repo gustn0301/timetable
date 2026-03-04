@@ -13,7 +13,7 @@
         .grid-header { background-color: #f1f5f9; font-weight: bold; text-align: center; padding: 10px; }
         .grid-cell { background-color: white; min-height: 80px; padding: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 0.85rem; }
         .current-period { background-color: #eff6ff; border: 2px solid #3b82f6; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         /* 로딩 애니메이션 */
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -40,11 +40,12 @@
     </div>
 
     <!-- Subject Setup Section -->
-    <div id="setup-section" class="hidden container mx-auto px-4 py-8 max-w-2xl">
-        <div class="bg-white p-8 rounded-2xl shadow-lg">
-            <h2 class="text-2xl font-bold mb-6 text-center">선택 과목 설정</h2>
+    <div id="setup-section" class="hidden container mx-auto px-4 py-8 max-w-2xl min-h-screen flex items-center">
+        <div class="bg-white p-8 rounded-2xl shadow-lg w-full">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">선택 과목 설정</h2>
+            <p class="text-sm text-center text-gray-500 mb-6">본인의 시간표에 맞춰 과목을 선택해주세요.</p>
             <div id="setup-form" class="space-y-4"></div>
-            <button id="save-subjects-btn" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all">설정 완료</button>
+            <button id="save-subjects-btn" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md">설정 완료</button>
         </div>
     </div>
 
@@ -264,6 +265,7 @@
         };
 
         const showSetup = () => {
+            document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('loading-section').classList.add('hidden');
             document.getElementById('main-section').classList.add('hidden');
             document.getElementById('setup-section').classList.remove('hidden');
@@ -279,7 +281,7 @@
                 label.innerText = key === '음미' ? '음악/미술 선택' : key;
                 const select = document.createElement('select');
                 select.id = `select-${key}`;
-                select.className = "w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none";
+                select.className = "w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all";
                 subjectOptions[key].forEach((opt, idx) => {
                     const option = document.createElement('option');
                     option.value = idx;
@@ -294,15 +296,35 @@
 
         const saveSubjects = async () => {
             if (!currentUser) return;
+            
+            // 저장 중 버튼 비활성화
+            const saveBtn = document.getElementById('save-subjects-btn');
+            const originalText = saveBtn.innerText;
+            saveBtn.disabled = true;
+            saveBtn.innerText = "저장 중...";
+
             const data = {};
             Object.keys(subjectOptions).forEach(key => {
                 data[key] = document.getElementById(`select-${key}`).value;
             });
-            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings'), data);
-            userSubjects = data;
-            document.getElementById('setup-section').classList.add('hidden');
-            document.getElementById('main-section').classList.remove('hidden');
-            renderTimetable();
+
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings'), data);
+                userSubjects = data;
+                
+                // UI 전환
+                document.getElementById('setup-section').classList.add('hidden');
+                document.getElementById('main-section').classList.remove('hidden');
+                
+                renderTimetable();
+                updateRealTime();
+            } catch (error) {
+                console.error("Save failed:", error);
+                alert("설정 저장에 실패했습니다. 다시 시도해주세요.");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = originalText;
+            }
         };
 
         const renderTimetable = () => {
@@ -419,6 +441,7 @@
             const authSec = document.getElementById('auth-section');
             const loadingSec = document.getElementById('loading-section');
             const mainSec = document.getElementById('main-section');
+            const setupSec = document.getElementById('setup-section');
             
             if (user) {
                 currentUser = user;
@@ -431,13 +454,14 @@
                         userSubjects = docSnap.data();
                         loadingSec.classList.add('hidden');
                         mainSec.classList.remove('hidden');
+                        setupSec.classList.add('hidden');
                         renderTimetable();
                     } else {
                         showSetup();
                     }
                 } catch (e) {
                     console.error("Error fetching data:", e);
-                    showSetup(); // 데이터 로드 실패 시 설정 화면으로 유도
+                    showSetup(); 
                 }
 
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'notice'), (doc) => {
@@ -447,6 +471,7 @@
                 authSec.classList.remove('hidden');
                 mainSec.classList.add('hidden');
                 loadingSec.classList.add('hidden');
+                setupSec.classList.add('hidden');
             }
         });
 
