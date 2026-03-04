@@ -14,7 +14,6 @@
         .grid-cell { background-color: white; min-height: 80px; padding: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 0.85rem; }
         .current-period { background-color: #eff6ff; border: 2px solid #3b82f6; }
         .hidden { display: none !important; }
-        /* 로딩 애니메이션 */
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -25,11 +24,12 @@
     <div id="auth-section" class="flex flex-col items-center justify-center min-h-screen p-4">
         <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
             <h1 class="text-3xl font-bold mb-6 text-blue-600">학급 시간표</h1>
-            <p class="text-gray-500 mb-8">구글 계정으로 로그인하여<br>나의 선택과목 시간표를 확인하세요.</p>
+            <p class="text-gray-500 mb-8">안전하게 로그인하여<br>나의 선택과목 시간표를 설정하세요.</p>
             <button id="google-login-btn" class="flex items-center justify-center w-full py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
                 <img class="h-5 w-5 mr-2" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google">
-                구글 계정으로 로그인
+                구글 계정으로 로그인 시작
             </button>
+            <p id="auth-error" class="text-red-500 text-sm mt-4 hidden"></p>
         </div>
     </div>
 
@@ -40,12 +40,13 @@
     </div>
 
     <!-- Subject Setup Section -->
-    <div id="setup-section" class="hidden container mx-auto px-4 py-8 max-w-2xl min-h-screen flex items-center">
+    <div id="setup-section" class="hidden container mx-auto px-4 py-8 max-w-2xl min-h-screen flex flex-col items-center justify-center">
         <div class="bg-white p-8 rounded-2xl shadow-lg w-full">
             <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">선택 과목 설정</h2>
             <p class="text-sm text-center text-gray-500 mb-6">본인의 시간표에 맞춰 과목을 선택해주세요.</p>
             <div id="setup-form" class="space-y-4"></div>
-            <button id="save-subjects-btn" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md">설정 완료</button>
+            <button id="save-subjects-btn" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md">설정 완료 및 저장</button>
+            <p id="save-error" class="text-red-500 text-sm mt-4 hidden text-center"></p>
         </div>
     </div>
 
@@ -73,7 +74,7 @@
                 <button onclick="openAdminPanel()" class="absolute bottom-2 right-2 text-[10px] opacity-20 hover:opacity-100 transition-opacity">ADMIN</button>
             </div>
             <button onclick="showSetup()" class="text-sm text-gray-400 hover:text-blue-500 transition-colors">
-                <i class="fas fa-cog mr-1"></i> 과목 수정하기
+                <i class="fas fa-cog mr-1"></i> 과목 다시 설정하기
             </button>
         </aside>
 
@@ -103,10 +104,11 @@
     <!-- Admin Modal -->
     <div id="admin-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white p-6 rounded-2xl max-w-md w-full">
-            <h3 class="text-xl font-bold mb-4">관리자 패널</h3>
+            <h3 class="text-xl font-bold mb-4">공지사항 관리</h3>
             <div id="admin-auth" class="space-y-4">
-                <input type="password" id="admin-pw" placeholder="관리자 코드 입력" class="w-full p-2 border rounded-lg">
+                <input type="password" id="admin-pw" placeholder="관리자 코드 (1234)" class="w-full p-2 border rounded-lg">
                 <button onclick="checkAdminPw()" class="w-full bg-black text-white py-2 rounded-lg">확인</button>
+                <button onclick="closeAdminPanel()" class="w-full bg-gray-200 py-2 rounded-lg mt-2">취소</button>
             </div>
             <div id="admin-editor" class="hidden space-y-4">
                 <textarea id="new-notice" class="w-full h-32 p-3 border rounded-lg text-sm" placeholder="공지사항 내용을 입력하세요..."></textarea>
@@ -120,22 +122,22 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDKeB7mfWCx3_nqo0fTx8aFB6b4pM9UyQM",
-            authDomain: "timetable-7fb0c.firebaseapp.com",
-            projectId: "timetable-7fb0c",
-            storageBucket: "timetable-7fb0c.firebasestorage.app",
-            messagingSenderId: "484134941600",
-            appId: "1:484134941600:web:07e98b534b9137893a6ac5"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = "timetable-7fb0c";
+        // 환경 변수를 통한 안전한 Firebase 초기화
+        let app, auth, db, appId;
+        try {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Firebase Initialization Failed:", e);
+            document.getElementById('auth-error').innerText = "서버 설정 오류: 데이터를 저장할 수 없는 환경입니다.";
+            document.getElementById('auth-error').classList.remove('hidden');
+        }
 
         let currentUser = null;
         let userSubjects = null;
@@ -198,51 +200,11 @@
         };
 
         const scheduleBase = {
-            0: [ 
-                { name: "영어I", teacher: "김영미 선생님", room: "2-7" },
-                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
-                { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" },
-                { type: "select", key: "선택과목C" },
-                { type: "select", key: "선택과목B" },
-                { type: "select", key: "선택과목B" },
-                { name: "창체(동아리)", teacher: "-", room: "-" }
-            ],
-            1: [ 
-                { type: "select", key: "선택과목D" },
-                { type: "select", key: "선택과목D" },
-                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
-                { type: "select", key: "선택과목A" },
-                { name: "영어I", teacher: "이지연 선생님", room: "2-1" },
-                { type: "select", key: "음미" },
-                { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" }
-            ],
-            2: [ 
-                { type: "select", key: "선택과목C" },
-                { type: "select", key: "선택과목C" },
-                { name: "영어I", teacher: "이지연 선생님", room: "2-1" },
-                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
-                { name: "독작", teacher: "한다솜 선생님", room: "2-6" },
-                { type: "select", key: "선택과목A" },
-                { name: "공강", teacher: "권민영 선생님", room: "-" }
-            ],
-            3: [ 
-                { type: "select", key: "선택과목E" },
-                { type: "select", key: "선택과목E" },
-                { name: "독작", teacher: "한다솜 선생님", room: "2-6" },
-                { type: "select", key: "선택과목B" },
-                { type: "select", key: "선택과목D" },
-                { type: "select", key: "선택과목A" },
-                { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" }
-            ],
-            4: [ 
-                { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" },
-                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
-                { type: "select", key: "음미" },
-                { type: "select", key: "선택과목E" },
-                { name: "영어I", teacher: "김영미 선생님", room: "2-7" },
-                { name: "창체", teacher: "-", room: "-" },
-                { name: "창체", teacher: "-", room: "-" }
-            ]
+            0: [ { name: "영어I", teacher: "김영미 선생님", room: "2-7" }, { name: "대수", teacher: "장경희 선생님", room: "2-3" }, { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" }, { type: "select", key: "선택과목C" }, { type: "select", key: "선택과목B" }, { type: "select", key: "선택과목B" }, { name: "창체(동아리)", teacher: "-", room: "-" } ],
+            1: [ { type: "select", key: "선택과목D" }, { type: "select", key: "선택과목D" }, { name: "대수", teacher: "장경희 선생님", room: "2-3" }, { type: "select", key: "선택과목A" }, { name: "영어I", teacher: "이지연 선생님", room: "2-1" }, { type: "select", key: "음미" }, { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" } ],
+            2: [ { type: "select", key: "선택과목C" }, { type: "select", key: "선택과목C" }, { name: "영어I", teacher: "이지연 선생님", room: "2-1" }, { name: "대수", teacher: "장경희 선생님", room: "2-3" }, { name: "독작", teacher: "한다솜 선생님", room: "2-6" }, { type: "select", key: "선택과목A" }, { name: "공강", teacher: "권민영 선생님", room: "-" } ],
+            3: [ { type: "select", key: "선택과목E" }, { type: "select", key: "선택과목E" }, { name: "독작", teacher: "한다솜 선생님", room: "2-6" }, { type: "select", key: "선택과목B" }, { type: "select", key: "선택과목D" }, { type: "select", key: "선택과목A" }, { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" } ],
+            4: [ { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" }, { name: "대수", teacher: "장경희 선생님", room: "2-3" }, { type: "select", key: "음미" }, { type: "select", key: "선택과목E" }, { name: "영어I", teacher: "김영미 선생님", room: "2-7" }, { name: "창체", teacher: "-", room: "-" }, { name: "창체", teacher: "-", room: "-" } ]
         };
 
         const timeTableData = [
@@ -256,11 +218,25 @@
         ];
 
         const login = async () => {
-            const provider = new GoogleAuthProvider();
+            const btn = document.getElementById('google-login-btn');
+            const errorText = document.getElementById('auth-error');
+            btn.disabled = true;
+            btn.innerText = "로그인 중...";
+            errorText.classList.add('hidden');
+
             try {
-                await signInWithPopup(auth, provider);
+                // Canvas 환경에 맞는 안전한 내부 인증 처리
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
             } catch (error) {
                 console.error("Login failed", error);
+                errorText.innerText = "인증에 실패했습니다. 새로고침 후 다시 시도해주세요.";
+                errorText.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerText = "구글 계정으로 로그인 시작";
             }
         };
 
@@ -297,11 +273,13 @@
         const saveSubjects = async () => {
             if (!currentUser) return;
             
-            // 저장 중 버튼 비활성화
             const saveBtn = document.getElementById('save-subjects-btn');
+            const errorMsg = document.getElementById('save-error');
             const originalText = saveBtn.innerText;
+            
             saveBtn.disabled = true;
             saveBtn.innerText = "저장 중...";
+            errorMsg.classList.add('hidden');
 
             const data = {};
             Object.keys(subjectOptions).forEach(key => {
@@ -309,10 +287,12 @@
             });
 
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings'), data);
+                // 정확한 Firestore 구조 규칙을 준수한 데이터 저장 경로
+                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'config');
+                await setDoc(docRef, data);
+                
                 userSubjects = data;
                 
-                // UI 전환
                 document.getElementById('setup-section').classList.add('hidden');
                 document.getElementById('main-section').classList.remove('hidden');
                 
@@ -320,7 +300,8 @@
                 updateRealTime();
             } catch (error) {
                 console.error("Save failed:", error);
-                alert("설정 저장에 실패했습니다. 다시 시도해주세요.");
+                errorMsg.innerText = "서버 저장 권한 오류가 발생했습니다. 브라우저를 새로고침 해보세요.";
+                errorMsg.classList.remove('hidden');
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerText = originalText;
@@ -418,7 +399,11 @@
             infoBox.innerHTML = html;
         };
 
+        // 관리자 공지사항 로직
         window.openAdminPanel = () => {
+            document.getElementById('admin-auth').classList.remove('hidden');
+            document.getElementById('admin-editor').classList.add('hidden');
+            document.getElementById('admin-pw').value = '';
             document.getElementById('admin-modal').classList.remove('hidden');
         };
         window.closeAdminPanel = () => {
@@ -432,11 +417,20 @@
             } else { alert('비밀번호가 틀렸습니다.'); }
         };
         window.saveNotice = async () => {
+            if (!currentUser) return;
             const text = document.getElementById('new-notice').value;
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'notice'), { content: text, updated: new Date().getTime() });
-            closeAdminPanel();
+            try {
+                // 정확한 공지사항 저장 경로
+                const noticeRef = doc(db, 'artifacts', appId, 'public', 'data', 'notices', 'main');
+                await setDoc(noticeRef, { content: text, updated: new Date().getTime() });
+                closeAdminPanel();
+            } catch (error) {
+                console.error("Notice save error", error);
+                alert("공지사항 저장에 실패했습니다.");
+            }
         };
 
+        // 인증 상태 모니터링
         onAuthStateChanged(auth, async (user) => {
             const authSec = document.getElementById('auth-section');
             const loadingSec = document.getElementById('loading-section');
@@ -448,13 +442,14 @@
                 authSec.classList.add('hidden');
                 loadingSec.classList.remove('hidden');
                 
+                // 설정 데이터 가져오기
                 try {
-                    const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'settings'));
+                    const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'config');
+                    const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         userSubjects = docSnap.data();
                         loadingSec.classList.add('hidden');
                         mainSec.classList.remove('hidden');
-                        setupSec.classList.add('hidden');
                         renderTimetable();
                     } else {
                         showSetup();
@@ -464,9 +459,17 @@
                     showSetup(); 
                 }
 
-                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'notice'), (doc) => {
-                    if (doc.exists()) document.getElementById('notice-content').innerText = doc.data().content;
-                });
+                // 공지사항 실시간 감지
+                try {
+                    const noticeRef = doc(db, 'artifacts', appId, 'public', 'data', 'notices', 'main');
+                    onSnapshot(noticeRef, (docSnap) => {
+                        if (docSnap.exists()) {
+                            document.getElementById('notice-content').innerText = docSnap.data().content;
+                        }
+                    }, (error) => console.error("Snapshot error:", error));
+                } catch (e) {
+                    console.error("공지사항 가져오기 에러:", e);
+                }
             } else {
                 authSec.classList.remove('hidden');
                 mainSec.classList.add('hidden');
