@@ -122,20 +122,35 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 환경 변수를 통한 안전한 Firebase 초기화
         let app, auth, db, appId;
+        
         try {
-            const firebaseConfig = JSON.parse(__firebase_config);
-            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            app = initializeApp(firebaseConfig);
+            // 1. 브라우저/캔버스 환경 변수 확인을 먼저 수행 (Reference Error 방지)
+            if (typeof __firebase_config !== 'undefined') {
+                const firebaseConfig = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                app = initializeApp(firebaseConfig);
+            } else {
+                // 2. 외부 환경에서 실행할 경우, 회원님이 처음에 설정한 Firebase 정보로 자동 대체(Fallback)
+                const fallbackConfig = {
+                    apiKey: "AIzaSyDKeB7mfWCx3_nqo0fTx8aFB6b4pM9UyQM",
+                    authDomain: "timetable-7fb0c.firebaseapp.com",
+                    projectId: "timetable-7fb0c",
+                    storageBucket: "timetable-7fb0c.firebasestorage.app",
+                    messagingSenderId: "484134941600",
+                    appId: "1:484134941600:web:07e98b534b9137893a6ac5"
+                };
+                appId = "timetable-7fb0c";
+                app = initializeApp(fallbackConfig);
+            }
             auth = getAuth(app);
             db = getFirestore(app);
         } catch (e) {
             console.error("Firebase Initialization Failed:", e);
-            document.getElementById('auth-error').innerText = "서버 설정 오류: 데이터를 저장할 수 없는 환경입니다.";
+            document.getElementById('auth-error').innerText = "서버 설정 초기화 오류가 발생했습니다. 브라우저를 새로고침 해보세요.";
             document.getElementById('auth-error').classList.remove('hidden');
         }
 
@@ -225,15 +240,22 @@
             errorText.classList.add('hidden');
 
             try {
-                // Canvas 환경에 맞는 안전한 내부 인증 처리
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    // Canvas 내부 구동 시
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
-                    await signInAnonymously(auth);
+                    // 브라우저 직접 구동 시도 시
+                    try {
+                        const provider = new GoogleAuthProvider();
+                        await signInWithPopup(auth, provider);
+                    } catch (e) {
+                        // 팝업 차단 등으로 실패할 경우 익명 로그인 시도
+                        await signInAnonymously(auth);
+                    }
                 }
             } catch (error) {
                 console.error("Login failed", error);
-                errorText.innerText = "인증에 실패했습니다. 새로고침 후 다시 시도해주세요.";
+                errorText.innerText = "로그인에 실패했습니다. (팝업 차단을 해제하거나 인터넷 연결을 확인해주세요)";
                 errorText.classList.remove('hidden');
                 btn.disabled = false;
                 btn.innerText = "구글 계정으로 로그인 시작";
@@ -287,7 +309,7 @@
             });
 
             try {
-                // 정확한 Firestore 구조 규칙을 준수한 데이터 저장 경로
+                // 저장 경로에 안전하게 쓰기
                 const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'config');
                 await setDoc(docRef, data);
                 
@@ -300,7 +322,7 @@
                 updateRealTime();
             } catch (error) {
                 console.error("Save failed:", error);
-                errorMsg.innerText = "서버 저장 권한 오류가 발생했습니다. 브라우저를 새로고침 해보세요.";
+                errorMsg.innerText = "저장 권한이 없습니다. 관리자에게 문의하거나 Firebase Security Rules를 확인해주세요.";
                 errorMsg.classList.remove('hidden');
             } finally {
                 saveBtn.disabled = false;
@@ -420,7 +442,6 @@
             if (!currentUser) return;
             const text = document.getElementById('new-notice').value;
             try {
-                // 정확한 공지사항 저장 경로
                 const noticeRef = doc(db, 'artifacts', appId, 'public', 'data', 'notices', 'main');
                 await setDoc(noticeRef, { content: text, updated: new Date().getTime() });
                 closeAdminPanel();
