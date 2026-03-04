@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2학년 2반 시간표</title>
+    <!-- Favicon 추가 (캘린더 이모지) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -51,6 +53,7 @@
         .bg-homeroom { background-color: #e0f2fe !important; } /* 우리반 수업 (하늘색) */
         .bg-current { background-color: #ffedd5 !important; border: 2px solid #f97316 !important; z-index: 10; } /* 현재교시 */
 
+
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
@@ -58,10 +61,11 @@
 </head>
 <body class="h-screen w-screen flex flex-col">
 
+
     <!-- Auth Section -->
     <div id="auth-section" class="flex flex-col items-center justify-center h-full p-4 absolute inset-0 bg-slate-50 z-50">
         <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full text-center">
-            <h1 class="text-2xl font-bold mb-4 text-blue-600">학급 시간표</h1>
+            <h1 class="text-2xl font-bold mb-4 text-blue-600">2학년 2반 시간표</h1>
             <p class="text-gray-500 mb-6 text-sm">안전하게 로그인하여<br>나의 선택과목 시간표를 설정하세요.</p>
             <button id="google-login-btn" class="flex items-center justify-center w-full py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
                 <img class="h-4 w-4 mr-2" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google">
@@ -71,11 +75,13 @@
         </div>
     </div>
 
+
     <!-- Loading Section -->
     <div id="loading-section" class="hidden flex-col items-center justify-center h-full absolute inset-0 bg-slate-50 z-40">
         <div class="loader mb-3"></div>
         <p class="text-gray-500 text-sm">데이터를 불러오는 중...</p>
     </div>
+
 
     <!-- Subject Setup Section -->
     <div id="setup-section" class="hidden flex-col items-center justify-center h-full absolute inset-0 bg-slate-50 z-30 p-4">
@@ -87,6 +93,7 @@
             <p id="save-error" class="text-red-500 text-xs mt-2 hidden text-center shrink-0"></p>
         </div>
     </div>
+
 
     <!-- Main Dashboard Section -->
     <div id="main-section" class="hidden h-full flex flex-col md:flex-row w-full max-w-7xl mx-auto overflow-hidden bg-white shadow-xl">
@@ -106,12 +113,18 @@
                 </div>
             </div>
 
+
+            <!-- 공지사항 영역 (연필 버튼 우측 상단 배치) -->
             <div class="bg-slate-800 text-white p-4 rounded-xl shadow-md relative flex-grow flex flex-col">
-                <h3 class="font-bold text-sm mb-2 flex items-center shrink-0">
-                    <i class="fas fa-bullhorn mr-1.5 text-yellow-400"></i> 학급 공지사항
-                </h3>
-                <div id="notice-content" class="text-xs leading-relaxed opacity-90 overflow-y-auto flex-grow">등록된 공지사항이 없습니다.</div>
-                <button onclick="openAdminPanel()" class="absolute bottom-2 right-2 text-[10px] opacity-20 hover:opacity-100 transition-opacity">ADMIN</button>
+                <div class="flex justify-between items-center mb-2 shrink-0">
+                    <h3 class="font-bold text-sm flex items-center">
+                        <i class="fas fa-bullhorn mr-1.5 text-yellow-400"></i> 학급 공지사항
+                    </h3>
+                    <button onclick="openAdminPanel()" class="text-gray-400 hover:text-white transition-colors p-1" title="공지사항 수정">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                </div>
+                <div id="notice-content" class="text-xs leading-relaxed opacity-90 overflow-y-auto flex-grow whitespace-pre-wrap">등록된 공지사항이 없습니다.</div>
             </div>
             
             <button onclick="showSetup()" class="text-xs text-gray-400 hover:text-blue-500 transition-colors shrink-0 text-left">
@@ -119,9 +132,10 @@
             </button>
         </aside>
 
+
         <main class="flex-1 p-4 flex flex-col bg-white min-w-0">
             <h2 class="text-lg font-bold mb-3 flex items-center text-gray-800 shrink-0">
-                <i class="fas fa-calendar-alt mr-2 text-blue-600"></i> 2학년 2반 시간표
+                <i class="fas fa-calendar-alt mr-2 text-blue-600"></i> 주간 시간표
             </h2>
             
             <div class="flex-1 min-h-0 relative">
@@ -145,16 +159,17 @@
             
             <div class="mt-3 text-[11px] md:text-xs text-blue-600 font-medium shrink-0 flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 bg-blue-50 p-2 rounded-lg">
                 <div class="flex items-center"><i class="fas fa-info-circle mr-1.5 text-blue-500"></i> 하늘색으로 표시된 시간은 우리반에 수업이 있는 시간이니 참고하시기 바랍니다.</div>
-            </div>
+                           </div>
         </main>
     </div>
+
 
     <!-- Admin Modal -->
     <div id="admin-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white p-5 rounded-2xl max-w-sm w-full shadow-2xl">
             <h3 class="text-lg font-bold mb-3 text-gray-800">공지사항 관리</h3>
             <div id="admin-auth" class="space-y-3">
-                <input type="password" id="admin-pw" placeholder="관리자 코드 (1234)" class="w-full p-2.5 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" id="admin-pw" placeholder="관리자 비밀번호" class="w-full p-2.5 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
                 <div class="flex space-x-2">
                     <button onclick="checkAdminPw()" class="flex-1 bg-gray-800 text-white py-2 text-sm rounded-lg font-medium hover:bg-gray-900 transition">확인</button>
                     <button onclick="closeAdminPanel()" class="flex-1 bg-gray-200 text-gray-700 py-2 text-sm rounded-lg font-medium hover:bg-gray-300 transition">취소</button>
@@ -170,13 +185,16 @@
         </div>
     </div>
 
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+
         // 우리반 교실 수업 (하늘색 강조)
         const homeroomSlots = ["0-4", "0-5", "0-6", "1-1", "2-1", "2-2", "3-4"];
+
 
         let app, auth, db, appId;
         
@@ -205,8 +223,10 @@
             document.getElementById('auth-error').classList.remove('hidden');
         }
 
+
         let currentUser = null;
         let userSubjects = null;
+
 
         const subjectOptions = {
             "선택과목A": [
@@ -265,6 +285,7 @@
             ]
         };
 
+
         const scheduleBase = {
             0: [ { name: "영어I", teacher: "김영미 선생님", room: "2-7" }, { name: "대수", teacher: "장경희 선생님", room: "2-3" }, { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" }, { type: "select", key: "선택과목C" }, { type: "select", key: "선택과목B" }, { type: "select", key: "선택과목B" }, { name: "창체(동아리)", teacher: "-", room: "-" } ],
             1: [ { type: "select", key: "선택과목D" }, { type: "select", key: "선택과목D" }, { name: "대수", teacher: "장경희 선생님", room: "2-3" }, { type: "select", key: "선택과목A" }, { name: "영어I", teacher: "이지연 선생님", room: "2-1" }, { type: "select", key: "음미" }, { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" } ],
@@ -272,6 +293,7 @@
             3: [ { type: "select", key: "선택과목E" }, { type: "select", key: "선택과목E" }, { name: "독작", teacher: "한다솜 선생님", room: "2-6" }, { type: "select", key: "선택과목B" }, { type: "select", key: "선택과목D" }, { type: "select", key: "선택과목A" }, { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" } ],
             4: [ { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" }, { name: "대수", teacher: "장경희 선생님", room: "2-3" }, { type: "select", key: "음미" }, { type: "select", key: "선택과목E" }, { name: "영어I", teacher: "김영미 선생님", room: "2-7" }, { name: "창체", teacher: "-", room: "-" }, { name: "창체", teacher: "-", room: "-" } ]
         };
+
 
         const timeTableData = [
             { id: "p1", start: "08:40", end: "09:30", label: "1교시", period: 1 },
@@ -283,46 +305,37 @@
             { id: "p7", start: "15:40", end: "16:30", label: "7교시", period: 7 }
         ];
 
-        // ★ [핵심] 선택과목별 '독서' 과목 덮어쓰기 로직
+
+        // 독서 과목 대체 로직
         const getClassInfo = (dayIndex, periodIndex) => {
             const base = scheduleBase[dayIndex][periodIndex];
             
-            // 1. 공통과목이거나, 아직 선택을 안 한 경우 기본값 반환
             if (!userSubjects || base.type !== 'select') return base;
 
-            // 2. 사용자가 선택한 과목 정보 가져오기
+
             const selectedIdx = userSubjects[base.key];
             const selectedSubject = subjectOptions[base.key][selectedIdx] || { name: '미선택', teacher: '-', room: '-' };
             
-            // 3. 대체 조건 판별 도우미 함수 (요일, 교시인덱스, 선택과목그룹, 세부과목명)
             const isMatch = (d, pIdx, key, subName) => {
                 return dayIndex === d && periodIndex === pIdx && base.key === key && selectedSubject.name === subName;
             };
 
-            // ---- 예외 조건: '독서' 로 완전히 대체되는 경우 ----
-            
-            // A: 철학 -> 수(2) 6교시(5)
+
+            // 독서 대체
             if (isMatch(2, 5, '선택과목A', '철학')) return { name: '독서', teacher: '권민영 선생님', room: '보건교육실', isSub: true };
-            
-            // B: 논술 -> 월(0) 6교시(5) / 심리 -> 월(0) 5교시(4)
             if (isMatch(0, 5, '선택과목B', '논술')) return { name: '독서', teacher: '전민지 선생님', room: 'AI 인텔리랩', isSub: true };
             if (isMatch(0, 4, '선택과목B', '심리')) return { name: '독서', teacher: '양정은 선생님', room: '도서관', isSub: true };
-            
-            // C: 교육 -> 수(2) 1교시(0)
             if (isMatch(2, 0, '선택과목C', '교육')) return { name: '독서', teacher: '박성훈 선생님', room: '2-2', isSub: true };
-            
-            // D: 철학 -> 화(1) 1교시(0) / 심리 -> 화(1) 1교시(0)
             if (isMatch(1, 0, '선택과목D', '철학')) return { name: '독서', teacher: '권민영 선생님', room: '보건교육실', isSub: true };
             if (isMatch(1, 0, '선택과목D', '심리')) return { name: '독서', teacher: '박성훈 선생님', room: '2-2', isSub: true };
-            
-            // E: 교육 -> 목(3) 1교시(0) / 철학 -> 목(3) 1교시(0) / 논술 -> 목(3) 2교시(1)
             if (isMatch(3, 0, '선택과목E', '교육')) return { name: '독서', teacher: '전민지 선생님', room: 'AI 인텔리랩', isSub: true };
             if (isMatch(3, 0, '선택과목E', '철학')) return { name: '독서', teacher: '김동해 신부님', room: 'J301', isSub: true };
             if (isMatch(3, 1, '선택과목E', '논술')) return { name: '독서', teacher: '양정은 선생님', room: '도서관', isSub: true };
 
-            // 대체 조건에 해당하지 않으면 원래 선택한 과목 반환
+
             return selectedSubject;
         };
+
 
         const login = async () => {
             const btn = document.getElementById('google-login-btn');
@@ -330,6 +343,7 @@
             btn.disabled = true;
             btn.innerText = "로그인 중...";
             errorText.classList.add('hidden');
+
 
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -351,6 +365,7 @@
             }
         };
 
+
         const showSetup = () => {
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('loading-section').classList.add('hidden');
@@ -358,6 +373,7 @@
             document.getElementById('setup-section').classList.remove('hidden');
             renderSetupForm();
         };
+
 
         const renderSetupForm = () => {
             const container = document.getElementById('setup-form');
@@ -383,6 +399,7 @@
             });
         };
 
+
         const saveSubjects = async () => {
             if (!currentUser) return;
             const saveBtn = document.getElementById('save-subjects-btn');
@@ -390,6 +407,7 @@
             saveBtn.innerText = "저장 중...";
             const data = {};
             Object.keys(subjectOptions).forEach(key => { data[key] = document.getElementById(`select-${key}`).value; });
+
 
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'config'), data);
@@ -407,6 +425,7 @@
             }
         };
 
+
         const renderTimetable = () => {
             if (!userSubjects) return;
             for (let d = 0; d < 5; d++) {
@@ -415,15 +434,13 @@
                     const cell = document.getElementById(`cell-${d}-${period}`);
                     if (!cell) continue;
                     
-                    // getClassInfo 함수를 통해 최종 정보(독서 대체 여부 포함)를 가져옴
                     const finalInfo = getClassInfo(d, idx);
                     
-                    // 요일과 교시 확인하여 하늘색 배경 적용
                     const slotKey = `${d}-${period}`;
                     if (homeroomSlots.includes(slotKey)) cell.classList.add('bg-homeroom');
                     else cell.classList.remove('bg-homeroom');
 
-                    // 텍스트 렌더링 (독서 대체 과목은 글씨 색상을 살짝 다르게 표현할 수도 있지만 동일하게 유지)
+
                     const titleClass = finalInfo.isSub ? "text-green-700 font-extrabold" : "text-gray-800 font-bold";
                     
                     cell.innerHTML = `
@@ -435,6 +452,7 @@
             }
         };
 
+
         const updateRealTime = () => {
             const now = new Date();
             const dateStr = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -442,12 +460,15 @@
             const daysArr = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
             const dayStr = daysArr[now.getDay()];
 
+
             document.getElementById('current-date').innerText = dateStr;
             document.getElementById('current-time').innerText = timeStr;
             document.getElementById('current-day').innerText = dayStr;
 
+
             if (userSubjects) updateNextClass(now);
         };
+
 
         const updateNextClass = (now) => {
             const currentTotalMin = now.getHours() * 60 + now.getMinutes();
@@ -456,11 +477,13 @@
             let activeSlot = null;
             let nextSlot = null;
 
+
             for(let i=0; i<timeTableData.length; i++) {
                 const [sH, sM] = timeTableData[i].start.split(':').map(Number);
                 const [eH, eM] = timeTableData[i].end.split(':').map(Number);
                 const startMin = sH * 60 + sM;
                 const endMin = eH * 60 + eM;
+
 
                 if (currentTotalMin >= startMin && currentTotalMin < endMin) {
                     activeSlot = timeTableData[i];
@@ -472,19 +495,21 @@
                 }
             }
 
+
             document.querySelectorAll('.bg-current').forEach(el => el.classList.remove('bg-current'));
             if (activeSlot && activeSlot.period && currentDay >= 1 && currentDay <= 5) {
                 const activeCell = document.getElementById(`cell-${currentDay-1}-${activeSlot.period}`);
                 if (activeCell) activeCell.classList.add('bg-current');
             }
 
+
             const infoBox = document.getElementById('next-class-info');
             if (!infoBox) return;
+
 
             let html = "";
             
             if (activeSlot && activeSlot.period && currentDay >= 1 && currentDay <= 5) {
-                // 실시간 수업 정보에서도 대체된 독서 과목 정보를 정확히 띄우도록 getClassInfo 활용
                 let cData = getClassInfo(currentDay-1, activeSlot.period-1);
                 html += `
                     <div class="mb-2">
@@ -496,10 +521,12 @@
                 html += `<div class="mb-2 text-xs text-gray-500">현재 대기 중입니다.</div>`;
             }
 
+
             if (nextSlot) {
                 const [sH, sM] = nextSlot.start.split(':').map(Number);
                 const startMin = sH * 60 + sM;
                 const diff = startMin - currentTotalMin;
+
 
                 if (diff <= 10 && diff > 0) {
                     const isNextClass = nextSlot.period && currentDay >= 1 && currentDay <= 5;
@@ -524,6 +551,8 @@
             infoBox.innerHTML = html;
         };
 
+
+        // 관리자 패널 관련 함수들
         window.openAdminPanel = () => {
             document.getElementById('admin-auth').classList.remove('hidden');
             document.getElementById('admin-editor').classList.add('hidden');
@@ -531,22 +560,29 @@
             document.getElementById('admin-modal').classList.remove('hidden');
         };
         window.closeAdminPanel = () => document.getElementById('admin-modal').classList.add('hidden');
+        
         window.checkAdminPw = () => {
-            if (document.getElementById('admin-pw').value === '1234') {
+            // 요청하신 비밀번호(nsdg26)로 변경
+            if (document.getElementById('admin-pw').value === 'nsdg26') {
                 document.getElementById('admin-auth').classList.add('hidden');
                 document.getElementById('admin-editor').classList.remove('hidden');
                 document.getElementById('new-notice').value = document.getElementById('notice-content').innerText;
-            } else { alert('비밀번호가 틀렸습니다.'); }
+            } else { alert('비밀번호가 일치하지 않습니다.'); }
         };
+
+
         window.saveNotice = async () => {
             if (!currentUser) return;
             try {
+                // Firebase Public 영역에 학급 전체 공지 저장
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'notices', 'main'), { 
-                    content: document.getElementById('new-notice').value, updated: new Date().getTime() 
+                    content: document.getElementById('new-notice').value, 
+                    updated: new Date().getTime() 
                 });
                 closeAdminPanel();
-            } catch (e) { alert("저장 실패"); }
+            } catch (e) { alert("공지사항 저장에 실패했습니다. 권한을 확인해주세요."); }
         };
+
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -564,7 +600,9 @@
                     } else { showSetup(); }
                 } catch (e) { showSetup(); }
 
+
                 try {
+                    // Firebase 공지사항 실시간 구독
                     onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'notices', 'main'), (snap) => {
                         if (snap.exists()) document.getElementById('notice-content').innerText = snap.data().content;
                     });
@@ -576,6 +614,7 @@
                 document.getElementById('setup-section').classList.add('hidden');
             }
         });
+
 
         document.getElementById('google-login-btn').addEventListener('click', login);
         document.getElementById('save-subjects-btn').addEventListener('click', saveSubjects);
