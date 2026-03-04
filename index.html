@@ -3,914 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2학년 2반 시간표</title>
-    
-    <!-- === 웹 아이콘 (Favicon) 설정 시작 === -->
-    <!-- [중요] 아래 href 속성의 주소를 사용자님의 아이콘 파일이 저장된 실제 웹 주소로 변경해야 합니다. -->
-    
-    <!-- 1. 모든 브라우저용 표준 아이콘 (32x32 PNG 권장) -->
-    <link rel="icon" type="image/png" href="https://placehold.co/32x32/ffffff/000000?text=2-2" sizes="32x32">
-    
-    <!-- 2. iOS 홈 화면 아이콘 (180x180 권장) -->
-    <link rel="apple-touch-icon" href="https://placehold.co/180x180/ffffff/000000?text=2-2">
-    
-    <!-- 3. Android/Chrome용 테마 색상 (브라우저 주소창 색상) -->
-    <meta name="theme-color" content="#2c3e50">
-    <!-- === 웹 아이콘 (Favicon) 설정 끝 === -->
-
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <title>우리 학급 실시간 시간표</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --bg-start-color: #f0f4f8;
-            --bg-end-color: #e6e9f0;
-            --main-color: #2c3e50;
-            --accent-color: #4299e1;
-            --btn-color: #4CAF50;
-        }
-
-        body {
-            font-family: 'Noto+Sans+KR', sans-serif;
-            color: var(--main-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 10vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: background 1s ease;
-            background: linear-gradient(to bottom right, var(--bg-start-color), var(--bg-end-color));
-            position: relative;
-        }
-
-        .container {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            width: 95%;
-            max-width: 1400px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                width: 100%;
-            }
-        }
-        
-        .top-sections {
-            display: flex;
-            width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .top-sections {
-                flex-direction: column;
-            }
-        }
-
-        .left-section {
-            flex: 1;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: white;
-            color: black;
-            transition: background 1s ease;
-        }
-
-        .right-section {
-            flex: 2;
-            padding: 20px;
-        }
-
-        .left-section h2 {
-            font-size: 2em;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
-
-        .left-section h1 {
-            font-size: 6em;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: -2px;
-        }
-        
-        #current-date {
-            color: #808080;
-        }
-
-        #current-time {
-            color: #0a1c3d;
-        }
-        
-        .current-class-info {
-            margin-top: 30px;
-            font-size: 1.3em;
-            background-color: rgba(0, 0, 0, 0.05);
-            padding: 25px;
-            border-radius: 10px;
-            width: 100%;
-            box-sizing: border-box;
-            line-height: 1.6;
-        }
-
-        .current-class-info p {
-            margin: 5px 0;
-        }
-        
-        #class-name {
-            font-size: 1.5em;
-            font-weight: bold;
-            display: block;
-        }
-        
-        .right-section h2 {
-            text-align: center;
-            font-size: 2em;
-            color: var(--main-color);
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8em;
-            text-align: center;
-            table-layout: fixed;
-        }
-
-        th, td {
-            border: 1px solid #e0e6ed;
-            padding: 6px 3px;
-            white-space: normal;
-            word-break: normal;
-        }
-        
-        td div {
-            font-size: 0.75em;
-            color: #555;
-            margin-top: 5px;
-        }
-
-        th {
-            background-color: var(--main-color);
-            color: white;
-            font-weight: bold;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        td.highlight {
-            background-color: #f7d794 !important;
-            font-weight: bold;
-            color: #a05a00;
-        }
-
-        .announcement-section {
-            margin-top: 30px;
-            width: 100%;
-        }
-        
-        .announcement-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .announcement-header h3 {
-            font-size: 1.2em;
-            color: var(--main-color);
-            margin: 0;
-        }
-
-        #announcement-display {
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            white-space: pre-wrap;
-            word-break: break-word;
-            min-height: 50px;
-            border: 1px dashed #ccc;
-            font-size: 1.1em;
-            line-height: 1.6;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .cleanup-time {
-            background-color: #e0f7fa !important;
-        }
-
-        /* 관리자 UI CSS */
-        .admin-btn {
-            background-color: #5DADE2; /* 밝은 파랑 */
-            color: white;
-            padding: 6px 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8em;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .admin-btn:hover {
-            background-color: #2C78BA;
-        }
-
-        .admin-login-btn, .admin-save-btn {
-            background-color: var(--accent-color);
-            color: white;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-
-        .admin-login-btn:hover, .admin-save-btn:hover {
-            background-color: #3182CE;
-        }
-
-        .admin-input, .admin-textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        .admin-textarea {
-            resize: vertical;
-        }
-
-        /* 모바일 최적화 (768px 이하) */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                width: 100%;
-                padding: 10px;
-            }
-            .left-section h1 {
-                font-size: 5em;
-            }
-            .current-class-info {
-                font-size: 1.1em;
-            }
-            th, td {
-                padding: 4px 1px;
-                font-size: 0.7em;
-            }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        .timetable-grid { display: grid; grid-template-columns: 80px repeat(5, 1fr); gap: 1px; background-color: #e2e8f0; border: 1px solid #e2e8f0; }
+        .grid-header { background-color: #f1f5f9; font-weight: bold; text-align: center; padding: 10px; }
+        .grid-cell { background-color: white; min-height: 80px; padding: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 0.85rem; }
+        .current-period { background-color: #eff6ff; border: 2px solid #3b82f6; }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- 상단 섹션: 현재 시간/정보(왼쪽)와 시간표(오른쪽) -->
-        <div class="top-sections">
-            <!-- 왼쪽 섹션: 현재 시간 및 수업 정보 -->
-            <div class="left-section">
-                <h2 id="current-date"></h2>
-                <h1 id="current-time"></h1>
-                <div class="current-class-info">
-                    <span id="class-name"></span>
-                    <p id="teacher-name-p">선생님: <span id="teacher-name"></span></p>
-                    <p id="location-p">장소: <span id="location"></span></p>
-                </div>
-                <p id="special-message" style="margin-top: 20px; font-size: 1.1em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);"></p>
-            </div>
-            
-            <!-- 오른쪽 섹션: 전체 시간표 -->
-            <div class="right-section">
-                <h2>주간 시간표</h2>
-                <div style="overflow-x: auto;">
-                    <table id="timetable">
-                        <thead>
-                            <tr>
-                                <th>교시</th>
-                                <th>월</th>
-                                <th>화</th>
-                                <th>수</th>
-                                <th>목</th>
-                                <th>금</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- JavaScript가 여기에 시간표 내용을 생성합니다 -->
-                        </tbody>
-                    </table>
-                </div>
-                <p style="text-align: center; margin-top: 10px; font-size: 0.9em; color: #555;">
-                    <span style="background-color: #e0f7fa; padding: 2px 6px; border-radius: 4px; border: 1px solid #b2ebf2; display: inline-block;"></span>
-                    <span style="vertical-align: middle;">색깔로 표시된 부분은 우리반에 수업이 있는 시간이니 참고하시기 바랍니다.</span>
-                </p>
-            </div>
+<body class="min-h-screen">
+
+    <!-- Auth Section -->
+    <div id="auth-section" class="flex flex-col items-center justify-center min-h-screen p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
+            <h1 class="text-3xl font-bold mb-6 text-blue-600">학급 시간표</h1>
+            <p class="text-gray-500 mb-8">구글 계정으로 로그인하여<br>나의 선택과목 시간표를 확인하세요.</p>
+            <button id="google-login-btn" class="flex items-center justify-center w-full py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
+                <img class="h-5 w-5 mr-2" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google">
+                구글 계정으로 로그인
+            </button>
         </div>
+    </div>
 
-        <!-- 공지사항 섹션 (아래에 길게 위치) -->
-        <div class="announcement-section">
-            <div class="announcement-header">
-                <h3>📢 공지사항</h3>
-                <button id="admin-toggle-btn" class="admin-btn">관리자 모드</button>
+    <!-- Subject Setup Section -->
+    <div id="setup-section" class="hidden container mx-auto px-4 py-8 max-w-2xl">
+        <div class="bg-white p-8 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 text-center">선택 과목 설정</h2>
+            <div id="setup-form" class="space-y-4">
+                <!-- Select fields will be injected here by JS -->
             </div>
-            <div id="announcement-display">📢 데이터 로딩 중...</div>
-            
-            <!-- 관리자 모드 패널 (초기에는 숨김) -->
-            <div id="admin-panel" style="display: none; margin-top: 15px; padding: 15px; background-color: #f0f4f8; border-radius: 8px;">
-                <h4>관리자 로그인</h4>
-                <input type="password" id="admin-code-input" placeholder="관리자 코드 입력" class="admin-input">
-                <button id="admin-login-btn" class="admin-login-btn">로그인</button>
-                <p id="admin-error-message" style="color: red; margin-top: 10px; display: none; font-weight: bold;"></p>
+            <button id="save-subjects-btn" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all">설정 완료</button>
+        </div>
+    </div>
 
-                <div id="announcement-editor" style="display: none; margin-top: 20px;">
-                    <h4>📢 공지사항 편집</h4>
-                    <textarea id="announcement-textarea" class="admin-textarea" rows="10" placeholder="새로운 공지사항을 입력하세요."></textarea>
-                    <button id="save-announcement-btn" class="admin-save-btn">공지사항 저장</button>
+    <!-- Main Dashboard Section -->
+    <div id="main-section" class="hidden min-h-screen flex flex-col md:flex-row overflow-hidden">
+        <!-- Left Sidebar: Real-time Info -->
+        <aside class="md:w-1/4 bg-white border-r p-6 flex flex-col space-y-8">
+            <div class="text-center md:text-left">
+                <div id="current-date" class="text-xl text-gray-600 font-medium"></div>
+                <div id="current-time" class="text-5xl font-bold text-blue-600 mt-2"></div>
+                <div id="current-day" class="text-2xl text-gray-400 mt-1"></div>
+            </div>
+
+            <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex-grow">
+                <h3 class="text-blue-800 font-bold text-lg mb-4 flex items-center">
+                    <i class="fas fa-clock mr-2"></i> 다음 수업 안내
+                </h3>
+                <div id="next-class-info" class="space-y-3">
+                    <p class="text-gray-400 italic">로딩 중...</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+                <h3 class="font-bold text-lg mb-2 flex items-center relative z-10">
+                    <i class="fas fa-bullhorn mr-2 text-yellow-400"></i> 공지사항
+                </h3>
+                <div id="notice-content" class="text-sm leading-relaxed relative z-10 opacity-90 min-h-[60px]">등록된 공지사항이 없습니다.</div>
+                <button onclick="openAdminPanel()" class="absolute bottom-2 right-2 text-[10px] opacity-20 hover:opacity-100 transition-opacity">ADMIN</button>
+            </div>
+
+            <button onclick="showSetup()" class="text-sm text-gray-400 hover:text-blue-500 transition-colors">
+                <i class="fas fa-cog mr-1"></i> 과목 수정하기
+            </button>
+        </aside>
+
+        <!-- Right: Timetable Content -->
+        <main class="flex-grow p-4 md:p-8 overflow-y-auto">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-calendar-alt mr-3 text-blue-600"></i> 주간 시간표 (평일 1-7교시)
+            </h2>
+            <div class="timetable-grid rounded-lg shadow-sm overflow-hidden bg-white">
+                <div class="grid-header">교시</div>
+                <div class="grid-header">월</div>
+                <div class="grid-header">화</div>
+                <div class="grid-header">수</div>
+                <div class="grid-header">목</div>
+                <div class="grid-header">금</div>
+                
+                <!-- Time slots 1-7 -->
+                <script>
+                    const days = ['월', '화', '수', '목', '금'];
+                    for (let p = 1; p <= 7; p++) {
+                        document.write(`<div class="grid-cell font-bold bg-slate-50">${p}</div>`);
+                        for (let d = 0; d < 5; d++) {
+                            document.write(`<div id="cell-${d}-${p}" class="grid-cell border-l"></div>`);
+                        }
+                    }
+                </script>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-2xl max-w-md w-full">
+            <h3 class="text-xl font-bold mb-4">관리자 패널</h3>
+            <div id="admin-auth" class="space-y-4">
+                <input type="password" id="admin-pw" placeholder="관리자 코드 입력" class="w-full p-2 border rounded-lg">
+                <button onclick="checkAdminPw()" class="w-full bg-black text-white py-2 rounded-lg">확인</button>
+            </div>
+            <div id="admin-editor" class="hidden space-y-4">
+                <textarea id="new-notice" class="w-full h-32 p-3 border rounded-lg text-sm" placeholder="공지사항 내용을 입력하세요..."></textarea>
+                <div class="flex space-x-2">
+                    <button onclick="saveNotice()" class="flex-grow bg-blue-600 text-white py-2 rounded-lg">저장</button>
+                    <button onclick="closeAdminPanel()" class="flex-grow bg-gray-200 py-2 rounded-lg">닫기</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Firebase Scripts -->
     <script type="module">
-        // Firebase 모듈 임포트
-        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // === Firebase 및 전역 변수 설정 ===
-        let app;
-        let db;
-        let auth;
-        let userId;
-        const ADMIN_CODE = "0301"; // 관리자 코드
-        
-        // **[수정]** GitHub Pages 환경을 위한 하드코딩된 Firebase 설정
-        const hardcodedFirebaseConfig = {
-            apiKey: "AIzaSyCtxpMib6DMWf8o7tbzUEGB-W3atQbBE2w",
-            authDomain: "lumberjack-leaderboard.firebaseapp.com",
-            projectId: "lumberjack-leaderboard",
-            storageBucket: "lumberjack-leaderboard.firebasestorage.app",
-            messagingSenderId: "50215906757",
-            appId: "1:50215906757:web:6d1729dfd6c2798546efac"
-        };
-        
-        // 데이터베이스 설정: 파이어스토어에서 데이터가 로드되기 전의 기본 메시지
-        const DEFAULT_ANNOUNCEMENT_TEXT = `📢 데이터베이스에 연결 중입니다. 잠시만 기다려주세요...`;
-
-        // **[수정]** Canvas 환경 또는 하드코딩된 설정 가져오기
-        const getFirebaseConfig = () => {
-            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                try {
-                    console.log("Using Canvas provided Firebase config.");
-                    return JSON.parse(__firebase_config);
-                } catch (e) {
-                    console.error("Error parsing __firebase_config, falling back to hardcoded config.", e);
-                }
-            }
-            console.log("Using hardcoded Firebase config (likely running on GitHub Pages).");
-            return hardcodedFirebaseConfig;
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKeB7mfWCx3_nqo0fTx8aFB6b4pM9UyQM",
+            authDomain: "timetable-7fb0c.firebaseapp.com",
+            projectId: "timetable-7fb0c",
+            storageBucket: "timetable-7fb0c.firebasestorage.app",
+            messagingSenderId: "484134941600",
+            appId: "1:484134941600:web:07e98b534b9137893a6ac5"
         };
 
-        // **[수정]** Firebase 초기화 및 인증 설정 (GitHub Pages 대응)
-        async function setupFirebaseAndAuth(firebaseConfig) {
-            if (!firebaseConfig || !firebaseConfig.apiKey) {
-                console.error("Firebase configuration is missing or invalid.");
-                document.getElementById('announcement-display').innerText = '데이터베이스 연결 실패: 설정이 올바르지 않습니다.';
-                return false;
-            }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = "timetable-7fb0c";
 
+        let currentUser = null;
+        let userSubjects = null;
+
+        // Data Definition
+        const subjectOptions = {
+            "선택과목A": [
+                { name: "주탐독", teacher: "황인해 선생님", room: "국어교과실" },
+                { name: "인공수", teacher: "박동민 선생님", room: "수학교과실" },
+                { name: "사문", teacher: "김형석 선생님", room: "AI 창의융합정보실" },
+                { name: "현사윤", teacher: "여현주 선생님", room: "3-1" },
+                { name: "물리", teacher: "이윤숙 선생님", room: "물리학 실험실" },
+                { name: "화학", teacher: "김보련 선생님", room: "화학 실험실" },
+                { name: "철학", teacher: "김동해 신부님", room: "J301" }
+            ],
+            "선택과목B": [
+                { name: "주탐독", teacher: "황인해 선생님", room: "국어교과실" },
+                { name: "세지", teacher: "지리온", room: "지능형 영어실" },
+                { name: "물리1반", teacher: "유현영 선생님", room: "2-8" },
+                { name: "물리2반", teacher: "이윤숙 선생님", room: "물리학 실험실" },
+                { name: "화학", teacher: "김보련 선생님", room: "화학 실험실" },
+                { name: "일어", teacher: "박성훈 선생님", room: "2-2" },
+                { name: "중어", teacher: "권민영 선생님", room: "2-4" },
+                { name: "논술", teacher: "배오현 선생님", room: "영어교과실" },
+                { name: "심리", teacher: "김혜선 수녀님", room: "1-3" }
+            ],
+            "선택과목C": [
+                { name: "정치", teacher: "김형석 선생님", room: "AI 창의융합정보실" },
+                { name: "현사윤", teacher: "여현주 선생님", room: "3-1" },
+                { name: "화학", teacher: "김보련 선생님", room: "화학 실험실" },
+                { name: "생명", teacher: "류혜인 선생님", room: "지구과학 실험실" },
+                { name: "지학", teacher: "정보온", room: "컴퓨터실" },
+                { name: "프로", teacher: "박성훈 선생님", room: "2-2" },
+                { name: "교육", teacher: "박성훈 선생님", room: "2-2" } // 교육 옵션 보강
+            ],
+            "선택과목D": [
+                { name: "세계사", teacher: "정기엽 선생님", room: "사회교과실" },
+                { name: "물리", teacher: "유현영 선생님", room: "2-8" },
+                { name: "생명", teacher: "박성미 선생님", room: "3-5" },
+                { name: "프로1반", teacher: "정보온", room: "2-7" },
+                { name: "프로2반", teacher: "정보온", room: "컴퓨터실" },
+                { name: "철학", teacher: "김동해 신부님", room: "J301" },
+                { name: "심리", teacher: "김혜선 수녀님", room: "2-2" }
+            ],
+            "선택과목E": [
+                { name: "영발토", teacher: "배오현 선생님", room: "영어교과실" },
+                { name: "세지", teacher: "지리온", room: "2-7" },
+                { name: "현사윤", teacher: "여현주 선생님", room: "3-1" },
+                { name: "물리", teacher: "유현영 선생님", room: "2-8" },
+                { name: "화학", teacher: "김보련 선생님", room: "화학 실험실" },
+                { name: "생명", teacher: "박성미 선생님", room: "3-5" },
+                { name: "프로", teacher: "정보온", room: "컴퓨터실" },
+                { name: "교육", teacher: "김형석 선생님", room: "AI 창의융합정보실" },
+                { name: "철학", teacher: "김동해 신부님", room: "J301" },
+                { name: "논술", teacher: "한종오 선생님", room: "3-6" }
+            ],
+            "음미": [
+                { name: "음악", teacher: "최수미 선생님", room: "음악실" },
+                { name: "미술", teacher: "홍현숙 선생님", room: "미술실" }
+            ]
+        };
+
+        const scheduleBase = {
+            0: [ // 월
+                { name: "영어I", teacher: "김영미 선생님", room: "2-7" },
+                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
+                { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" },
+                { type: "select", key: "선택과목C" },
+                { type: "select", key: "선택과목B" },
+                { type: "select", key: "선택과목B" },
+                { name: "창체(동아리)", teacher: "-", room: "-" }
+            ],
+            1: [ // 화
+                { type: "select", key: "선택과목D" },
+                { type: "select", key: "선택과목D" },
+                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
+                { type: "select", key: "선택과목A" },
+                { name: "영어I", teacher: "이지연 선생님", room: "2-1" },
+                { type: "select", key: "음미" },
+                { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" }
+            ],
+            2: [ // 수
+                { type: "select", key: "선택과목C" },
+                { type: "select", key: "선택과목C" },
+                { name: "영어I", teacher: "이지연 선생님", room: "2-1" },
+                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
+                { name: "독작", teacher: "한다솜 선생님", room: "2-6" },
+                { type: "select", key: "선택과목A" },
+                { name: "공강", teacher: "권민영 선생님", room: "-" }
+            ],
+            3: [ // 목
+                { type: "select", key: "선택과목E" },
+                { type: "select", key: "선택과목E" },
+                { name: "독작", teacher: "한다솜 선생님", room: "2-6" },
+                { type: "select", key: "선택과목B" },
+                { type: "select", key: "선택과목D" },
+                { type: "select", key: "선택과목A" },
+                { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" }
+            ],
+            4: [ // 금
+                { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" },
+                { name: "대수", teacher: "장경희 선생님", room: "2-3" },
+                { type: "select", key: "음미" },
+                { type: "select", key: "선택과목E" },
+                { name: "영어I", teacher: "김영미 선생님", room: "2-7" },
+                { name: "창체", teacher: "-", room: "-" },
+                { name: "창체", teacher: "-", room: "-" }
+            ]
+        };
+
+        const timeTableData = [
+            { id: "morning", start: "06:30", end: "07:50", label: "아침 시간" },
+            { id: "activity", start: "07:50", end: "08:30", label: "아침 활동" },
+            { id: "break0", start: "08:30", end: "08:40", label: "쉬는시간" },
+            { id: "p1", start: "08:40", end: "09:30", label: "1교시", period: 1 },
+            { id: "break1", start: "09:30", end: "09:40", label: "쉬는시간" },
+            { id: "p2", start: "09:40", end: "10:30", label: "2교시", period: 2 },
+            { id: "break2", start: "10:30", end: "10:40", label: "쉬는시간" },
+            { id: "p3", start: "10:40", end: "11:30", label: "3교시", period: 3 },
+            { id: "break3", start: "11:30", end: "11:40", label: "쉬는시간" },
+            { id: "p4", start: "11:40", end: "12:30", label: "4교시", period: 4 },
+            { id: "lunch", start: "12:30", end: "13:30", label: "점심시간" },
+            { id: "p5", start: "13:30", end: "14:20", label: "5교시", period: 5 },
+            { id: "break4", start: "14:20", end: "14:30", label: "쉬는시간" },
+            { id: "p6", start: "14:30", end: "15:20", label: "6교시", period: 6 },
+            { id: "cleaning", start: "15:20", end: "15:40", label: "청소시간" },
+            { id: "p7", start: "15:40", end: "16:30", label: "7교시", period: 7 },
+            { id: "break5", start: "16:30", end: "16:40", label: "쉬는시간" },
+            { id: "p8", start: "16:40", end: "17:30", label: "8교시" },
+            { id: "dinner", start: "17:30", end: "19:00", label: "저녁시간" },
+            { id: "study1", start: "19:00", end: "20:40", label: "자습시간" },
+            { id: "break6", start: "20:40", end: "21:00", label: "쉬는시간" },
+            { id: "study2", start: "21:00", end: "22:30", label: "자습시간" }
+        ];
+
+        // Core Functions
+        const login = async () => {
+            const provider = new GoogleAuthProvider();
             try {
-                // setLogLevel('Debug'); // 디버그 모드 활성화
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                // **[수정]** 인증 로직: Canvas 토큰이 있으면 사용, 없으면 익명 로그인 사용
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    console.log("Signing in with Canvas custom token.");
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    console.log("Signing in anonymously (GitHub Pages).");
-                    await signInAnonymously(auth);
-                }
-                
-                userId = auth.currentUser?.uid || crypto.randomUUID();
-                console.log("Authentication successful. Current User ID:", userId);
-                return true;
+                await signInWithPopup(auth, provider);
             } catch (error) {
-                console.error("Firebase setup or sign-in failed:", error);
-                document.getElementById('announcement-display').innerText = `데이터베이스 연결 오류: ${error.message}. API 키나 프로젝트 ID를 확인하세요.`;
-                return false;
+                console.error("Login failed", error);
             }
-        }
-
-        // **[수정]** 공지사항 문서 참조 (DocRef) 생성 - ID 결정 로직 변경
-        function getAnnouncementDocRef() {
-            // Canvas 환경에서는 __app_id 사용, 없으면 hardcodedFirebaseConfig.projectId 사용
-            const appId = typeof __app_id !== 'undefined' ? __app_id : hardcodedFirebaseConfig.projectId;
-            
-            // 공용 데이터 경로: /artifacts/{appId}/public/data/announcements/current_announcement
-            // 주의: GitHub Pages에서 저장/읽기가 작동하려면 Firestore 보안 규칙이 익명 사용자에게도 'read' 권한을, 관리자 코드 검증 후 'write' 권한을 허용해야 합니다.
-            const docPath = `artifacts/${appId}/public/data/announcements/current_announcement`;
-            console.log("Firestore Path:", docPath);
-            return doc(db, docPath);
-        }
-
-        // 공지사항 실시간 수신 리스너
-        function listenForAnnouncement() {
-            if (!db) return;
-
-            const docRef = getAnnouncementDocRef();
-            const announcementDisplay = document.getElementById('announcement-display');
-
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists() && docSnap.data().content) {
-                    const announcement = docSnap.data().content;
-                    announcementDisplay.innerText = announcement;
-                    document.getElementById('announcement-textarea').value = announcement; // 에디터에도 반영
-                } else {
-                    announcementDisplay.innerText = '등록된 공지사항이 없습니다.';
-                    document.getElementById('announcement-textarea').value = '';
-                }
-            }, (error) => {
-                console.error("Error listening to announcement:", error);
-                announcementDisplay.innerText = '공지사항을 불러오는 중 오류가 발생했습니다. (보안 규칙 또는 경로 오류 확인)';
-            });
-        }
-
-        // 공지사항 저장 함수
-        async function saveAnnouncement() {
-            if (!db || !auth.currentUser) {
-                document.getElementById('admin-error-message').textContent = '인증 또는 DB 연결 상태를 확인하세요.';
-                document.getElementById('admin-error-message').style.display = 'block';
-                return;
-            }
-            
-            const newContent = document.getElementById('announcement-textarea').value.trim();
-            const saveButton = document.getElementById('save-announcement-btn');
-            const originalText = saveButton.textContent;
-            saveButton.textContent = '저장 중...';
-            saveButton.disabled = true;
-
-            try {
-                const docRef = getAnnouncementDocRef();
-                await setDoc(docRef, {
-                    content: newContent,
-                    lastUpdated: new Date().toISOString(),
-                    updatedBy: auth.currentUser.uid 
-                }, { merge: true });
-
-                console.log("Announcement successfully written by", auth.currentUser.uid);
-                saveButton.textContent = '저장 완료!';
-                document.getElementById('admin-error-message').textContent = '공지사항이 성공적으로 저장되었습니다.';
-                document.getElementById('admin-error-message').style.color = 'green';
-                document.getElementById('admin-error-message').style.display = 'block';
-
-                setTimeout(() => {
-                    saveButton.textContent = originalText;
-                    saveButton.disabled = false;
-                    document.getElementById('admin-error-message').style.display = 'none';
-                }, 2000);
-
-            } catch (e) {
-                console.error("Error saving document: ", e);
-                // **[주의]** Firestore write 권한 오류일 가능성이 높습니다.
-                document.getElementById('admin-error-message').textContent = `🚫 저장 실패: ${e.message} (Firestore 권한 오류일 수 있습니다.)`;
-                document.getElementById('admin-error-message').style.color = 'red';
-                document.getElementById('admin-error-message').style.display = 'block';
-                saveButton.textContent = originalText;
-                saveButton.disabled = false;
-            }
-        }
-
-        // 관리자 UI 리스너 설정
-        function setupAdminListeners() {
-            const adminToggleBtn = document.getElementById('admin-toggle-btn');
-            const adminPanel = document.getElementById('admin-panel');
-            const adminLoginBtn = document.getElementById('admin-login-btn');
-            const adminCodeInput = document.getElementById('admin-code-input');
-            const adminErrorMessage = document.getElementById('admin-error-message');
-            const announcementEditor = document.getElementById('announcement-editor');
-            const saveBtn = document.getElementById('save-announcement-btn');
-            
-            // 관리자 패널 토글
-            adminToggleBtn.addEventListener('click', () => {
-                const isVisible = adminPanel.style.display !== 'none';
-                adminPanel.style.display = isVisible ? 'none' : 'block';
-                
-                // 패널이 열릴 때 초기화
-                adminErrorMessage.style.display = 'none';
-                if (!isVisible) {
-                    announcementEditor.style.display = 'none';
-                    adminCodeInput.value = '';
-                    adminCodeInput.style.display = 'block';
-                    adminLoginBtn.style.display = 'block';
-                    adminErrorMessage.textContent = '';
-                }
-            });
-
-            // 관리자 로그인 로직 (코드 0301 검증)
-            adminLoginBtn.addEventListener('click', () => {
-                const code = adminCodeInput.value.trim();
-                adminErrorMessage.style.display = 'none';
-                
-                if (code === ADMIN_CODE) {
-                    adminCodeInput.style.display = 'none';
-                    adminLoginBtn.style.display = 'none';
-                    announcementEditor.style.display = 'block';
-                    adminErrorMessage.textContent = '✅ 관리자 모드가 활성화되었습니다. 내용을 수정하고 저장하세요.';
-                    adminErrorMessage.style.color = 'green';
-                    adminErrorMessage.style.display = 'block';
-                } else {
-                    adminErrorMessage.textContent = '🚫 관리자 코드가 틀렸습니다.';
-                    adminErrorMessage.style.color = 'red';
-                    adminErrorMessage.style.display = 'block';
-                }
-            });
-            
-            // 저장 버튼 리스너
-            saveBtn.addEventListener('click', saveAnnouncement);
-        }
-
-
-        // === 기존 시간표 및 시간 관련 로직 (변경 없음) ===
-
-        // 이 부분에 본인의 시간표 데이터를 입력하세요. (변경 없음)
-        const timetableData = {
-            '월': [
-                { name: '영어I', teacher: '김영미T', location: '2학년 7반 교실' },
-                { name: '대수', teacher: '장경희T', location: '2학년 3반 교실' },
-                { name: '독서와 작문', teacher: '이수환T', location: '공동교육과정실' },
-                { name: '선택과목C', teacher: '-', location: '-' },
-                { name: '선택과목B', teacher: '-', location: '-' },
-                { name: '선택과목B', teacher: '-', location: '-' },
-                { name: '창체', teacher: '-', location: '-' }
-            ],
-            '화': [
-                { name: '선택과목D', teacher: '-', location: '-' },
-                { name: '선택과목D', teacher: '-', location: '-' },
-                { name: '대수', teacher: '장경희T', location: '2학년 3반 교실' },
-                { name: '선택과목A', teacher: '-', location: '-' },
-                { name: '영어I', teacher: '이지연T', location: '2학년 1반 교실' },
-                { name: '음악·미술', teacher: '최수미T, 홍현숙T', location: '음악실, 미술실' },
-                { name: '체육I', teacher: '은현진T', location: '-' }
-            ],
-            '수': [
-                { name: '선택과목C', teacher: '-', location: '-' },
-                { name: '선택과목C', teacher: '-', location: '-' },
-                { name: '영어I', teacher: '이지연T', location: '2학년 1반 교실' },
-                { name: '대수', teacher: '장경희T', location: '2학년 3반 교실' },
-                { name: '독서와 작문', teacher: '한다솜T', location: '2학년 6반 교실' },
-                { name: '선택과목A', teacher: '-', location: '-' },
-                { name: '공강', teacher: '권민영T', location: '-' }
-            ],
-            '목': [
-                { name: '선택과목E', teacher: '-', location: '-' },
-                { name: '선택과목E', teacher: '-', location: '-' },
-                { name: '독서와 작문', teacher: '한다솜T', location: '2학년 6반 교실' },
-                { name: '선택과목B', teacher: '-', location: '-' },
-                { name: '선택과목D', teacher: '-', location: '-' },
-                { name: '선택과목A', teacher: '-', location: '-' },
-                { name: '독서와 작문', teacher: '이수환T', location: '공동교육과정실' }
-            ],
-            '금': [
-                { name: '체육I', teacher: '은현진T', location: '-' },
-                { name: '대수', teacher: '장경희T', location: '2학년 3반 교실' },
-                { name: '음악·미술', teacher: '최수미T, 홍현숙T', location: '음악실, 미술실' },
-                { name: '선택과목E', teacher: '-', location: '-' },
-                { name: '영어I', teacher: '김영미T', location: '2학년 7반 교실' },
-                { name: '창체', teacher: null, location: null },
-                { name: '창체', teacher: null, location: null }
-            ]
         };
 
-        const morningMessages = [
-            '활기찬 아침, 오늘도 힘차게 시작해봐요!',
-            '좋은 생각과 함께 멋진 하루를 시작하세요.',
-            '오늘 하루도 긍정적인 에너지가 가득하길 바랍니다!',
-            '새로운 시작을 응원합니다. 좋은 아침!',
-            '오늘도 새로운 배움과 즐거움으로 채워나가세요.'
-        ];
-
-        // 우리반에 수업이 있어 교실을 비워줘야 하는 시간표 (교시 기준)
-        const cleanupSchedule = {
-            '월': [4, 5, 6],
-            '화': [1],
-            '수': [1, 2],
-            '목': [4],
-            '금': []
+        const showSetup = () => {
+            document.getElementById('main-section').classList.add('hidden');
+            document.getElementById('setup-section').classList.remove('hidden');
+            renderSetupForm();
         };
 
-        // 주말 시간표 데이터
-        const weekendTimetable = {
-            '토': [
-                { start: '09:00', end: '10:39', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '10:40', end: '10:59', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
-                { start: '11:00', end: '12:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '12:30', end: '13:59', name: '점심시간', message: '맛있는 점심, 행복한 시간 보내세요!', special: true },
-                { start: '14:00', end: '15:39', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '15:40', end: '15:59', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
-                { start: '16:00', end: '17:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '17:30', end: '18:59', name: '저녁시간', message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!', special: true },
-                { start: '19:00', end: '20:59', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '21:00', end: '23:59', name: '수고하셨습니다.', message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!', special: true },
-            ],
-            '일': [
-                { start: '11:00', end: '12:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '12:30', end: '13:59', name: '점심시간', message: '맛있는 점심, 행복한 시간 보내세요!', special: true },
-                { start: '14:00', end: '15:39', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '15:40', end: '15:59', name: '쉬는 시간', message: '잠시 쉬면서 다음 자습 시간을 준비하세요.', special: true },
-                { start: '16:00', end: '17:29', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '17:30', end: '18:59', name: '저녁시간', message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!', special: true },
-                { start: '19:00', end: '20:59', name: '자습시간', message: '자기주도 학습 시간입니다.', special: true },
-                { start: '21:00', end: '23:59', name: '수고하셨습니다.', message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!', special: true },
-            ]
-        };
-        
-        // 교시별 시작 및 종료 시간 설정 (평일)
-        const weekdayClassTimes = [
-            { start: '06:30', end: '07:49', name: '아침 시간', special: true, type: 'morning_message' },
-            { start: '07:50', end: '08:29', name: '아침 활동', special: true, type: 'morning_activity_message' },
-            { start: '08:30', end: '08:39', name: '쉬는 시간', special: true, message: '1교시 수업을 준비하세요.' },
-            { start: '08:40', end: '09:29', name: '1교시', special: false, period: 1 },
-            { start: '09:30', end: '09:39', name: '쉬는 시간', special: true, message: '2교시 수업을 준비하세요.' },
-            { start: '09:40', end: '10:29', name: '2교시', special: false, period: 2 },
-            { start: '10:30', end: '10:39', name: '쉬는 시간', special: true, message: '3교시 수업을 준비하세요.' },
-            { start: '10:40', end: '11:29', name: '3교시', special: false, period: 3 },
-            { start: '11:30', end: '11:39', name: '쉬는 시간', special: true, message: '4교시 수업을 준비하세요.' },
-            { start: '11:40', end: '12:29', name: '4교시', special: false, period: 4 },
-            { start: '12:30', end: '13:09', name: '점심시간', special: true, message: '맛있는 점심, 행복한 시간 보내세요!' },
-            { start: '13:10', end: '13:29', name: '5교시 준비', special: true, message: '5교시 수업을 준비하세요.' },
-            { start: '13:30', end: '14:19', name: '5교시', special: false, period: 5 },
-            { start: '14:20', end: '14:29', name: '쉬는 시간', special: true, message: '6교시 수업을 준비하세요.' },
-            { start: '14:30', end: '15:19', name: '6교시', special: false, period: 6 },
-            { start: '15:20', end: '15:39', name: '청소시간', special: true, message: '7교시 수업을 준비하세요.' },
-            { start: '15:40', end: '16:29', name: '7교시', special: false, period: 7 },
-            { start: '16:30', end: '16:39', name: '자습(방과후) 준비', special: true, message: '자습(방과후) 준비 시간입니다.' },
-            { start: '16:40', end: '17:29', name: '자습(방과후)', special: true, message: '자율적으로 학습하는 시간입니다.' },
-            { start: '17:30', end: '18:44', name: '저녁시간', special: true, message: '오늘 하루도 수고 많았어요. 든든하게 저녁 먹고 힘내세요!' },
-            { start: '18:45', end: '19:00', name: '자습 준비', special: true, message: '자습을 준비하세요.' },
-            { start: '19:00', end: '20:19', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '20:20', end: '20:39', name: '쉬는 시간', special: true, message: '잠시 쉬면서 다음 자습 시간을 준비하세요.' },
-            { start: '20:40', end: '21:49', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '21:50', end: '21:59', name: '쉬는 시간', special: true, message: '잠시 쉬면서 다음 자습 시간을 준비하세요.' },
-            { start: '22:00', end: '22:59', name: '자습시간', special: true, message: '자기주도 학습 시간입니다.' },
-            { start: '23:00', end: '24:00', name: '수고하셨습니다.', special: true, message: '오늘 하루 정말 수고 많으셨습니다. 편안한 밤 되세요!' }
-        ];
-
-        /**
-         * 주어진 교시 번호의 정확한 시간 범위 (시작~종료+1분)를 반환합니다.
-         */
-        function getClassTimeRange(period) {
-            const timeInfo = weekdayClassTimes.find(t => !t.special && t.period === period);
-            if (timeInfo) {
-                const [endHour, endMinute] = timeInfo.end.split(':').map(Number);
-                const endDate = new Date(1970, 0, 1, endHour, endMinute);
-                endDate.setMinutes(endDate.getMinutes() + 1);
-
-                const formattedEndHour = String(endDate.getHours()).padStart(2, '0');
-                const formattedEndMinute = String(endDate.getMinutes()).padStart(2, '0');
+        const renderSetupForm = () => {
+            const container = document.getElementById('setup-form');
+            container.innerHTML = '';
+            Object.keys(subjectOptions).forEach(key => {
+                const label = document.createElement('label');
+                label.className = "block text-sm font-semibold text-gray-700 mb-1 mt-4";
+                label.innerText = key === '음미' ? '음악/미술 선택' : key;
                 
-                return `${timeInfo.start}~${formattedEndHour}:${formattedEndMinute}`;
-            }
-            return '';
-        }
-
-        /**
-         * 현재 시간, 날짜 및 현재/다음 진행 중인 수업 정보를 업데이트합니다.
-         */
-        function updateTimeAndClass() {
-            const now = new Date();
-            const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const currentDate = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 (${dayOfWeek})`;
-            const currentTime = `${hours}:${minutes}:${seconds}`;
-
-            document.getElementById('current-date').textContent = currentDate;
-            document.getElementById('current-time').textContent = currentTime;
-
-            const teacherNameP = document.getElementById('teacher-name-p');
-            const locationP = document.getElementById('location-p');
-            const specialMessageEl = document.getElementById('special-message');
-            const classNameEl = document.getElementById('class-name');
-
-            let currentClass = '정보 없음';
-            let currentTeacher = '';
-            let currentLocation = '';
-            let currentMessage = '';
-            let currentClassIndex = -1; 
-            let currentClassTimeRange = '';
-
-            const currentDayTimetable = (dayOfWeek === '토' || dayOfWeek === '일') ? weekendTimetable[dayOfWeek] : weekdayClassTimes;
-            const isWeekday = dayOfWeek !== '토' && dayOfWeek !== '일';
-
-            for (let i = 0; i < currentDayTimetable.length; i++) {
-                const classTime = currentDayTimetable[i];
-                const [startHours, startMinutes] = classTime.start.split(':').map(Number);
-                const [endHours, endMinutes] = classTime.end.split(':').map(Number);
-                const nowHours = now.getHours();
-                const nowMinutes = now.getMinutes();
-                const nowInMinutes = nowHours * 60 + nowMinutes;
-                const startInMinutes = startHours * 60 + startMinutes;
-                const endInMinutes = endHours * 60 + endMinutes;
-
-                if (nowInMinutes >= startInMinutes && nowInMinutes < endInMinutes) {
-                    
-                    if (isWeekday && classTime.special) {
-                        const showNextClass = classTime.name.includes('쉬는 시간') || classTime.name.includes('준비') || classTime.name.includes('청소시간');
-
-                        if (showNextClass) {
-                            let nextClassInfo = null;
-                            let nextPeriod = -1;
-                            
-                            for (let j = i + 1; j < currentDayTimetable.length; j++) {
-                                if (!currentDayTimetable[j].special) {
-                                    nextPeriod = currentDayTimetable[j].period;
-                                    nextClassInfo = timetableData[dayOfWeek] && timetableData[dayOfWeek][nextPeriod - 1];
-                                    break;
-                                }
-                            }
-
-                            if (nextClassInfo) {
-                                currentClass = `[다음 수업] ${nextClassInfo.name}`;
-                                currentTeacher = nextClassInfo.teacher;
-                                currentLocation = nextClassInfo.location;
-                                currentClassTimeRange = getClassTimeRange(nextPeriod); 
-                                currentMessage = `${classTime.name} 중입니다. ${nextPeriod}교시 장소로 이동하세요.`;
-                            } else {
-                                currentClass = classTime.name;
-                                currentMessage = classTime.message;
-                            }
-
-                        } else {
-                            currentClass = classTime.name;
-                            currentTeacher = '';
-                            currentLocation = '';
-                            currentMessage = classTime.message;
-                            
-                            if (classTime.type === 'morning_message') {
-                                const dayIndex = now.getDay();
-                                const randomMessageIndex = (dayIndex % morningMessages.length);
-                                currentMessage = morningMessages[randomMessageIndex];
-                            } else if (classTime.type === 'morning_activity_message') {
-                                if (dayOfWeek === '월' || dayOfWeek === '수' || dayOfWeek === '금') {
-                                    currentMessage = '달리기 및 줄넘기 시간입니다.';
-                                } else if (dayOfWeek === '화' || dayOfWeek === '목') {
-                                    currentMessage = '영어 듣기 평가 시간입니다.';
-                                }
-                            }
-                        }
-                    } 
-                    else if (isWeekday && !classTime.special) {
-                        const classInfo = timetableData[dayOfWeek] && timetableData[dayOfWeek][classTime.period - 1];
-                        if (classInfo) {
-                            currentClass = classInfo.name;
-                            currentTeacher = classInfo.teacher;
-                            currentLocation = classInfo.location;
-                        }
-                        currentClassIndex = classTime.period;
-                        currentClassTimeRange = getClassTimeRange(currentClassIndex);
-                        currentMessage = '지금 수업 중입니다. 집중하세요!';
-                    } 
-                    else if (!isWeekday) {
-                        currentClass = classTime.name;
-                        currentTeacher = '';
-                        currentLocation = '';
-                        currentMessage = classTime.message;
-                    }
-
-                    break; 
-                }
-            }
-
-            // UI 업데이트
-            classNameEl.textContent = currentClass;
-            specialMessageEl.textContent = (currentClassTimeRange ? `(${currentClassTimeRange}) ` : '') + currentMessage;
-
-            if (currentTeacher || currentLocation) {
-                document.getElementById('teacher-name').textContent = currentTeacher || '';
-                document.getElementById('location').textContent = currentLocation || '';
-                teacherNameP.style.display = currentTeacher ? 'block' : 'none';
-                locationP.style.display = currentLocation ? 'block' : 'none';
-            } else {
-                teacherNameP.style.display = 'none';
-                locationP.style.display = 'none';
-            }
-
-            // 시간표 하이라이트
-            const cells = document.querySelectorAll('#timetable td');
-            cells.forEach(cell => cell.classList.remove('highlight'));
-            if (dayOfWeek !== '토' && dayOfWeek !== '일' && currentClassIndex !== -1) {
-                const colIndex = now.getDay() + 1;
-                const cellToHighlight = document.querySelector(`#timetable tr:nth-child(${currentClassIndex}) td:nth-child(${colIndex})`);
-                if (cellToHighlight) {
-                    cellToHighlight.classList.add('highlight');
-                }
-            }
-        }
-
-        // 전체 시간표를 동적으로 생성하는 함수
-        function generateTimetable() {
-            const tableBody = document.querySelector('#timetable tbody');
-            const days = ['월', '화', '수', '목', '금'];
-            
-            for (let i = 0; i < 7; i++) {
-                const row = document.createElement('tr');
-                const periodCell = document.createElement('td');
-                periodCell.innerHTML = `<strong>${i + 1}교시</strong>`;
-                row.appendChild(periodCell);
-
-                days.forEach(day => {
-                    const classInfo = timetableData[day] && timetableData[day][i];
-                    const cell = document.createElement('td');
-                    if (classInfo) {
-                        const className = classInfo.name;
-                        const teacherName = classInfo.teacher;
-                        const location = classInfo.location;
-                        cell.innerHTML = `<strong>${className}</strong><div>${teacherName || ''}</div><div>${location || ''}</div>`;
-                    } else {
-                        cell.textContent = '정보 없음';
-                    }
-
-                    const currentPeriod = i + 1;
-                    const cleanupDays = cleanupSchedule[day];
-                    if (cleanupDays && cleanupDays.includes(currentPeriod)) {
-                        cell.classList.add('cleanup-time');
-                    }
-
-                    row.appendChild(cell);
+                const select = document.createElement('select');
+                select.id = `select-${key}`;
+                select.className = "w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none";
+                
+                subjectOptions[key].forEach((opt, idx) => {
+                    const option = document.createElement('option');
+                    option.value = idx;
+                    option.innerText = `${opt.name} (${opt.teacher})`;
+                    if (userSubjects && userSubjects[key] == idx) option.selected = true;
+                    select.appendChild(option);
                 });
-                tableBody.appendChild(row);
-            }
-        }
-        
-        // 시간대별 배경 색상 설정
-        function setTimeBasedBackground() {
-            const now = new Date();
-            const hour = now.getHours();
-            const root = document.documentElement;
-
-            if (hour >= 6 && hour < 12) {
-                root.style.setProperty('--bg-start-color', '#fffde4');
-                root.style.setProperty('--bg-end-color', '#c6ffdd');
-            } else if (hour >= 12 && hour < 18) {
-                root.style.setProperty('--bg-start-color', '#f7d794');
-                root.style.setProperty('--bg-end-color', '#f8a5c2');
-            } else {
-                root.style.setProperty('--bg-start-color', '#091e3a');
-                root.style.setProperty('--bg-end-color', '#2f5a89');
-            }
-        }
-
-        // 페이지 로드 시 실행
-        window.onload = async function () {
-            // 초기 UI 설정
-            generateTimetable();
-            setTimeBasedBackground();
-            document.getElementById('announcement-display').innerText = DEFAULT_ANNOUNCEMENT_TEXT;
-
-            // 1. Firebase 설정 및 인증 시도
-            const firebaseConfig = getFirebaseConfig();
-            if (firebaseConfig) {
-                const isReady = await setupFirebaseAndAuth(firebaseConfig);
-                if (isReady) {
-                    // 2. 인증 완료 후 데이터 리스너 시작
-                    listenForAnnouncement();
-                } else {
-                    document.getElementById('announcement-display').innerText = '데이터베이스 연결 실패. 관리자에게 문의하세요.';
-                }
-            } else {
-                document.getElementById('announcement-display').innerText = '데이터베이스 설정을 찾을 수 없습니다.';
-            }
-
-            // 3. 관리자 UI 리스너 설정
-            setupAdminListeners();
-
-            // 4. 1초마다 시간 및 수업 정보 업데이트
-            setInterval(() => {
-                updateTimeAndClass();
-                setTimeBasedBackground();
-            }, 1000);   
+                
+                container.appendChild(label);
+                container.appendChild(select);
+            });
         };
+
+        const saveSubjects = async () => {
+            if (!currentUser) return;
+            const data = {};
+            Object.keys(subjectOptions).forEach(key => {
+                data[key] = document.getElementById(`select-${key}`).value;
+            });
+            
+            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings'), data);
+            userSubjects = data;
+            document.getElementById('setup-section').classList.add('hidden');
+            document.getElementById('main-section').classList.remove('hidden');
+            renderTimetable();
+        };
+
+        const renderTimetable = () => {
+            if (!userSubjects) return;
+            for (let d = 0; d < 5; d++) {
+                const dayClasses = scheduleBase[d];
+                dayClasses.forEach((cls, idx) => {
+                    const period = idx + 1;
+                    const cell = document.getElementById(`cell-${d}-${period}`);
+                    if (!cell) return;
+
+                    let finalInfo = cls;
+                    if (cls.type === 'select') {
+                        const selectedIdx = userSubjects[cls.key];
+                        finalInfo = subjectOptions[cls.key][selectedIdx];
+                    }
+
+                    cell.innerHTML = `
+                        <div class="font-bold text-blue-800">${finalInfo.name}</div>
+                        <div class="text-[10px] text-gray-500">${finalInfo.teacher}</div>
+                        <div class="text-[11px] mt-1 bg-gray-100 px-2 py-0.5 rounded text-gray-700">${finalInfo.room}</div>
+                    `;
+                });
+            }
+        };
+
+        const updateRealTime = () => {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const daysArr = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            const dayStr = daysArr[now.getDay()];
+
+            document.getElementById('current-date').innerText = dateStr;
+            document.getElementById('current-time').innerText = timeStr;
+            document.getElementById('current-day').innerText = dayStr;
+
+            updateNextClass(now);
+        };
+
+        const updateNextClass = (now) => {
+            const currentTotalMin = now.getHours() * 60 + now.getMinutes();
+            const currentDay = now.getDay(); // 0(일) ~ 6(토)
+            
+            let currentStatus = "현재 수업 없음";
+            let nextInfo = "다음 일정 없음";
+
+            // Find current and next schedule based on timeTableData
+            let activeSlot = null;
+            let nextSlot = null;
+
+            for(let i=0; i<timeTableData.length; i++) {
+                const [sH, sM] = timeTableData[i].start.split(':').map(Number);
+                const [eH, eM] = timeTableData[i].end.split(':').map(Number);
+                const startMin = sH * 60 + sM;
+                const endMin = eH * 60 + eM;
+
+                if (currentTotalMin >= startMin && currentTotalMin < endMin) {
+                    activeSlot = timeTableData[i];
+                    nextSlot = timeTableData[i+1] || null;
+                    break;
+                } else if (currentTotalMin < startMin) {
+                    nextSlot = timeTableData[i];
+                    break;
+                }
+            }
+
+            const infoBox = document.getElementById('next-class-info');
+            if (activeSlot) {
+                const isClass = activeSlot.period && currentDay >= 1 && currentDay <= 5;
+                let classData = null;
+                if(isClass) {
+                    const base = scheduleBase[currentDay-1][activeSlot.period-1];
+                    classData = base.type === 'select' ? subjectOptions[base.key][userSubjects[base.key]] : base;
+                }
+
+                infoBox.innerHTML = `
+                    <div class="mb-4">
+                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Now</span>
+                        <p class="text-lg font-bold">${activeSlot.label}</p>
+                        ${isClass && classData ? `<p class="text-sm text-gray-600">${classData.name} (${classData.room})</p>` : ''}
+                    </div>
+                `;
+            } else {
+                infoBox.innerHTML = `<div class="mb-4 text-gray-400">일과 외 시간입니다.</div>`;
+            }
+
+            if (nextSlot) {
+                const isNextClass = nextSlot.period && currentDay >= 1 && currentDay <= 5;
+                let nextClassData = null;
+                if(isNextClass) {
+                    const base = scheduleBase[currentDay-1][nextSlot.period-1];
+                    if (base) nextClassData = base.type === 'select' ? subjectOptions[base.key][userSubjects[base.key]] : base;
+                }
+
+                infoBox.innerHTML += `
+                    <div>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Next</span>
+                        <p class="text-lg font-bold text-gray-700">${nextSlot.label} (${nextSlot.start})</p>
+                        ${isNextClass && nextClassData ? `<p class="text-sm text-gray-600">${nextClassData.name} - ${nextClassData.room}</p>` : ''}
+                    </div>
+                `;
+            }
+        };
+
+        // Admin & Notice Functions
+        window.openAdminPanel = () => {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-auth').classList.remove('hidden');
+            document.getElementById('admin-editor').classList.add('hidden');
+            document.getElementById('admin-pw').value = '';
+        };
+
+        window.closeAdminPanel = () => {
+            document.getElementById('admin-modal').classList.add('hidden');
+        };
+
+        window.checkAdminPw = () => {
+            if (document.getElementById('admin-pw').value === '1234') {
+                document.getElementById('admin-auth').classList.add('hidden');
+                document.getElementById('admin-editor').classList.remove('hidden');
+                document.getElementById('new-notice').value = document.getElementById('notice-content').innerText;
+            } else {
+                alert('비밀번호가 틀렸습니다.');
+            }
+        };
+
+        window.saveNotice = async () => {
+            const text = document.getElementById('new-notice').value;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'notice'), { content: text, updated: new Date().getTime() });
+            closeAdminPanel();
+        };
+
+        // Listeners
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('auth-section').classList.add('hidden');
+                
+                // Fetch user settings
+                const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'settings'));
+                if (docSnap.exists()) {
+                    userSubjects = docSnap.data();
+                    document.getElementById('main-section').classList.remove('hidden');
+                    renderTimetable();
+                } else {
+                    showSetup();
+                }
+
+                // Listen for public notice
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'notice'), (doc) => {
+                    if (doc.exists()) {
+                        document.getElementById('notice-content').innerText = doc.data().content;
+                    }
+                });
+            } else {
+                document.getElementById('auth-section').classList.remove('hidden');
+                document.getElementById('main-section').classList.add('hidden');
+                document.getElementById('setup-section').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('google-login-btn').addEventListener('click', login);
+        document.getElementById('save-subjects-btn').addEventListener('click', saveSubjects);
+        window.showSetup = showSetup;
+
+        // Init loops
+        setInterval(updateRealTime, 1000);
+        updateRealTime();
+
     </script>
 </body>
 </html>
