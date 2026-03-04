@@ -14,6 +14,9 @@
         .grid-cell { background-color: white; min-height: 80px; padding: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 0.85rem; }
         .current-period { background-color: #eff6ff; border: 2px solid #3b82f6; }
         .hidden { display: none; }
+        /* 로딩 애니메이션 */
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="min-h-screen">
@@ -30,36 +33,37 @@
         </div>
     </div>
 
+    <!-- Loading Section -->
+    <div id="loading-section" class="hidden flex flex-col items-center justify-center min-h-screen p-4">
+        <div class="loader mb-4"></div>
+        <p class="text-gray-500">데이터를 불러오는 중입니다...</p>
+    </div>
+
     <!-- Subject Setup Section -->
     <div id="setup-section" class="hidden container mx-auto px-4 py-8 max-w-2xl">
         <div class="bg-white p-8 rounded-2xl shadow-lg">
             <h2 class="text-2xl font-bold mb-6 text-center">선택 과목 설정</h2>
-            <div id="setup-form" class="space-y-4">
-                <!-- Select fields will be injected here by JS -->
-            </div>
+            <div id="setup-form" class="space-y-4"></div>
             <button id="save-subjects-btn" class="w-full mt-8 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-all">설정 완료</button>
         </div>
     </div>
 
     <!-- Main Dashboard Section -->
     <div id="main-section" class="hidden min-h-screen flex flex-col md:flex-row overflow-hidden">
-        <!-- Left Sidebar: Real-time Info -->
         <aside class="md:w-1/4 bg-white border-r p-6 flex flex-col space-y-8">
             <div class="text-center md:text-left">
                 <div id="current-date" class="text-xl text-gray-600 font-medium"></div>
                 <div id="current-time" class="text-5xl font-bold text-blue-600 mt-2"></div>
                 <div id="current-day" class="text-2xl text-gray-400 mt-1"></div>
             </div>
-
             <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex-grow">
                 <h3 class="text-blue-800 font-bold text-lg mb-4 flex items-center">
                     <i class="fas fa-clock mr-2"></i> 다음 수업 안내
                 </h3>
                 <div id="next-class-info" class="space-y-3">
-                    <p class="text-gray-400 italic">로딩 중...</p>
+                    <p class="text-gray-400 italic">일정을 계산 중입니다...</p>
                 </div>
             </div>
-
             <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
                 <h3 class="font-bold text-lg mb-2 flex items-center relative z-10">
                     <i class="fas fa-bullhorn mr-2 text-yellow-400"></i> 공지사항
@@ -67,13 +71,11 @@
                 <div id="notice-content" class="text-sm leading-relaxed relative z-10 opacity-90 min-h-[60px]">등록된 공지사항이 없습니다.</div>
                 <button onclick="openAdminPanel()" class="absolute bottom-2 right-2 text-[10px] opacity-20 hover:opacity-100 transition-opacity">ADMIN</button>
             </div>
-
             <button onclick="showSetup()" class="text-sm text-gray-400 hover:text-blue-500 transition-colors">
                 <i class="fas fa-cog mr-1"></i> 과목 수정하기
             </button>
         </aside>
 
-        <!-- Right: Timetable Content -->
         <main class="flex-grow p-4 md:p-8 overflow-y-auto">
             <h2 class="text-2xl font-bold mb-6 flex items-center">
                 <i class="fas fa-calendar-alt mr-3 text-blue-600"></i> 주간 시간표 (평일 1-7교시)
@@ -85,10 +87,7 @@
                 <div class="grid-header">수</div>
                 <div class="grid-header">목</div>
                 <div class="grid-header">금</div>
-                
-                <!-- Time slots 1-7 -->
                 <script>
-                    const days = ['월', '화', '수', '목', '금'];
                     for (let p = 1; p <= 7; p++) {
                         document.write(`<div class="grid-cell font-bold bg-slate-50">${p}</div>`);
                         for (let d = 0; d < 5; d++) {
@@ -118,13 +117,11 @@
         </div>
     </div>
 
-    <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDKeB7mfWCx3_nqo0fTx8aFB6b4pM9UyQM",
             authDomain: "timetable-7fb0c.firebaseapp.com",
@@ -142,7 +139,6 @@
         let currentUser = null;
         let userSubjects = null;
 
-        // Data Definition
         const subjectOptions = {
             "선택과목A": [
                 { name: "주탐독", teacher: "황인해 선생님", room: "국어교과실" },
@@ -171,7 +167,7 @@
                 { name: "생명", teacher: "류혜인 선생님", room: "지구과학 실험실" },
                 { name: "지학", teacher: "정보온", room: "컴퓨터실" },
                 { name: "프로", teacher: "박성훈 선생님", room: "2-2" },
-                { name: "교육", teacher: "박성훈 선생님", room: "2-2" } // 교육 옵션 보강
+                { name: "교육", teacher: "박성훈 선생님", room: "2-2" }
             ],
             "선택과목D": [
                 { name: "세계사", teacher: "정기엽 선생님", room: "사회교과실" },
@@ -201,7 +197,7 @@
         };
 
         const scheduleBase = {
-            0: [ // 월
+            0: [ 
                 { name: "영어I", teacher: "김영미 선생님", room: "2-7" },
                 { name: "대수", teacher: "장경희 선생님", room: "2-3" },
                 { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" },
@@ -210,7 +206,7 @@
                 { type: "select", key: "선택과목B" },
                 { name: "창체(동아리)", teacher: "-", room: "-" }
             ],
-            1: [ // 화
+            1: [ 
                 { type: "select", key: "선택과목D" },
                 { type: "select", key: "선택과목D" },
                 { name: "대수", teacher: "장경희 선생님", room: "2-3" },
@@ -219,7 +215,7 @@
                 { type: "select", key: "음미" },
                 { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" }
             ],
-            2: [ // 수
+            2: [ 
                 { type: "select", key: "선택과목C" },
                 { type: "select", key: "선택과목C" },
                 { name: "영어I", teacher: "이지연 선생님", room: "2-1" },
@@ -228,7 +224,7 @@
                 { type: "select", key: "선택과목A" },
                 { name: "공강", teacher: "권민영 선생님", room: "-" }
             ],
-            3: [ // 목
+            3: [ 
                 { type: "select", key: "선택과목E" },
                 { type: "select", key: "선택과목E" },
                 { name: "독작", teacher: "한다솜 선생님", room: "2-6" },
@@ -237,7 +233,7 @@
                 { type: "select", key: "선택과목A" },
                 { name: "독작", teacher: "이수환 선생님", room: "지능형 영어실" }
             ],
-            4: [ // 금
+            4: [ 
                 { name: "체육I", teacher: "은현진 선생님", room: "마리아홀" },
                 { name: "대수", teacher: "장경희 선생님", room: "2-3" },
                 { type: "select", key: "음미" },
@@ -249,31 +245,15 @@
         };
 
         const timeTableData = [
-            { id: "morning", start: "06:30", end: "07:50", label: "아침 시간" },
-            { id: "activity", start: "07:50", end: "08:30", label: "아침 활동" },
-            { id: "break0", start: "08:30", end: "08:40", label: "쉬는시간" },
             { id: "p1", start: "08:40", end: "09:30", label: "1교시", period: 1 },
-            { id: "break1", start: "09:30", end: "09:40", label: "쉬는시간" },
             { id: "p2", start: "09:40", end: "10:30", label: "2교시", period: 2 },
-            { id: "break2", start: "10:30", end: "10:40", label: "쉬는시간" },
             { id: "p3", start: "10:40", end: "11:30", label: "3교시", period: 3 },
-            { id: "break3", start: "11:30", end: "11:40", label: "쉬는시간" },
             { id: "p4", start: "11:40", end: "12:30", label: "4교시", period: 4 },
-            { id: "lunch", start: "12:30", end: "13:30", label: "점심시간" },
             { id: "p5", start: "13:30", end: "14:20", label: "5교시", period: 5 },
-            { id: "break4", start: "14:20", end: "14:30", label: "쉬는시간" },
             { id: "p6", start: "14:30", end: "15:20", label: "6교시", period: 6 },
-            { id: "cleaning", start: "15:20", end: "15:40", label: "청소시간" },
-            { id: "p7", start: "15:40", end: "16:30", label: "7교시", period: 7 },
-            { id: "break5", start: "16:30", end: "16:40", label: "쉬는시간" },
-            { id: "p8", start: "16:40", end: "17:30", label: "8교시" },
-            { id: "dinner", start: "17:30", end: "19:00", label: "저녁시간" },
-            { id: "study1", start: "19:00", end: "20:40", label: "자습시간" },
-            { id: "break6", start: "20:40", end: "21:00", label: "쉬는시간" },
-            { id: "study2", start: "21:00", end: "22:30", label: "자습시간" }
+            { id: "p7", start: "15:40", end: "16:30", label: "7교시", period: 7 }
         ];
 
-        // Core Functions
         const login = async () => {
             const provider = new GoogleAuthProvider();
             try {
@@ -284,6 +264,7 @@
         };
 
         const showSetup = () => {
+            document.getElementById('loading-section').classList.add('hidden');
             document.getElementById('main-section').classList.add('hidden');
             document.getElementById('setup-section').classList.remove('hidden');
             renderSetupForm();
@@ -296,11 +277,9 @@
                 const label = document.createElement('label');
                 label.className = "block text-sm font-semibold text-gray-700 mb-1 mt-4";
                 label.innerText = key === '음미' ? '음악/미술 선택' : key;
-                
                 const select = document.createElement('select');
                 select.id = `select-${key}`;
                 select.className = "w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none";
-                
                 subjectOptions[key].forEach((opt, idx) => {
                     const option = document.createElement('option');
                     option.value = idx;
@@ -308,7 +287,6 @@
                     if (userSubjects && userSubjects[key] == idx) option.selected = true;
                     select.appendChild(option);
                 });
-                
                 container.appendChild(label);
                 container.appendChild(select);
             });
@@ -320,7 +298,6 @@
             Object.keys(subjectOptions).forEach(key => {
                 data[key] = document.getElementById(`select-${key}`).value;
             });
-            
             await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings'), data);
             userSubjects = data;
             document.getElementById('setup-section').classList.add('hidden');
@@ -336,13 +313,11 @@
                     const period = idx + 1;
                     const cell = document.getElementById(`cell-${d}-${period}`);
                     if (!cell) return;
-
                     let finalInfo = cls;
                     if (cls.type === 'select') {
                         const selectedIdx = userSubjects[cls.key];
-                        finalInfo = subjectOptions[cls.key][selectedIdx];
+                        finalInfo = subjectOptions[cls.key][selectedIdx] || { name: '미선택', teacher: '-', room: '-' };
                     }
-
                     cell.innerHTML = `
                         <div class="font-bold text-blue-800">${finalInfo.name}</div>
                         <div class="text-[10px] text-gray-500">${finalInfo.teacher}</div>
@@ -359,21 +334,21 @@
             const daysArr = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
             const dayStr = daysArr[now.getDay()];
 
-            document.getElementById('current-date').innerText = dateStr;
-            document.getElementById('current-time').innerText = timeStr;
-            document.getElementById('current-day').innerText = dayStr;
+            const dateEl = document.getElementById('current-date');
+            const timeEl = document.getElementById('current-time');
+            const dayEl = document.getElementById('current-day');
+            
+            if(dateEl) dateEl.innerText = dateStr;
+            if(timeEl) timeEl.innerText = timeStr;
+            if(dayEl) dayEl.innerText = dayStr;
 
-            updateNextClass(now);
+            if (userSubjects) updateNextClass(now);
         };
 
         const updateNextClass = (now) => {
             const currentTotalMin = now.getHours() * 60 + now.getMinutes();
-            const currentDay = now.getDay(); // 0(일) ~ 6(토)
+            const currentDay = now.getDay(); 
             
-            let currentStatus = "현재 수업 없음";
-            let nextInfo = "다음 일정 없음";
-
-            // Find current and next schedule based on timeTableData
             let activeSlot = null;
             let nextSlot = null;
 
@@ -394,23 +369,19 @@
             }
 
             const infoBox = document.getElementById('next-class-info');
+            if (!infoBox) return;
+
+            let html = "";
             if (activeSlot) {
                 const isClass = activeSlot.period && currentDay >= 1 && currentDay <= 5;
                 let classData = null;
                 if(isClass) {
                     const base = scheduleBase[currentDay-1][activeSlot.period-1];
-                    classData = base.type === 'select' ? subjectOptions[base.key][userSubjects[base.key]] : base;
+                    if(base) classData = base.type === 'select' ? subjectOptions[base.key][userSubjects[base.key]] : base;
                 }
-
-                infoBox.innerHTML = `
-                    <div class="mb-4">
-                        <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">Now</span>
-                        <p class="text-lg font-bold">${activeSlot.label}</p>
-                        ${isClass && classData ? `<p class="text-sm text-gray-600">${classData.name} (${classData.room})</p>` : ''}
-                    </div>
-                `;
+                html += `<div class="mb-4"><span class="text-xs font-bold text-blue-500 uppercase">Now</span><p class="text-lg font-bold">${activeSlot.label}</p>${isClass && classData ? `<p class="text-sm text-gray-600">${classData.name} (${classData.room})</p>` : ''}</div>`;
             } else {
-                infoBox.innerHTML = `<div class="mb-4 text-gray-400">일과 외 시간입니다.</div>`;
+                html += `<div class="mb-4 text-gray-400">일과 외 시간입니다.</div>`;
             }
 
             if (nextSlot) {
@@ -420,82 +391,70 @@
                     const base = scheduleBase[currentDay-1][nextSlot.period-1];
                     if (base) nextClassData = base.type === 'select' ? subjectOptions[base.key][userSubjects[base.key]] : base;
                 }
-
-                infoBox.innerHTML += `
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Next</span>
-                        <p class="text-lg font-bold text-gray-700">${nextSlot.label} (${nextSlot.start})</p>
-                        ${isNextClass && nextClassData ? `<p class="text-sm text-gray-600">${nextClassData.name} - ${nextClassData.room}</p>` : ''}
-                    </div>
-                `;
+                html += `<div><span class="text-xs font-bold text-gray-400 uppercase">Next</span><p class="text-lg font-bold text-gray-700">${nextSlot.label} (${nextSlot.start})</p>${isNextClass && nextClassData ? `<p class="text-sm text-gray-600">${nextClassData.name} - ${nextClassData.room}</p>` : ''}</div>`;
             }
+            infoBox.innerHTML = html;
         };
 
-        // Admin & Notice Functions
         window.openAdminPanel = () => {
             document.getElementById('admin-modal').classList.remove('hidden');
-            document.getElementById('admin-auth').classList.remove('hidden');
-            document.getElementById('admin-editor').classList.add('hidden');
-            document.getElementById('admin-pw').value = '';
         };
-
         window.closeAdminPanel = () => {
             document.getElementById('admin-modal').classList.add('hidden');
         };
-
         window.checkAdminPw = () => {
             if (document.getElementById('admin-pw').value === '1234') {
                 document.getElementById('admin-auth').classList.add('hidden');
                 document.getElementById('admin-editor').classList.remove('hidden');
                 document.getElementById('new-notice').value = document.getElementById('notice-content').innerText;
-            } else {
-                alert('비밀번호가 틀렸습니다.');
-            }
+            } else { alert('비밀번호가 틀렸습니다.'); }
         };
-
         window.saveNotice = async () => {
             const text = document.getElementById('new-notice').value;
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'notice'), { content: text, updated: new Date().getTime() });
             closeAdminPanel();
         };
 
-        // Listeners
         onAuthStateChanged(auth, async (user) => {
+            const authSec = document.getElementById('auth-section');
+            const loadingSec = document.getElementById('loading-section');
+            const mainSec = document.getElementById('main-section');
+            
             if (user) {
                 currentUser = user;
-                document.getElementById('auth-section').classList.add('hidden');
+                authSec.classList.add('hidden');
+                loadingSec.classList.remove('hidden');
                 
-                // Fetch user settings
-                const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'settings'));
-                if (docSnap.exists()) {
-                    userSubjects = docSnap.data();
-                    document.getElementById('main-section').classList.remove('hidden');
-                    renderTimetable();
-                } else {
-                    showSetup();
+                try {
+                    const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'settings'));
+                    if (docSnap.exists()) {
+                        userSubjects = docSnap.data();
+                        loadingSec.classList.add('hidden');
+                        mainSec.classList.remove('hidden');
+                        renderTimetable();
+                    } else {
+                        showSetup();
+                    }
+                } catch (e) {
+                    console.error("Error fetching data:", e);
+                    showSetup(); // 데이터 로드 실패 시 설정 화면으로 유도
                 }
 
-                // Listen for public notice
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'notice'), (doc) => {
-                    if (doc.exists()) {
-                        document.getElementById('notice-content').innerText = doc.data().content;
-                    }
+                    if (doc.exists()) document.getElementById('notice-content').innerText = doc.data().content;
                 });
             } else {
-                document.getElementById('auth-section').classList.remove('hidden');
-                document.getElementById('main-section').classList.add('hidden');
-                document.getElementById('setup-section').classList.add('hidden');
+                authSec.classList.remove('hidden');
+                mainSec.classList.add('hidden');
+                loadingSec.classList.add('hidden');
             }
         });
 
         document.getElementById('google-login-btn').addEventListener('click', login);
         document.getElementById('save-subjects-btn').addEventListener('click', saveSubjects);
         window.showSetup = showSetup;
-
-        // Init loops
         setInterval(updateRealTime, 1000);
         updateRealTime();
-
     </script>
 </body>
 </html>
