@@ -4,628 +4,698 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2학년 2반 시간표</title>
-    <!-- Favicon 추가 (캘린더 이모지) -->
+    <!-- Favicon (달력 이모지) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
-    
-    <!-- Tailwind CSS 및 다크모드 설정 -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class', // 클래스 기반 다크모드 활성화
-        }
-    </script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
-        
-        body, html { 
-            font-family: 'Noto Sans KR', sans-serif; 
-            height: 100%; 
-            margin: 0; 
-            overflow: hidden; 
-        }
-        
-        /* Grid Styles (Light & Dark) */
-        .timetable-grid { 
-            display: grid; 
-            grid-template-columns: 45px repeat(5, 1fr); 
-            grid-template-rows: 35px repeat(7, 1fr); 
-            height: 100%; 
-            border-top: 2px solid #3b82f6;
-            background-color: #e2e8f0; /* Light Gap */
-            gap: 1px;
-            transition: background-color 0.3s;
-        }
-        .dark .timetable-grid { background-color: #334155; /* Dark Gap */ }
-        
-        .grid-header { 
-            background-color: #f1f5f9; /* Light */
-            color: #475569;
-            font-weight: bold; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 0.8rem; 
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .dark .grid-header { background-color: #1e293b; color: #94a3b8; /* Dark */ }
-        
-        .grid-cell { 
-            background-color: white; /* Light */
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            padding: 2px;
-            overflow: hidden;
-            transition: background-color 0.3s ease;
-        }
-        .dark .grid-cell { background-color: #0f172a; /* Dark */ }
-        
-        /* 특수 셀 배경색 */
-        .bg-homeroom { background-color: #e0f2fe !important; }
-        .dark .bg-homeroom { background-color: #1e3a8a !important; }
-        
-        .bg-current { background-color: #ffedd5 !important; border: 2px solid #f97316 !important; z-index: 10; }
-        .dark .bg-current { background-color: #451a03 !important; border: 2px solid #f97316 !important; }
-
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; }
-        .dark .loader { border: 3px solid #334155; border-top: 3px solid #3b82f6; }
-        
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; background-color: #f3f4f6; }
+        .hide { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .timetable-cell { transition: all 0.2s; }
+        .timetable-cell:hover { transform: scale(1.02); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 10; }
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col bg-slate-50 text-gray-800 dark:bg-[#0f172a] dark:text-slate-100 transition-colors duration-300">
+<body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
-    <!-- Auth Section -->
-    <div id="auth-section" class="flex flex-col items-center justify-center h-full p-4 absolute inset-0 bg-slate-50 dark:bg-slate-900 z-50 transition-colors duration-300">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl dark:shadow-2xl max-w-sm w-full text-center border border-transparent dark:border-slate-700 transition-colors duration-300">
-            <h1 class="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">학급 시간표</h1>
-            <p class="text-gray-500 dark:text-slate-400 mb-6 text-sm">안전하게 로그인하여<br>나의 선택과목 시간표를 설정하세요.</p>
-            <button id="google-login-btn" class="flex items-center justify-center w-full py-2.5 px-4 border border-gray-300 dark:border-slate-600 rounded-lg shadow-sm bg-white dark:bg-slate-700 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600 transition-all">
-                <img class="h-4 w-4 mr-2" src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google">
-                구글 로그인 시작
+    <!-- Loading Overlay -->
+    <div id="loading" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hide">
+        <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
+        <p class="text-lg font-semibold text-gray-600">데이터를 불러오는 중...</p>
+    </div>
+
+    <!-- 1. Login View -->
+    <div id="login-view" class="flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 hide fade-in">
+        <div class="bg-white p-10 rounded-2xl shadow-xl text-center max-w-md w-full mx-4">
+            <div class="text-6xl mb-6">🏫</div>
+            <h1 class="text-3xl font-bold mb-2 text-gray-800">우리 학급 시간표</h1>
+            <p class="text-gray-500 mb-8">구글 계정으로 로그인하여 나만의 시간표를 확인하세요.</p>
+            <button id="btn-login" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg py-3 px-4 text-gray-700 font-semibold hover:bg-gray-50 transition shadow-sm">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-6 h-6">
+                구글 계정으로 로그인
             </button>
-            <p id="auth-error" class="text-red-500 dark:text-red-400 text-xs mt-3 hidden"></p>
         </div>
     </div>
 
-    <!-- Loading Section -->
-    <div id="loading-section" class="hidden flex-col items-center justify-center h-full absolute inset-0 bg-slate-50 dark:bg-slate-900 z-40 transition-colors duration-300">
-        <div class="loader mb-3"></div>
-        <p class="text-gray-500 dark:text-slate-400 text-sm">데이터를 불러오는 중...</p>
-    </div>
-
-    <!-- Subject Setup Section -->
-    <div id="setup-section" class="hidden flex-col items-center justify-center h-full absolute inset-0 bg-slate-50 dark:bg-slate-900 z-30 p-4 transition-colors duration-300">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg dark:shadow-2xl border border-transparent dark:border-slate-700 w-full max-w-lg max-h-full flex flex-col transition-colors duration-300">
-            <h2 class="text-xl font-bold mb-2 text-center text-blue-600 dark:text-blue-400 shrink-0">선택 과목 설정</h2>
-            <p class="text-xs text-center text-gray-500 dark:text-slate-400 mb-4 shrink-0">본인의 시간표에 맞춰 과목을 선택해주세요.</p>
-            <div id="setup-form" class="space-y-3 overflow-y-auto pr-2 pb-2"></div>
-            <button id="save-subjects-btn" class="w-full mt-4 bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md shrink-0">설정 완료 및 저장</button>
-            <p id="save-error" class="text-red-500 dark:text-red-400 text-xs mt-2 hidden text-center shrink-0"></p>
-        </div>
-    </div>
-
-    <!-- Main Dashboard Section -->
-    <div id="main-section" class="hidden h-full flex flex-col md:flex-row w-full max-w-7xl mx-auto overflow-hidden bg-white dark:bg-slate-900 shadow-xl transition-colors duration-300">
-        <aside class="w-full md:w-64 bg-gray-50 dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 p-4 flex flex-col space-y-4 shrink-0 overflow-y-auto transition-colors duration-300">
-            <div class="text-center md:text-left">
-                <div id="current-date" class="text-sm text-gray-500 dark:text-slate-400 font-medium"></div>
-                <div id="current-time" class="text-3xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight mt-1"></div>
-                <div id="current-day" class="text-lg text-gray-400 dark:text-slate-500 font-medium mt-0.5"></div>
-            </div>
+    <!-- 2. Setup View (선택과목 설정) -->
+    <div id="setup-view" class="flex-1 overflow-y-auto bg-gray-50 py-10 px-4 hide fade-in">
+        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold mb-6 border-b pb-4">나의 선택과목 설정</h2>
+            <p class="text-gray-600 mb-6 text-sm">본인이 수강하는 선택과목을 정확히 선택해주세요. 설정은 나중에도 변경할 수 있습니다.</p>
             
-            <div class="bg-white dark:bg-slate-700 p-4 rounded-xl border border-gray-200 dark:border-slate-600 shadow-sm flex flex-col shrink-0 transition-colors duration-300">
-                <h3 class="text-blue-800 dark:text-blue-300 font-bold text-sm mb-3 flex items-center">
-                    <i class="fas fa-clock mr-1.5 text-blue-500 dark:text-blue-400"></i> 수업 진행 상황
-                </h3>
-                <div id="next-class-info" class="space-y-2">
-                    <p class="text-xs text-gray-400 dark:text-slate-400 italic">일정을 계산 중입니다...</p>
-                </div>
-            </div>
-
-            <!-- 공지사항 영역 -->
-            <div class="bg-slate-800 dark:bg-slate-900 border border-transparent dark:border-slate-700 text-white p-4 rounded-xl shadow-md relative flex-grow flex flex-col transition-colors duration-300">
-                <div class="flex justify-between items-center mb-2 shrink-0">
-                    <h3 class="font-bold text-sm flex items-center dark:text-slate-200">
-                        <i class="fas fa-bullhorn mr-1.5 text-yellow-400 dark:text-yellow-500"></i> 학급 공지사항
-                    </h3>
-                    <button onclick="openAdminPanel()" class="text-gray-400 dark:text-slate-500 hover:text-white transition-colors p-1" title="공지사항 수정">
-                        <i class="fas fa-pencil-alt"></i>
-                    </button>
-                </div>
-                <div id="notice-content" class="text-xs text-slate-200 dark:text-slate-300 leading-relaxed opacity-90 overflow-y-auto flex-grow whitespace-pre-wrap">등록된 공지사항이 없습니다.</div>
-            </div>
-            
-            <!-- 테마 전환 및 설정 버튼 -->
-            <div class="flex items-center justify-between mt-auto pt-2 shrink-0 border-t border-gray-200 dark:border-slate-700 transition-colors duration-300">
-                <button onclick="showSetup()" class="text-xs text-gray-500 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors flex items-center py-2">
-                    <i class="fas fa-cog mr-1.5"></i> 과목 다시 설정
-                </button>
+            <form id="setup-form" class="space-y-5">
+                <!-- Selects will be injected here by JS -->
+                <div id="select-containers"></div>
                 
-                <button id="theme-toggle" class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-yellow-400 hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors" title="테마 변경">
-                    <i class="fas fa-moon dark:hidden"></i>
-                    <i class="fas fa-sun hidden dark:block"></i>
-                </button>
-            </div>
-        </aside>
-
-        <main class="flex-1 p-4 flex flex-col bg-white dark:bg-slate-900 min-w-0 transition-colors duration-300">
-            <h2 class="text-lg font-bold mb-3 flex items-center text-gray-800 dark:text-slate-100 shrink-0">
-                <i class="fas fa-calendar-alt mr-2 text-blue-600 dark:text-blue-500"></i> 2학년 2반 시간표
-            </h2>
-            
-            <div class="flex-1 min-h-0 relative">
-                <div class="timetable-grid rounded-lg shadow-inner overflow-hidden">
-                    <div class="grid-header rounded-tl-lg">교시</div>
-                    <div class="grid-header text-blue-700 dark:text-blue-400">월</div>
-                    <div class="grid-header text-blue-700 dark:text-blue-400">화</div>
-                    <div class="grid-header text-blue-700 dark:text-blue-400">수</div>
-                    <div class="grid-header text-blue-700 dark:text-blue-400">목</div>
-                    <div class="grid-header text-blue-700 dark:text-blue-400 rounded-tr-lg">금</div>
-                    <script>
-                        for (let p = 1; p <= 7; p++) {
-                            document.write(`<div class="grid-header bg-slate-50 dark:bg-slate-800 dark:text-slate-300">${p}</div>`);
-                            for (let d = 0; d < 5; d++) {
-                                document.write(`<div id="cell-${d}-${p}" class="grid-cell relative group"></div>`);
-                            }
-                        }
-                    </script>
+                <div class="pt-6 border-t mt-6 flex gap-3">
+                    <button type="button" id="btn-setup-cancel" class="flex-1 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition hide">취소</button>
+                    <button type="submit" class="flex-1 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition shadow-md">저장하고 시간표 보기</button>
                 </div>
-            </div>
-            
-            <div class="mt-3 text-[11px] md:text-xs text-blue-600 dark:text-blue-300 font-medium shrink-0 flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 bg-blue-50 dark:bg-slate-800 border border-transparent dark:border-slate-700 p-2 rounded-lg transition-colors duration-300">
-                <div class="flex items-center"><i class="fas fa-info-circle mr-1.5 text-blue-500 dark:text-blue-400"></i> 하늘색으로 표시된 시간은 우리반에 수업이 있는 시간이니 참고하시기 바랍니다.</div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Admin Modal -->
-    <div id="admin-modal" class="hidden fixed inset-0 bg-black/60 dark:bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 p-5 rounded-2xl max-w-sm w-full shadow-2xl transition-colors duration-300">
-            <h3 class="text-lg font-bold mb-3 text-gray-800 dark:text-slate-100">공지사항 관리</h3>
-            <div id="admin-auth" class="space-y-3">
-                <input type="password" id="admin-pw" placeholder="관리자 비밀번호" class="w-full p-2.5 text-sm bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 text-gray-800 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-slate-400">
-                <div class="flex space-x-2">
-                    <button onclick="checkAdminPw()" class="flex-1 bg-gray-800 dark:bg-blue-600 text-white py-2 text-sm rounded-lg font-medium hover:bg-gray-900 dark:hover:bg-blue-700 transition">확인</button>
-                    <button onclick="closeAdminPanel()" class="flex-1 bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-slate-200 py-2 text-sm rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-slate-500 transition">취소</button>
-                </div>
-            </div>
-            <div id="admin-editor" class="hidden flex-col space-y-3">
-                <textarea id="new-notice" class="w-full h-32 p-3 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 text-gray-800 dark:text-white rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 resize-none placeholder-gray-400 dark:placeholder-slate-400" placeholder="공지사항을 입력하세요..."></textarea>
-                <div class="flex space-x-2">
-                    <button onclick="saveNotice()" class="flex-1 bg-blue-600 text-white py-2 text-sm rounded-lg font-medium hover:bg-blue-700 transition">저장</button>
-                    <button onclick="closeAdminPanel()" class="flex-1 bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-slate-200 py-2 text-sm rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-slate-500 transition">닫기</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
+    <!-- 3. Main Dashboard -->
+    <div id="dashboard-view" class="flex-1 flex flex-col h-full bg-gray-100 hide fade-in">
+        <!-- Header -->
+        <header class="bg-white shadow-sm px-6 py-4 flex justify-between items-center shrink-0">
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-calendar-alt text-blue-500"></i> 실시간 시간표
+            </h1>
+            <div class="flex items-center gap-4">
+                <span id="user-name-display" class="text-sm font-medium text-gray-600"></span>
+                <button id="btn-re-setup" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-1.5 px-3 rounded transition"><i class="fas fa-cog"></i> 과목 변경</button>
+                <button id="btn-logout" class="text-sm text-red-500 hover:text-red-700 py-1.5 px-2 transition"><i class="fas fa-sign-out-alt"></i> 로그아웃</button>
+            </div>
+        </header>
+
+        <!-- Main Content Layout -->
+        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 gap-4">
+            
+            <!-- Left Panel (Info & Notice) -->
+            <div class="w-full lg:w-80 flex flex-col gap-4 shrink-0">
+                
+                <!-- Time Widget -->
+                <div class="bg-blue-600 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-10 text-8xl"><i class="far fa-clock"></i></div>
+                    <div id="current-date" class="text-blue-100 text-sm font-medium mb-1"></div>
+                    <div id="current-time" class="text-4xl font-bold tracking-wider mb-6">--:--:--</div>
+                    
+                    <!-- Next Class Info -->
+                    <div class="bg-white/20 rounded-xl p-4 backdrop-blur-sm border border-white/30">
+                        <div class="text-xs text-blue-100 mb-1 uppercase tracking-wider font-semibold">다음 수업 안내</div>
+                        <div id="next-class-info">
+                            <div class="text-lg font-bold truncate">대기 중...</div>
+                            <div class="text-sm opacity-90 mt-1 flex items-center gap-2"><i class="fas fa-chalkboard-teacher text-xs"></i> <span>-</span></div>
+                            <div class="text-sm opacity-90 flex items-center gap-2"><i class="fas fa-map-marker-alt text-xs ml-[2px]"></i> <span>-</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notice Board -->
+                <div class="bg-white rounded-2xl shadow-md flex-1 flex flex-col overflow-hidden min-h-[200px]">
+                    <div class="bg-amber-50 border-b border-amber-100 px-4 py-3 flex justify-between items-center shrink-0">
+                        <h3 class="font-bold text-amber-800 flex items-center gap-2"><i class="fas fa-bullhorn"></i> 공지사항</h3>
+                        <button id="btn-edit-notice" class="text-amber-600 hover:text-amber-800 text-sm"><i class="fas fa-edit"></i> 관리자</button>
+                    </div>
+                    <div class="p-4 flex-1 overflow-y-auto">
+                        <div id="notice-display" class="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed">공지사항을 불러오는 중...</div>
+                        <div id="notice-edit-area" class="hide flex flex-col h-full gap-2">
+                            <textarea id="notice-textarea" class="w-full flex-1 border border-gray-300 rounded p-2 text-sm focus:outline-none focus:border-amber-400 resize-none"></textarea>
+                            <div class="flex justify-end gap-2 shrink-0">
+                                <button id="btn-cancel-notice" class="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300">취소</button>
+                                <button id="btn-save-notice" class="px-3 py-1 bg-amber-500 text-white rounded text-sm hover:bg-amber-600">저장</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- External Link -->
+                <div class="mt-auto">
+                    <a href="https://gustn0301.github.io/Yatzy" target="_blank" class="block bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 transition rounded-xl p-4 text-center group shadow-sm">
+                        <div class="text-indigo-600 font-semibold flex items-center justify-center gap-2">
+                            <i class="fas fa-dice group-hover:rotate-12 transition"></i> 친구와 간단한 보드게임을 해보세요!
+                        </div>
+                        <div class="text-xs text-indigo-400 mt-1 break-all">gustn0301.github.io/Yatzy</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Panel (Timetable Grid) -->
+            <div class="flex-1 bg-white rounded-2xl shadow-md flex flex-col overflow-hidden">
+                <div class="p-4 border-b bg-gray-50 flex justify-between items-center shrink-0">
+                    <h2 class="font-bold text-gray-800 text-lg">이번 주 시간표</h2>
+                    <div class="text-xs text-gray-500 flex items-center gap-2">
+                        <div class="w-3 h-3 rounded bg-sky-100 border border-sky-300"></div>
+                        하늘색으로 표시된 시간은 우리반에 수업이 있는 시간이니 참고하시기 바랍니다.
+                    </div>
+                </div>
+                <div class="flex-1 overflow-auto p-4">
+                    <div class="min-w-[700px] h-full flex flex-col">
+                        <!-- Table Header -->
+                        <div class="grid grid-cols-6 gap-2 mb-2 font-bold text-center text-sm shrink-0">
+                            <div class="text-gray-400">교시</div>
+                            <div class="text-gray-700">월</div>
+                            <div class="text-gray-700">화</div>
+                            <div class="text-gray-700">수</div>
+                            <div class="text-gray-700">목</div>
+                            <div class="text-gray-700">금</div>
+                        </div>
+                        <!-- Table Body -->
+                        <div id="timetable-body" class="flex-1 grid grid-cols-6 grid-rows-7 gap-2">
+                            <!-- JS will populate this -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Firebase & Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 테마(다크모드) 전환 로직 ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
-        
-        // 1. 초기 테마 설정 (로컬 스토리지 확인)
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            htmlElement.classList.add('dark');
-        } else {
-            htmlElement.classList.remove('dark');
-        }
+        // Firebase Configuration (Provided by user)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKeB7mfWCx3_nqo0fTx8aFB6b4pM9UyQM",
+            authDomain: "timetable-7fb0c.firebaseapp.com",
+            projectId: "timetable-7fb0c",
+            storageBucket: "timetable-7fb0c.firebasestorage.app",
+            messagingSenderId: "484134941600",
+            appId: "1:484134941600:web:07e98b534b9137893a6ac5"
+        };
 
-        // 2. 테마 전환 버튼 이벤트
-        themeToggleBtn.addEventListener('click', () => {
-            htmlElement.classList.toggle('dark');
-            if (htmlElement.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Data Definitions ---
+
+        // 1. Elective Subjects Data
+        const electivesData = {
+            A: {
+                title: "선택과목 A",
+                names: ["주제탐구독서", "인공지능수학", "사문", "현대사회와 윤리", "물리학", "화학", "인간과 철학"],
+                teachers: ["황인해T", "박동민T", "김형석T", "여현주T", "이윤숙T", "김보련T", "김동해 신부님"],
+                rooms: ["국어교과실", "수학교과실", "AI 창의융합정보실", "3-1", "물리학 실험실", "화학 실험실", "J301"]
+            },
+            B: {
+                title: "선택과목 B",
+                names: ["주제탐구독서", "세계시민과 지리", "물리학 1반", "물리학 2반", "화학", "일본어", "중국어", "논술", "심리"],
+                teachers: ["황인해T", "지리온", "유현영T", "이윤숙T", "김보련T", "박성훈T", "권민영T", "배오현T", "김혜선 수녀님"],
+                rooms: ["국어교과실", "공동교육과정실", "2-8", "물리학 실험실", "화학 실험실", "2-2", "2-4", "영어교과실", "1-3"]
+            },
+            C: {
+                title: "선택과목 C",
+                names: ["정치", "현대사회와 윤리", "화학", "생명과학", "지구과학", "프로그래밍", "교육의 이해"],
+                teachers: ["김형석T", "여현주T", "김보련T", "박성미T", "류혜인T", "정보온", "박성훈T"],
+                rooms: ["AI 창의융합정보실", "3-1", "화학 실험실", "3-5", "지구과학 실험실", "컴퓨터실", "2-2"]
+            },
+            D: {
+                title: "선택과목 D",
+                names: ["세계사", "물리학", "생명과학", "프로그래밍 1반", "프로그래밍 2반", "인간과 철학", "심리"],
+                teachers: ["정기엽T", "유현영T", "박성미T", "정보온", "정보온", "김동해 신부님", "김혜선 수녀님"],
+                rooms: ["사회교과실", "2-8", "3-5", "2-7", "컴퓨터실", "J301", "2-2"]
+            },
+            E: {
+                title: "선택과목 E",
+                names: ["영어발표와 토론", "세계시민과 지리", "현대사회와 윤리", "물리학", "화학", "생명과학", "프로그래밍", "교육의 이해", "철학", "논술"],
+                teachers: ["배오현T", "지리온", "여현주T", "유현영T", "김보련T", "박성미T", "정보온", "김형석T", "김동해 신부님", "한종오T"],
+                rooms: ["영어교과실", "2-7", "3-1", "2-8", "화학 실험실", "3-5", "컴퓨터실", "AI 창의융합정보실", "J301", "3-6"]
+            },
+            M: {
+                title: "음/미",
+                names: ["음악", "미술"],
+                teachers: ["최수미T", "홍현숙T"],
+                rooms: ["음악실", "미술실"]
             }
-        });
-        // -----------------------------
+        };
 
-        // 우리반 교실 수업
-        const homeroomSlots = ["0-4", "0-5", "0-6", "1-1", "2-1", "2-2", "3-4", "3-3", "3-5", "4-3"];
-
-        let app, auth, db, appId;
-        
-        try {
-            if (typeof __firebase_config !== 'undefined') {
-                const firebaseConfig = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
-                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                app = initializeApp(firebaseConfig);
-            } else {
-                const fallbackConfig = {
-                    apiKey: "AIzaSyDKeB7mfWCx3_nqo0fTx8aFB6b4pM9UyQM",
-                    authDomain: "timetable-7fb0c.firebaseapp.com",
-                    projectId: "timetable-7fb0c",
-                    storageBucket: "timetable-7fb0c.firebasestorage.app",
-                    messagingSenderId: "484134941600",
-                    appId: "1:484134941600:web:07e98b534b9137893a6ac5"
-                };
-                appId = "timetable-7fb0c";
-                app = initializeApp(fallbackConfig);
-            }
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch (e) {
-            console.error("Firebase Initialization Failed:", e);
-            document.getElementById('auth-error').innerText = "서버 설정 초기화 오류가 발생했습니다.";
-            document.getElementById('auth-error').classList.remove('hidden');
-        }
-
-        let currentUser = null;
-        let userSubjects = null;
-
-        const subjectOptions = {
-            "선택과목A": [
-                { name: "주제탐구독서", teacher: "황인해T", room: "국어교과실" },
-                { name: "인공지능 수학", teacher: "박동민T", room: "수학교과실" },
-                { name: "사문", teacher: "김형석T", room: "AI 창의융합정보실" },
-                { name: "현대사회와 윤리", teacher: "여현주T", room: "3-1" },
-                { name: "물리학", teacher: "이윤숙T", room: "물리학 실험실" },
-                { name: "화학", teacher: "김보련T", room: "화학 실험실" },
-                { name: "인간과 철학", teacher: "김동해 신부님", room: "J301" }
+        // 2. Base Timetable (Mon-Fri, 1st-7th periods)
+        // Format: [Subject Name, Teacher, Room, Type(Base or Elective Key)]
+        const baseSchedule = [
+            // Mon
+            [
+                ["체육I", "강길재T", "마리아홀", "Base"],
+                ["독서와 작문", "한다솜T", "2-6", "Base"],
+                ["대수", "장경희T", "2-3", "Base"],
+                ["", "", "", "C"],
+                ["", "", "", "B"],
+                ["", "", "", "B"],
+                ["창체(동아리)", "-", "-", "Base"]
             ],
-            "선택과목B": [
-                { name: "주제탐구독서", teacher: "황인해T", room: "국어교과실" },
-                { name: "세지", teacher: "지리온", room: "공동교육과정실" },
-                { name: "물리학1", teacher: "유현영T", room: "2-8" },
-                { name: "물리학2", teacher: "이윤숙T", room: "물리학 실험실" },
-                { name: "화학", teacher: "김보련T", room: "화학 실험실" },
-                { name: "일본어", teacher: "박성훈T", room: "2-2" },
-                { name: "중국어", teacher: "권민영T", room: "2-4" },
-                { name: "논술", teacher: "배오현T", room: "영어교과실" },
-                { name: "심리", teacher: "김혜선 수녀님", room: "1-3" }
+            // Tue
+            [
+                ["", "", "", "D"],
+                ["", "", "", "D"],
+                ["", "", "", "M"],
+                ["", "", "", "A"],
+                ["영어I", "이지연T", "2-1", "Base"],
+                ["대수", "장경희T", "2-3", "Base"],
+                ["독서와 작문", "이수환T", "공동교육과정실", "Base"]
             ],
-            "선택과목C": [
-                { name: "정치", teacher: "김형석T", room: "AI 창의융합정보실" },
-                { name: "현대사회와 윤리", teacher: "여현주T", room: "3-1" },
-                { name: "화학", teacher: "김보련T", room: "화학 실험실" },
-                { name: "생명과학", teacher: "박성미T", room: "3-5" },
-                { name: "지구과학", teacher: "류혜인T", room: "지구과학 실험실" },
-                { name: "프로그래밍", teacher: "정보온", room: "컴퓨터실" },
-                { name: "교육의 이해", teacher: "박성훈T", room: "2-2" }
+            // Wed
+            [
+                ["", "", "", "C"],
+                ["", "", "", "C"],
+                ["대수", "장경희T", "2-3", "Base"],
+                ["영어I", "김영미T", "2-7", "Base"],
+                ["독서와 작문", "한다솜T", "2-6", "Base"],
+                ["", "", "", "A"],
+                ["공강", "권민영T", "-", "Base"]
             ],
-            "선택과목D": [
-                { name: "세계사", teacher: "정기엽T", room: "사회교과실" },
-                { name: "물리학", teacher: "유현영T", room: "2-8" },
-                { name: "생명과학", teacher: "박성미T", room: "3-5" },
-                { name: "프로그래밍1", teacher: "정보온", room: "공동교육과정실" },
-                { name: "프로그래밍2", teacher: "정보온", room: "컴퓨터실" },
-                { name: "인간과 철학", teacher: "김동해 신부님", room: "J301" },
-                { name: "심리", teacher: "김혜선 수녀님", room: "2-2" }
+            // Thu
+            [
+                ["", "", "", "E"],
+                ["", "", "", "E"],
+                ["체육I", "은현진T", "마리아홀", "Base"],
+                ["", "", "", "B"],
+                ["", "", "", "D"],
+                ["", "", "", "A"],
+                ["영어I", "김영미T", "2-7", "Base"]
             ],
-            "선택과목E": [
-                { name: "영어 발표와 토론", teacher: "배오현T", room: "영어교과실" },
-                { name: "세지", teacher: "지리온", room: "2-7" },
-                { name: "현대사회와 윤리", teacher: "여현주T", room: "3-1" },
-                { name: "물리학", teacher: "유현영T", room: "2-8" },
-                { name: "화학", teacher: "김보련T", room: "화학 실험실" },
-                { name: "생명과학", teacher: "박성미T", room: "3-5" },
-                { name: "프로그래밍", teacher: "정보온", room: "컴퓨터실" },
-                { name: "교육의 이해", teacher: "김형석T", room: "AI 창의융합정보실" },
-                { name: "인간과 철학", teacher: "김동해 신부님", room: "J301" },
-                { name: "논술", teacher: "한종오T", room: "3-6" }
-            ],
-            "음미": [
-                { name: "음악", teacher: "최수미T", room: "음악실" },
-                { name: "미술", teacher: "홍현숙T", room: "미술실" }
+            // Fri
+            [
+                ["영어I", "이지연T", "2-1", "Base"],
+                ["대수", "장경희T", "2-3", "Base"],
+                ["", "", "", "M"],
+                ["", "", "", "E"],
+                ["독서와 작문", "이수환T", "2-7", "Base"],
+                ["창체", "-", "-", "Base"],
+                ["창체", "-", "-", "Base"]
             ]
-        };
-
-        const scheduleBase = {
-            0: [ { name: "체육I", teacher: "은현진T", room: "마리아홀" }, { name: "독서와 작문", teacher: "한다솜T", room: "2-6" }, { name: "대수", teacher: "장경희T", room: "2-3" }, { type: "select", key: "선택과목C" }, { type: "select", key: "선택과목B" }, { type: "select", key: "선택과목B" }, { name: "창체(동아리)", teacher: "-", room: "-" } ],
-            1: [ { type: "select", key: "선택과목D" }, { type: "select", key: "선택과목D" }, { type: "select", key: "음미" }, { type: "select", key: "선택과목A" }, { name: "영어I", teacher: "이지연T", room: "2-1" }, { name: "대수", teacher : "장경희T", room: "2-3" }, { name: "독서와 작문", teacher: "이수환T", room: "공동교육과정실" } ],
-            2: [ { type: "select", key: "선택과목C" }, { type: "select", key: "선택과목C" }, { name: "대수", teacher: "장경희T", room: "2-3" }, { name: "영어I", teacher: "김영미T", room: "2-7" }, { name: "독서와 작문", teacher: "한다솜T", room: "2-6" }, { type: "select", key: "선택과목A" }, { name: "공강", teacher: "권민영T", room: "-" } ],
-            3: [ { type: "select", key: "선택과목E" }, { type: "select", key: "선택과목E" }, { name: "체육I", teacher: "은현진T", room: "마리아홀" }, { type: "select", key: "선택과목B" }, { type: "select", key: "선택과목D" }, { type: "select", key: "선택과목A" }, { name: "영어I", teacher: "김영미T", room: "2-7" } ],
-            4: [ { name: "영어I", teacher: "이지연T", room: "2-1" }, { name: "대수", teacher: "장경희T", room: "2-3" }, { type: "select", key: "음미" }, { type: "select", key: "선택과목E" }, { name: "독서와 작문", teacher: "이수환T", room: "공동교육과정실" }, { name: "창체", teacher: "-", room: "-" }, { name: "창체", teacher: "-", room: "-" } ]
-        };
-
-        const timeTableData = [
-            { id: "p1", start: "08:40", end: "09:30", label: "1교시", period: 1 },
-            { id: "p2", start: "09:40", end: "10:30", label: "2교시", period: 2 },
-            { id: "p3", start: "10:40", end: "11:30", label: "3교시", period: 3 },
-            { id: "p4", start: "11:40", end: "12:30", label: "4교시", period: 4 },
-            { id: "p5", start: "13:30", end: "14:20", label: "5교시", period: 5 },
-            { id: "p6", start: "14:30", end: "15:20", label: "6교시", period: 6 },
-            { id: "p7", start: "15:40", end: "16:30", label: "7교시", period: 7 }
         ];
 
-        // 독서 과목 대체 로직
-        const getClassInfo = (dayIndex, periodIndex) => {
-            const base = scheduleBase[dayIndex][periodIndex];
-            
-            if (!userSubjects || base.type !== 'select') return base;
-
-            const selectedIdx = userSubjects[base.key];
-            const selectedSubject = subjectOptions[base.key][selectedIdx] || { name: '미선택', teacher: '-', room: '-' };
-            
-            const isMatch = (d, pIdx, key, subName) => {
-                return dayIndex === d && periodIndex === pIdx && base.key === key && selectedSubject.name === subName;
-            };
-
-            // 독서 대체
-            if (isMatch(2, 5, '선택과목A', '철학')) return { name: '독서', teacher: '권민영T', room: '보건교육실', isSub: true };
-            if (isMatch(0, 5, '선택과목B', '논술')) return { name: '독서', teacher: '전민지T', room: 'AI 인텔리랩', isSub: true };
-            if (isMatch(0, 4, '선택과목B', '심리')) return { name: '독서', teacher: '양정은T', room: '도서관', isSub: true };
-            if (isMatch(2, 0, '선택과목C', '교육')) return { name: '독서', teacher: '박성훈T', room: '2-2', isSub: true };
-            if (isMatch(1, 0, '선택과목D', '철학')) return { name: '독서', teacher: '권민영T', room: '보건교육실', isSub: true };
-            if (isMatch(1, 0, '선택과목D', '심리')) return { name: '독서', teacher: '박성훈T', room: '2-2', isSub: true };
-            if (isMatch(3, 0, '선택과목E', '교육')) return { name: '독서', teacher: '전민지T', room: 'AI 인텔리랩', isSub: true };
-            if (isMatch(3, 0, '선택과목E', '철학')) return { name: '독서', teacher: '김동해 신부님', room: 'J301', isSub: true };
-            if (isMatch(3, 1, '선택과목E', '논술')) return { name: '독서', teacher: '양정은T', room: '도서관', isSub: true };
-
-            return selectedSubject;
+        // Highlighted Classes (Our Class has class at these times)
+        // Format: { dayIndex: [periodIndices] }
+        const ourClassHighlights = {
+            0: [3, 4, 5], // 월: 4, 5, 6
+            1: [0],       // 화: 1
+            2: [0, 1],    // 수: 1, 2
+            3: [2, 3, 4], // 목: 3, 4, 5
+            4: [2]        // 금: 3
         };
 
-        const login = async () => {
-            const btn = document.getElementById('google-login-btn');
-            const errorText = document.getElementById('auth-error');
-            btn.disabled = true;
-            btn.innerText = "로그인 중...";
-            errorText.classList.add('hidden');
+        // Class Time Schedule (For Next Class Logic)
+        const timeSchedule = [
+            { period: 1, start: "08:40", end: "09:30" },
+            { period: 2, start: "09:40", end: "10:30" },
+            { period: 3, start: "10:40", end: "11:30" },
+            { period: 4, start: "11:40", end: "12:30" },
+            { period: 5, start: "13:30", end: "14:20" },
+            { period: 6, start: "14:30", end: "15:20" },
+            { period: 7, start: "15:40", end: "16:30" }
+        ];
 
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    try {
-                        const provider = new GoogleAuthProvider();
-                        await signInWithPopup(auth, provider);
-                    } catch (e) {
-                        await signInAnonymously(auth);
-                    }
-                }
-            } catch (error) {
-                console.error("Login failed", error);
-                errorText.innerText = "로그인에 실패했습니다.";
-                errorText.classList.remove('hidden');
-                btn.disabled = false;
-                btn.innerText = "구글 로그인 시작";
-            }
+        // Global State
+        let currentUser = null;
+        let userChoices = {}; // {A: idx, B: idx...}
+        let generatedTimetable = []; // 5x7 matrix
+        let clockInterval;
+
+        // --- UI Helper Functions ---
+        const showView = (viewId) => {
+            ['login-view', 'setup-view', 'dashboard-view'].forEach(id => {
+                document.getElementById(id).classList.add('hide');
+            });
+            document.getElementById(viewId).classList.remove('hide');
+        };
+        const showLoading = (show) => {
+            document.getElementById('loading').classList.toggle('hide', !show);
         };
 
-        const showSetup = () => {
-            document.getElementById('auth-section').classList.add('hidden');
-            document.getElementById('loading-section').classList.add('hidden');
-            document.getElementById('main-section').classList.add('hidden');
-            document.getElementById('setup-section').classList.remove('hidden');
-            renderSetupForm();
-        };
-
-        const renderSetupForm = () => {
-            const container = document.getElementById('setup-form');
+        // --- Setup View Logic ---
+        const buildSetupForm = () => {
+            const container = document.getElementById('select-containers');
             container.innerHTML = '';
-            Object.keys(subjectOptions).forEach(key => {
-                const wrapper = document.createElement('div');
-                const label = document.createElement('label');
-                label.className = "block text-[11px] font-semibold text-gray-700 dark:text-slate-300 mb-1";
-                label.innerText = key === '음미' ? '음악/미술 선택' : key;
-                const select = document.createElement('select');
-                select.id = `select-${key}`;
-                select.className = "w-full p-2 text-sm border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none";
-                subjectOptions[key].forEach((opt, idx) => {
-                    const option = document.createElement('option');
-                    option.value = idx;
-                    option.innerText = `${opt.name} (${opt.teacher})`;
-                    if (userSubjects && userSubjects[key] == idx) option.selected = true;
-                    select.appendChild(option);
-                });
-                wrapper.appendChild(label);
-                wrapper.appendChild(select);
-                container.appendChild(wrapper);
+            
+            Object.keys(electivesData).forEach(key => {
+                const data = electivesData[key];
+                let optionsHtml = data.names.map((name, idx) => 
+                    `<option value="${idx}">${name} (${data.teachers[idx]})</option>`
+                ).join('');
+                
+                const selectGroup = `
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">${data.title}</label>
+                        <select id="select-${key}" class="w-full border border-gray-300 rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            <option value="" disabled selected>과목을 선택하세요</option>
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', selectGroup);
             });
         };
 
-        const saveSubjects = async () => {
-            if (!currentUser) return;
-            const saveBtn = document.getElementById('save-subjects-btn');
-            saveBtn.disabled = true;
-            saveBtn.innerText = "저장 중...";
-            const data = {};
-            Object.keys(subjectOptions).forEach(key => { data[key] = document.getElementById(`select-${key}`).value; });
+        const loadSetupDataToForm = () => {
+            Object.keys(electivesData).forEach(key => {
+                const select = document.getElementById(`select-${key}`);
+                if (userChoices[key] !== undefined) {
+                    select.value = userChoices[key];
+                } else {
+                    select.value = "";
+                }
+            });
+        };
 
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'config'), data);
-                userSubjects = data;
-                document.getElementById('setup-section').classList.add('hidden');
-                document.getElementById('main-section').classList.remove('hidden');
-                renderTimetable();
-                updateRealTime();
-            } catch (error) {
-                document.getElementById('save-error').innerText = "저장 실패. 권한을 확인해주세요.";
-                document.getElementById('save-error').classList.remove('hidden');
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerText = "설정 완료 및 저장";
+        const getFormData = () => {
+            let choices = {};
+            let allSelected = true;
+            Object.keys(electivesData).forEach(key => {
+                const val = document.getElementById(`select-${key}`).value;
+                if (val === "") allSelected = false;
+                choices[key] = parseInt(val, 10);
+            });
+            return { choices, isValid: allSelected };
+        };
+
+        // --- Timetable Generation Logic ---
+        const generatePersonalTimetable = () => {
+            // Deep copy base schedule
+            let schedule = JSON.parse(JSON.stringify(baseSchedule));
+
+            // Fill in normal electives
+            for (let d = 0; d < 5; d++) {
+                for (let p = 0; p < 7; p++) {
+                    const cellInfo = schedule[d][p];
+                    const type = cellInfo[3];
+                    
+                    if (electivesData[type]) { // If it's A, B, C, D, E, M
+                        const choiceIdx = userChoices[type];
+                        const data = electivesData[type];
+                        schedule[d][p] = [
+                            data.names[choiceIdx],
+                            data.teachers[choiceIdx],
+                            data.rooms[choiceIdx],
+                            type
+                        ];
+                    }
+                }
             }
+
+            // --- Apply Exception Rules (독서 Overrides) ---
+            const getChoiceName = (key) => electivesData[key].names[userChoices[key]];
+            
+            // Helper to override a specific cell: day(0-4), period(0-6)
+            const applyOverride = (day, period, tName, roomName) => {
+                schedule[day][period] = ["독서", tName, roomName, "Override"];
+            };
+
+            const aName = getChoiceName('A');
+            const bName = getChoiceName('B');
+            const cName = getChoiceName('C');
+            const dName = getChoiceName('D');
+            const eName = getChoiceName('E');
+
+            if (aName === "인간과 철학") applyOverride(2, 5, "권민영T", "보건교육실"); // 수 6
+            if (bName === "논술") applyOverride(0, 5, "전민지T", "AI 인텔리랩");     // 월 6
+            if (bName === "심리") applyOverride(0, 4, "양정은T", "1층 도서관");       // 월 5
+            if (cName === "교육의 이해") applyOverride(2, 0, "박성훈T", "2-2");       // 수 1
+            if (dName === "인간과 철학") applyOverride(1, 0, "권민영T", "보건교육실"); // 화 1
+            if (dName === "심리") applyOverride(1, 0, "박성훈T", "2-2");              // 화 1
+            if (eName === "교육의 이해") applyOverride(3, 0, "전민지T", "AI 인텔리랩"); // 목 1
+            if (eName === "인간과 철학") applyOverride(3, 0, "김동해 신부님", "J301"); // 목 1
+            if (eName === "논술") applyOverride(3, 1, "양정은T", "1층 도서관");       // 목 2
+
+            generatedTimetable = schedule;
         };
 
         const renderTimetable = () => {
-            if (!userSubjects) return;
-            for (let d = 0; d < 5; d++) {
-                for (let idx = 0; idx < 7; idx++) {
-                    const period = idx + 1;
-                    const cell = document.getElementById(`cell-${d}-${period}`);
-                    if (!cell) continue;
+            const tbody = document.getElementById('timetable-body');
+            tbody.innerHTML = '';
+
+            for (let p = 0; p < 7; p++) {
+                // Period Column
+                const timeStr = `${timeSchedule[p].start}<br><span class="text-xs opacity-60">~${timeSchedule[p].end}</span>`;
+                tbody.insertAdjacentHTML('beforeend', `
+                    <div class="flex flex-col items-center justify-center bg-gray-50 rounded-lg p-2 font-bold text-gray-500 text-sm border border-gray-100">
+                        <div class="mb-1">${p + 1}교시</div>
+                        <div class="text-[10px] text-center font-normal">${timeStr}</div>
+                    </div>
+                `);
+
+                // Day Columns (Mon-Fri)
+                for (let d = 0; d < 5; d++) {
+                    const cellData = generatedTimetable[d][p];
+                    const isHighlighted = ourClassHighlights[d] && ourClassHighlights[d].includes(p);
                     
-                    const finalInfo = getClassInfo(d, idx);
+                    const bgClass = isHighlighted ? 'bg-sky-100 border-sky-200' : 'bg-white border-gray-200';
+                    const textClass = isHighlighted ? 'text-sky-900' : 'text-gray-800';
                     
-                    const slotKey = `${d}-${period}`;
-                    if (homeroomSlots.includes(slotKey)) cell.classList.add('bg-homeroom');
-                    else cell.classList.remove('bg-homeroom');
+                    let innerHtml = '';
+                    if (cellData[0]) {
+                        innerHtml = `
+                            <div class="font-bold text-sm ${textClass} truncate w-full text-center mb-1" title="${cellData[0]}">${cellData[0]}</div>
+                            <div class="flex justify-between items-center w-full px-1 mt-auto">
+                                <div class="text-[10px] text-gray-500 truncate" title="${cellData[1]}"><i class="fas fa-user-circle text-gray-400 mr-1"></i>${cellData[1].replace('T','').replace(' 신부님','').replace(' 수녀님','')}</div>
+                                <div class="text-[10px] text-gray-500 truncate max-w-[50%]" title="${cellData[2]}">${cellData[2]}</div>
+                            </div>
+                        `;
+                    } else {
+                        innerHtml = `<div class="text-gray-300 text-xs">-</div>`;
+                    }
 
-                    const titleClass = finalInfo.isSub ? "text-green-700 dark:text-green-400 font-extrabold" : "text-gray-800 dark:text-slate-100 font-bold";
-                    
-                    cell.innerHTML = `
-                        <div class="${titleClass} text-xs sm:text-sm leading-tight">${finalInfo.name}</div>
-                        <div class="text-[9px] sm:text-[10px] text-gray-500 dark:text-slate-400 mt-0.5 truncate w-full px-1">${finalInfo.teacher}</div>
-                        <div class="text-[9px] sm:text-[10px] mt-1 bg-gray-50/80 dark:bg-slate-800 px-1.5 py-0.5 rounded text-blue-700 dark:text-blue-300 font-semibold border border-gray-200 dark:border-slate-600 transition-colors duration-300">${finalInfo.room}</div>
-                    `;
-                }
-            }
-        };
-
-        const updateRealTime = () => {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
-            const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const daysArr = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-            const dayStr = daysArr[now.getDay()];
-
-            document.getElementById('current-date').innerText = dateStr;
-            document.getElementById('current-time').innerText = timeStr;
-            document.getElementById('current-day').innerText = dayStr;
-
-            if (userSubjects) updateNextClass(now);
-        };
-
-        const updateNextClass = (now) => {
-            const currentTotalMin = now.getHours() * 60 + now.getMinutes();
-            const currentDay = now.getDay(); 
-            
-            let activeSlot = null;
-            let nextSlot = null;
-
-            for(let i=0; i<timeTableData.length; i++) {
-                const [sH, sM] = timeTableData[i].start.split(':').map(Number);
-                const [eH, eM] = timeTableData[i].end.split(':').map(Number);
-                const startMin = sH * 60 + sM;
-                const endMin = eH * 60 + eM;
-
-                if (currentTotalMin >= startMin && currentTotalMin < endMin) {
-                    activeSlot = timeTableData[i];
-                    nextSlot = timeTableData[i+1] || null;
-                    break;
-                } else if (currentTotalMin < startMin) {
-                    nextSlot = timeTableData[i];
-                    break;
-                }
-            }
-
-            document.querySelectorAll('.bg-current').forEach(el => el.classList.remove('bg-current'));
-            if (activeSlot && activeSlot.period && currentDay >= 1 && currentDay <= 5) {
-                const activeCell = document.getElementById(`cell-${currentDay-1}-${activeSlot.period}`);
-                if (activeCell) activeCell.classList.add('bg-current');
-            }
-
-            const infoBox = document.getElementById('next-class-info');
-            if (!infoBox) return;
-
-            let html = "";
-            
-            if (activeSlot && activeSlot.period && currentDay >= 1 && currentDay <= 5) {
-                let cData = getClassInfo(currentDay-1, activeSlot.period-1);
-                html += `
-                    <div class="mb-2">
-                        <span class="text-[10px] font-bold text-orange-500 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/40 px-1.5 py-0.5 rounded border border-orange-200 dark:border-orange-800 transition-colors">NOW</span>
-                        <p class="text-sm font-bold text-gray-800 dark:text-slate-100 mt-1">${activeSlot.label} 진행중</p>
-                        <p class="text-xs ${cData.isSub ? 'text-green-600 dark:text-green-400 font-bold' : 'text-gray-600 dark:text-slate-400'}">${cData.name} (${cData.room})</p>
-                    </div>`;
-            } else if (!activeSlot) {
-                html += `<div class="mb-2 text-xs text-gray-500 dark:text-slate-400">현재 대기 중입니다.</div>`;
-            }
-
-            if (nextSlot) {
-                const [sH, sM] = nextSlot.start.split(':').map(Number);
-                const startMin = sH * 60 + sM;
-                const diff = startMin - currentTotalMin;
-
-                if (diff <= 10 && diff > 0) {
-                    const isNextClass = nextSlot.period && currentDay >= 1 && currentDay <= 5;
-                    let nData = null;
-                    if(isNextClass) nData = getClassInfo(currentDay-1, nextSlot.period-1);
-                    
-                    html += `
-                    <div class="mt-2 p-2.5 bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-600 rounded-lg animate-pulse shadow-sm transition-colors">
-                        <div class="flex items-center text-blue-600 dark:text-blue-400 font-bold text-[11px] mb-1">
-                            <i class="fas fa-bell mr-1"></i> 곧 시작 (${diff}분 전)
+                    tbody.insertAdjacentHTML('beforeend', `
+                        <div class="timetable-cell flex flex-col items-center justify-center rounded-lg border p-2 h-full min-h-[70px] ${bgClass}">
+                            ${innerHtml}
                         </div>
-                        <p class="text-sm font-bold text-gray-900 dark:text-slate-100">${nextSlot.label} (${nextSlot.start})</p>
-                        ${nData ? `<p class="text-xs ${nData.isSub ? 'text-green-700 dark:text-green-400 font-bold' : 'text-gray-700 dark:text-slate-300'} mt-0.5">${nData.name} - ${nData.room}</p>` : ''}
-                    </div>`;
-                } else if (diff > 10) {
-                    html += `
-                    <div class="mt-2 text-[10px] text-gray-400 dark:text-slate-500 border-t pt-2 border-gray-200 dark:border-slate-600 border-dashed transition-colors">
-                        <i class="fas fa-info-circle"></i> 다음 수업 안내는 시작 10분 전에 표시됩니다.
-                    </div>`;
+                    `);
                 }
             }
-            infoBox.innerHTML = html;
         };
 
-        // 관리자 패널 관련 함수들
-        window.openAdminPanel = () => {
-            document.getElementById('admin-auth').classList.remove('hidden');
-            document.getElementById('admin-editor').classList.add('hidden');
-            document.getElementById('admin-pw').value = '';
-            document.getElementById('admin-modal').classList.remove('hidden');
+        // --- Clock & Next Class Logic ---
+        const updateClock = () => {
+            const now = new Date();
+            
+            // Date string
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            const dateStr = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
+            document.getElementById('current-date').textContent = dateStr;
+
+            // Time string
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('current-time').textContent = `${hh}:${mm}:${ss}`;
+
+            updateNextClassInfo(now);
         };
-        window.closeAdminPanel = () => document.getElementById('admin-modal').classList.add('hidden');
+
+        const timeToMinutes = (timeStr) => {
+            const [h, m] = timeStr.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const updateNextClassInfo = (now) => {
+            const dayIdx = now.getDay() - 1; // 0=Mon, 4=Fri
+            const currentMins = now.getHours() * 60 + now.getMinutes();
+            
+            const infoContainer = document.getElementById('next-class-info');
+
+            // Weekend or Friday after school
+            if (dayIdx < 0 || dayIdx > 4 || (dayIdx === 4 && currentMins >= timeToMinutes(timeSchedule[6].end))) {
+                infoContainer.innerHTML = `<div class="text-sm font-bold">정규 수업이 없습니다.</div>`;
+                return;
+            }
+
+            let nextPeriodIdx = -1;
+            let statusText = "다음 수업";
+
+            for (let i = 0; i < timeSchedule.length; i++) {
+                const sMins = timeToMinutes(timeSchedule[i].start);
+                const eMins = timeToMinutes(timeSchedule[i].end);
+
+                if (currentMins < sMins) {
+                    // Before class i starts
+                    nextPeriodIdx = i;
+                    break;
+                } else if (currentMins >= sMins && currentMins < eMins) {
+                    // Currently IN class i
+                    // Next class is i+1 (if exists)
+                    if (i < 6) {
+                        nextPeriodIdx = i + 1;
+                        statusText = "다음 수업";
+                    } else {
+                        statusText = "마지막 수업 진행중";
+                        nextPeriodIdx = -2; // End of day flag
+                    }
+                    break;
+                }
+            }
+
+            if (currentMins >= timeToMinutes(timeSchedule[6].end)) {
+                infoContainer.innerHTML = `<div class="text-sm font-bold">오늘의 정규 수업이 모두 끝났습니다.</div>`;
+                return;
+            }
+
+            if (nextPeriodIdx === -2) {
+                infoContainer.innerHTML = `<div class="text-sm font-bold">마지막 교시 수업 진행중입니다.</div>`;
+                return;
+            }
+
+            if (nextPeriodIdx >= 0 && generatedTimetable.length > 0) {
+                const cellData = generatedTimetable[dayIdx][nextPeriodIdx];
+                if(cellData && cellData[0]) {
+                     infoContainer.innerHTML = `
+                        <div class="text-xs text-blue-200 mb-0.5">${nextPeriodIdx + 1}교시 ${statusText}</div>
+                        <div class="text-lg font-bold truncate">${cellData[0]}</div>
+                        <div class="text-sm opacity-90 mt-1 flex items-center gap-2"><i class="fas fa-chalkboard-teacher text-xs w-4"></i> <span>${cellData[1]}</span></div>
+                        <div class="text-sm opacity-90 flex items-center gap-2"><i class="fas fa-map-marker-alt text-xs w-4 ml-[1px]"></i> <span>${cellData[2]}</span></div>
+                    `;
+                } else {
+                     infoContainer.innerHTML = `<div class="text-sm font-bold">다음 시간표 정보 없음</div>`;
+                }
+            }
+        };
+
+        // --- Notice Board Logic ---
+        let unsubscribeNotice = null;
         
-        window.checkAdminPw = () => {
-            if (document.getElementById('admin-pw').value === 'nsdg26') {
-                document.getElementById('admin-auth').classList.add('hidden');
-                document.getElementById('admin-editor').classList.remove('hidden');
-                document.getElementById('new-notice').value = document.getElementById('notice-content').innerText;
-            } else { alert('비밀번호가 일치하지 않습니다.'); }
+        const setupNoticeBoard = () => {
+            const noticeRef = doc(db, 'publicData', 'board');
+            
+            // Listen to real-time updates
+            unsubscribeNotice = onSnapshot(noticeRef, (docSnap) => {
+                const displayArea = document.getElementById('notice-display');
+                if (docSnap.exists()) {
+                    displayArea.textContent = docSnap.data().content || "등록된 공지사항이 없습니다.";
+                } else {
+                    displayArea.textContent = "등록된 공지사항이 없습니다.";
+                }
+            });
+
+            // Edit logic
+            document.getElementById('btn-edit-notice').addEventListener('click', () => {
+                const pin = prompt("관리자 비밀번호를 입력하세요:");
+                if (pin === "nsdg26") {
+                    document.getElementById('notice-display').classList.add('hide');
+                    document.getElementById('notice-edit-area').classList.remove('hide');
+                    document.getElementById('notice-textarea').value = document.getElementById('notice-display').textContent === "등록된 공지사항이 없습니다." ? "" : document.getElementById('notice-display').textContent;
+                } else if (pin !== null) {
+                    alert("비밀번호가 틀렸습니다.");
+                }
+            });
+
+            document.getElementById('btn-cancel-notice').addEventListener('click', () => {
+                document.getElementById('notice-display').classList.remove('hide');
+                document.getElementById('notice-edit-area').classList.add('hide');
+            });
+
+            document.getElementById('btn-save-notice').addEventListener('click', async () => {
+                const content = document.getElementById('notice-textarea').value;
+                try {
+                    await setDoc(noticeRef, { content, updatedAt: new Date() });
+                    document.getElementById('notice-display').classList.remove('hide');
+                    document.getElementById('notice-edit-area').classList.add('hide');
+                } catch (e) {
+                    console.error("공지사항 저장 실패:", e);
+                    alert("저장에 실패했습니다. 권한 설정을 확인하세요.");
+                }
+            });
         };
 
-        window.saveNotice = async () => {
-            if (!currentUser) return;
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'notices', 'main'), { 
-                    content: document.getElementById('new-notice').value, 
-                    updated: new Date().getTime() 
-                });
-                closeAdminPanel();
-            } catch (e) { alert("공지사항 저장에 실패했습니다. 권한을 확인해주세요."); }
-        };
+        // --- Firebase Auth & Initialization ---
+        const initApp = () => {
+            buildSetupForm();
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('loading-section').classList.remove('hidden');
+            // Setup Form Submit
+            document.getElementById('setup-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const { choices, isValid } = getFormData();
+                
+                if (!isValid) {
+                    alert("모든 선택과목을 선택해주세요.");
+                    return;
+                }
+
+                showLoading(true);
+                userChoices = choices;
                 
                 try {
-                    const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'config'));
-                    if (docSnap.exists()) {
-                        userSubjects = docSnap.data();
-                        document.getElementById('loading-section').classList.add('hidden');
-                        document.getElementById('main-section').classList.remove('hidden');
-                        renderTimetable();
-                    } else { showSetup(); }
-                } catch (e) { showSetup(); }
+                    // Save to Firestore
+                    const userRef = doc(db, 'users', currentUser.uid);
+                    await setDoc(userRef, { choices, updatedAt: new Date() });
+                    
+                    // Render and Go
+                    generatePersonalTimetable();
+                    renderTimetable();
+                    updateClock();
+                    showView('dashboard-view');
+                    
+                    if(clockInterval) clearInterval(clockInterval);
+                    clockInterval = setInterval(updateClock, 1000);
+                    
+                } catch (error) {
+                    console.error("데이터 저장 실패:", error);
+                    alert("설정 저장에 실패했습니다.");
+                } finally {
+                    showLoading(false);
+                }
+            });
 
+            // Re-setup button
+            document.getElementById('btn-re-setup').addEventListener('click', () => {
+                document.getElementById('btn-setup-cancel').classList.remove('hide');
+                loadSetupDataToForm();
+                showView('setup-view');
+            });
+
+            document.getElementById('btn-setup-cancel').addEventListener('click', () => {
+                showView('dashboard-view');
+            });
+
+            // Login Event
+            document.getElementById('btn-login').addEventListener('click', async () => {
+                const provider = new GoogleAuthProvider();
                 try {
-                    onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'notices', 'main'), (snap) => {
-                        if (snap.exists()) document.getElementById('notice-content').innerText = snap.data().content;
-                    });
-                } catch (e) {}
-            } else {
-                document.getElementById('auth-section').classList.remove('hidden');
-                document.getElementById('main-section').classList.add('hidden');
-                document.getElementById('loading-section').classList.add('hidden');
-                document.getElementById('setup-section').classList.add('hidden');
-            }
-        });
+                    await signInWithPopup(auth, provider);
+                } catch (error) {
+                    console.error("로그인 에러:", error);
+                    alert("로그인에 실패했습니다.");
+                }
+            });
 
-        document.getElementById('google-login-btn').addEventListener('click', login);
-        document.getElementById('save-subjects-btn').addEventListener('click', saveSubjects);
-        window.showSetup = showSetup;
-        
-        setInterval(updateRealTime, 1000);
-        updateRealTime();
+            // Logout Event
+            document.getElementById('btn-logout').addEventListener('click', () => {
+                signOut(auth);
+            });
+
+            // Auth State Listener
+            onAuthStateChanged(auth, async (user) => {
+                showLoading(true);
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('user-name-display').textContent = `${user.displayName}님`;
+                    
+                    // Fetch user choices
+                    const userRef = doc(db, 'users', user.uid);
+                    const docSnap = await getDoc(userRef);
+                    
+                    if (docSnap.exists() && docSnap.data().choices) {
+                        // User has data
+                        userChoices = docSnap.data().choices;
+                        generatePersonalTimetable();
+                        renderTimetable();
+                        
+                        setupNoticeBoard();
+                        
+                        updateClock();
+                        if(clockInterval) clearInterval(clockInterval);
+                        clockInterval = setInterval(updateClock, 1000);
+                        
+                        showView('dashboard-view');
+                    } else {
+                        // First time setup
+                        document.getElementById('btn-setup-cancel').classList.add('hide');
+                        buildSetupForm(); // Reset form
+                        showView('setup-view');
+                    }
+                } else {
+                    currentUser = null;
+                    if(clockInterval) clearInterval(clockInterval);
+                    if(unsubscribeNotice) unsubscribeNotice();
+                    showView('login-view');
+                }
+                showLoading(false);
+            });
+        };
+
+        // Start
+        initApp();
+
     </script>
 </body>
 </html>
