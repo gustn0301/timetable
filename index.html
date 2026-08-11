@@ -4,26 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2학년 2반 시간표</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎫</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📘</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', '-apple-system', 'system-ui', 'Roboto', 'sans-serif'],
-                        display: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+                        sans: ['Pretendard', '-apple-system', 'system-ui', 'Roboto', 'sans-serif'],
                         mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
                     },
                     colors: {
-                        paper: { DEFAULT: '#F2F5EF', card: '#FFFFFF' },
-                        ink: { DEFAULT: '#16261F', soft: '#4B5B52', faint: '#8FA098' },
-                        forest: { 50:'#EAF3EE',100:'#D3E6DA',200:'#AFD3BE',300:'#84BC9E',400:'#5AA37F',500:'#2F6F5E',600:'#255A4C',700:'#1C4539',800:'#15332B',900:'#0E211C' },
-                        amber: { 50:'#FDF6E8',100:'#FCEBC9',200:'#F7D896',300:'#F0BE5F',400:'#E8A33D',500:'#D68F26',600:'#B3721A' },
+                        paper: { DEFAULT: '#F6F7F5', card: '#FFFFFF' },
+                        ink: { DEFAULT: '#151B18', soft: '#525E58', faint: '#94A29B' },
+                        forest: { 50:'#EAF3EE',100:'#D3E6DA',200:'#AFD3BE',300:'#84BC9E',400:'#4E9A7C',500:'#237A62',600:'#186049',700:'#124A38',800:'#0D392B',900:'#08251C' },
+                        amber: { 50:'#FEF7E9',100:'#FCEACB',200:'#F8D48F',300:'#F3B94E',400:'#EA9E24',500:'#CB8215',600:'#A5680F' },
                     },
                 }
             }
@@ -31,133 +31,115 @@
     </script>
     <style>
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-            background-color: #F2F5EF;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background-color: #F6F7F5;
         }
         .hide { display: none !important; }
 
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        .shake { animation: shake 0.35s; }
+        @keyframes shake { 10%,90%{transform:translateX(-1px)} 20%,80%{transform:translateX(2px)} 30%,50%,70%{transform:translateX(-4px)} 40%,60%{transform:translateX(4px)} }
 
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         .shimmer { background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.5) 50%, transparent 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .spin-slow { animation: spin-slow 1s linear infinite; }
-        @keyframes pulse-soft { 0%,100% { box-shadow: 0 0 0 0 rgba(232,163,61,0.35); } 50% { box-shadow: 0 0 0 7px rgba(232,163,61,0); } }
+        @keyframes pulse-soft { 0%,100% { box-shadow: 0 0 0 0 rgba(234,158,36,0.35); } 50% { box-shadow: 0 0 0 6px rgba(234,158,36,0); } }
         .pulse-current { animation: pulse-soft 2s ease-in-out infinite; }
 
-        .timetable-cell { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
-        .timetable-cell:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(22,38,31,0.14); z-index: 10; }
+        .timetable-cell { transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
+        .timetable-cell:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -8px rgba(21,27,24,0.16); z-index: 10; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #C7D2C9; border-radius: 100px; }
-        ::-webkit-scrollbar-thumb:hover { background: #A9B8AB; }
+        ::-webkit-scrollbar-thumb { background: #CBD5CD; border-radius: 100px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A8B7AC; }
 
         select {
             appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%232F6F5E' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23186049' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
             background-position: right 0.75rem center;
             background-repeat: no-repeat;
-            background-size: 1.25em 1.25em;
-        }
-
-        .bg-grain {
-            background-image: radial-gradient(circle, rgba(22,38,31,0.06) 1px, transparent 1px);
-            background-size: 22px 22px;
-        }
-
-        /* Ticket / hall-pass perforation */
-        .ticket-stub {
-            position: relative;
-            border-top: 1px dashed rgba(255,255,255,0.28);
-        }
-        .ticket-stub::before, .ticket-stub::after {
-            content: '';
-            position: absolute;
-            top: -8px;
-            width: 16px; height: 16px;
-            background: #F2F5EF;
-            border-radius: 50%;
-        }
-        .ticket-stub::before { left: -8px; }
-        .ticket-stub::after { right: -8px; }
-
-        /* ID card selection ring */
-        .id-card { transition: all 0.18s ease; }
-        .id-card.selected { border-color: #2F6F5E; background: #EAF3EE; box-shadow: 0 6px 18px -6px rgba(47,111,94,0.35); }
-        .id-card:not(.selected):hover { border-color: #AFD3BE; transform: translateY(-1px); }
-
-        .badge-check {
-            position: absolute; top: -7px; right: -7px;
-            width: 22px; height: 22px; border-radius: 50%;
-            background: #2F6F5E; color: white;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            background-size: 1.15em 1.15em;
         }
 
         .tabular { font-variant-numeric: tabular-nums; }
+
+        .input-field {
+            width: 100%;
+            border: 1.5px solid #E1E7E2;
+            background: #FBFCFB;
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-size: 15px;
+            transition: all .15s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #237A62;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(35,122,98,0.10);
+        }
+        .input-field.error { border-color: #DC5B4E; box-shadow: 0 0 0 4px rgba(220,91,78,0.10); }
     </style>
 </head>
 <body class="text-ink h-screen flex flex-col overflow-hidden">
 
     <!-- Loading Overlay -->
-    <div id="loading" class="fixed inset-0 bg-paper/70 backdrop-blur-md z-50 flex flex-col items-center justify-center hide">
-        <div class="w-16 h-16 rounded-2xl bg-forest-600 flex items-center justify-center shadow-lg shadow-forest-600/25 spin-slow">
-            <i class="fas fa-ticket text-2xl text-white"></i>
+    <div id="loading" class="fixed inset-0 bg-paper/75 backdrop-blur-md z-50 flex flex-col items-center justify-center hide">
+        <div class="w-14 h-14 rounded-2xl bg-forest-600 flex items-center justify-center shadow-lg shadow-forest-600/25 spin-slow">
+            <i class="fas fa-book-open text-xl text-white"></i>
         </div>
-        <p class="text-sm font-semibold text-ink-soft mt-6 tracking-tight font-mono">불러오는 중...</p>
-        <div class="mt-3 w-48 h-1 bg-forest-100 rounded-full overflow-hidden">
+        <p class="text-sm font-semibold text-ink-soft mt-5 tracking-tight">불러오는 중...</p>
+        <div class="mt-3 w-40 h-1 bg-forest-100 rounded-full overflow-hidden">
             <div class="h-full bg-forest-500 rounded-full shimmer" style="width:60%;"></div>
         </div>
     </div>
 
-    <!-- 1. Login View (Student ID picker) -->
-    <div id="login-view" class="flex-1 flex flex-col overflow-hidden bg-paper bg-grain hide fade-in">
-        <div class="flex-1 overflow-y-auto px-4 pt-10 pb-6">
-            <div class="max-w-3xl mx-auto">
-                <div class="text-center mb-8 slide-up">
-                    <div class="inline-flex items-center gap-2 text-[11px] font-mono font-semibold tracking-[0.2em] text-forest-600 uppercase mb-3">
-                        <span class="w-6 h-px bg-forest-400"></span> 논산대건고 2학년 2반 <span class="w-6 h-px bg-forest-400"></span>
+    <!-- 1. Login View (학번/이름 직접 입력) -->
+    <div id="login-view" class="flex-1 flex items-center justify-center bg-paper px-4 hide fade-in">
+        <div class="w-full max-w-sm slide-up">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-forest-600 rounded-2xl mb-5 shadow-lg shadow-forest-600/20">
+                    <i class="fas fa-graduation-cap text-2xl text-white"></i>
+                </div>
+                <div class="text-[11px] font-bold tracking-[0.2em] text-forest-600 uppercase mb-2">논산대건고등학교</div>
+                <h1 class="text-2xl font-extrabold text-ink tracking-tight">2학년 2반 시간표</h1>
+                <p class="text-ink-soft text-sm mt-2">학번과 이름을 입력하고 들어가세요</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl shadow-ink/5 border border-forest-100 p-7">
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-ink-soft mb-1.5">학번</label>
+                        <input id="input-student-id" type="text" inputmode="numeric" maxlength="4" placeholder="예) 2201" class="input-field font-mono tracking-wider">
                     </div>
-                    <h1 class="font-display text-4xl font-semibold text-ink tracking-tight italic"></h1>
-                    <p class="text-ink-soft text-sm mt-3">아래에서 본인의 학번과 이름을 선택하면 시작할 수 있어요.</p>
-                </div>
-
-                <div class="relative mb-5 slide-up">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-ink-faint text-sm"></i>
-                    <input id="roster-search" type="text" placeholder="학번 또는 이름 검색"
-                        class="w-full bg-white border border-forest-100 rounded-2xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/20 focus:border-forest-400 transition shadow-sm">
-                </div>
-
-                <div id="roster-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 slide-up"></div>
-                <p id="roster-empty" class="text-center text-ink-faint text-sm py-8 hide">검색 결과가 없어요.</p>
+                    <div>
+                        <label class="block text-xs font-bold text-ink-soft mb-1.5">이름</label>
+                        <input id="input-student-name" type="text" placeholder="예) 홍길동" class="input-field">
+                    </div>
+                    <p id="login-error" class="text-xs text-red-500 font-medium hide">학번과 이름이 명단과 일치하지 않아요. 다시 확인해주세요.</p>
+                    <button type="submit" class="w-full bg-forest-600 hover:bg-forest-700 text-white font-bold text-sm py-3.5 rounded-xl transition shadow-sm mt-2">
+                        시작하기
+                    </button>
+                </form>
             </div>
-        </div>
-        <div class="shrink-0 border-t border-forest-100 bg-white/90 backdrop-blur px-4 py-4">
-            <div class="max-w-3xl mx-auto flex items-center justify-between gap-4">
-                <div class="text-sm text-ink-soft font-mono">
-                    <span id="selection-status">아직 선택하지 않았어요</span>
-                </div>
-                <button id="btn-confirm-login" disabled
-                    class="flex items-center gap-2 bg-forest-600 disabled:bg-ink-faint disabled:cursor-not-allowed text-white font-bold text-sm py-3 px-6 rounded-xl hover:bg-forest-700 transition shadow-sm">
-                    시간표 보기 <i class="fas fa-arrow-right text-xs"></i>
-                </button>
-            </div>
+            <p class="text-center text-[11px] text-ink-faint mt-5">한 번 입력하면 다음부터 자동으로 로그인돼요</p>
         </div>
     </div>
 
     <!-- 2. Setup View -->
-    <div id="setup-view" class="flex-1 overflow-y-auto bg-paper bg-grain py-10 px-4 hide fade-in">
+    <div id="setup-view" class="flex-1 overflow-y-auto bg-paper py-10 px-4 hide fade-in">
         <div class="max-w-2xl mx-auto">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 bg-forest-600 rounded-2xl mb-4 shadow-lg shadow-forest-600/20 rotate-3">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-forest-600 rounded-2xl mb-4 shadow-lg shadow-forest-600/20">
                     <i class="fas fa-sliders-h text-xl text-white"></i>
                 </div>
-                <h2 class="font-display text-2xl font-semibold tracking-tight text-ink">나의 선택과목 설정</h2>
-                <p id="setup-subtitle" class="text-ink-soft text-sm mt-2 font-mono"></p>
+                <h2 class="text-2xl font-extrabold tracking-tight text-ink">나의 선택과목 설정</h2>
+                <p id="setup-subtitle" class="text-ink-soft text-sm mt-2"></p>
             </div>
 
             <div class="bg-white rounded-2xl shadow-xl shadow-ink/5 border border-forest-100 p-8">
@@ -177,19 +159,19 @@
 
     <!-- 3. Main Dashboard -->
     <div id="dashboard-view" class="flex-1 flex flex-col h-full bg-paper hide fade-in">
-        <header class="bg-white/85 backdrop-blur-lg border-b border-forest-100 px-6 py-3 flex justify-between items-center shrink-0 sticky top-0 z-30">
-            <h1 class="font-display text-lg font-semibold text-ink flex items-center gap-2.5 tracking-tight">
+        <header class="bg-white/90 backdrop-blur-lg border-b border-forest-100 px-6 py-3 flex justify-between items-center shrink-0 sticky top-0 z-30">
+            <h1 class="text-lg font-extrabold text-ink flex items-center gap-2.5 tracking-tight">
                 <div class="w-8 h-8 bg-forest-600 rounded-lg flex items-center justify-center shadow-sm">
-                    <i class="fas fa-ticket text-white text-xs"></i>
+                    <i class="fas fa-book-open text-white text-xs"></i>
                 </div>
-                실시간 시간표 <span class="text-ink-faint text-sm font-sans font-normal">· 2학년 2반</span>
+                실시간 시간표 <span class="text-ink-faint text-sm font-medium">· 2학년 2반</span>
             </h1>
-            <div class="flex items-center gap-3">
-                <span id="user-name-display" class="text-sm font-medium text-forest-700 bg-forest-50 px-3 py-1.5 rounded-lg font-mono"></span>
-                <button id="btn-re-setup" class="text-sm bg-forest-50 hover:bg-forest-100 text-forest-700 py-2 px-4 rounded-xl transition font-medium">
+            <div class="flex items-center gap-2.5">
+                <span id="user-name-display" class="text-sm font-bold text-forest-700 bg-forest-50 px-3 py-1.5 rounded-lg"></span>
+                <button id="btn-re-setup" class="text-sm bg-forest-50 hover:bg-forest-100 text-forest-700 py-2 px-4 rounded-xl transition font-bold">
                     <i class="fas fa-cog text-xs mr-1.5"></i>과목 변경
                 </button>
-                <button id="btn-logout" class="text-sm text-ink-faint hover:text-amber-600 py-2 px-2 transition">
+                <button id="btn-logout" class="text-sm text-ink-faint hover:text-red-500 py-2 px-2 transition">
                     <i class="fas fa-right-from-bracket"></i>
                 </button>
             </div>
@@ -199,17 +181,13 @@
 
             <div class="w-full lg:w-80 flex flex-col gap-3 shrink-0">
 
-                <!-- Hall-pass ticket widget -->
+                <!-- 지금 시각 / 다음 수업 -->
                 <div class="relative bg-forest-800 rounded-2xl p-6 text-white shadow-xl shadow-forest-900/20 overflow-hidden">
                     <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/5 rounded-full"></div>
-                    <div class="flex items-center justify-between text-forest-200 text-[10px] font-mono uppercase tracking-widest mb-1">
-                        <span>Hall Pass</span>
-                        <span>2-2</span>
-                    </div>
-                    <div id="current-date" class="text-forest-200 text-xs font-medium mb-1 tracking-wide"></div>
-                    <div id="current-time" class="text-4xl font-bold tracking-wider mb-4 tabular font-mono">--:--:--</div>
+                    <div id="current-date" class="text-forest-200 text-xs font-semibold mb-1 tracking-wide"></div>
+                    <div id="current-time" class="text-4xl font-bold tracking-wider mb-5 tabular font-mono">--:--:--</div>
 
-                    <div class="ticket-stub pt-4">
+                    <div class="border-t border-white/15 pt-4">
                         <div class="text-[10px] text-amber-300 mb-2 uppercase tracking-widest font-bold flex items-center gap-1.5">
                             <div class="w-1.5 h-1.5 bg-amber-400 rounded-full"></div>
                             다음 수업 안내
@@ -260,18 +238,18 @@
 
             <div class="flex-1 bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 flex flex-col overflow-hidden">
                 <div class="p-4 border-b border-forest-50 flex justify-between items-center shrink-0">
-                    <h2 class="font-display font-semibold text-ink text-base tracking-tight flex items-center gap-2">
+                    <h2 class="font-extrabold text-ink text-base tracking-tight flex items-center gap-2">
                         <i class="fas fa-th text-forest-500 text-sm"></i>
                         이번 주 시간표
                     </h2>
-                    <div class="text-[10px] md:text-xs text-forest-700 flex items-center gap-2 bg-forest-50 px-3 py-1.5 rounded-lg font-mono">
+                    <div class="text-[10px] md:text-xs text-forest-700 flex items-center gap-2 bg-forest-50 px-3 py-1.5 rounded-lg font-semibold">
                         <div class="w-2.5 h-2.5 rounded-md bg-forest-200 border border-forest-300"></div>
                         <span>우리반 수업 시간</span>
                     </div>
                 </div>
                 <div class="flex-1 p-2.5 overflow-hidden flex flex-col">
                     <div class="w-full h-full flex flex-col">
-                        <div class="grid grid-cols-6 gap-1.5 mb-1.5 font-bold text-center text-xs shrink-0 font-mono">
+                        <div class="grid grid-cols-6 gap-1.5 mb-1.5 font-bold text-center text-xs shrink-0">
                             <div class="text-ink-faint py-1">교시</div>
                             <div class="text-ink-soft py-1 rounded-lg bg-forest-50">월</div>
                             <div class="text-ink-soft py-1 rounded-lg bg-forest-50">화</div>
@@ -312,66 +290,60 @@
             { id: "2204", name: "김영서" }, { id: "2205", name: "박건우" }, { id: "2206", name: "박재민" },
             { id: "2207", name: "손희수" }, { id: "2208", name: "신동욱" }, { id: "2209", name: "신정우" },
             { id: "2210", name: "안태건" }, { id: "2211", name: "유시은" }, { id: "2212", name: "윤현수" },
-            { id: "2213", name: "천안남자이종석" }, { id: "2214", name: "장성혁" }, { id: "2215", name: "전성윤" },
+            { id: "2213", name: "이종석" }, { id: "2214", name: "장성혁" }, { id: "2215", name: "전성윤" },
             { id: "2216", name: "조강익" }, { id: "2217", name: "지승민" }, { id: "2218", name: "진건오" },
             { id: "2219", name: "홍준명" }
-        ];
-        const AVATAR_TONES = [
-            { bg: "bg-forest-600", text: "text-white" },
-            { bg: "bg-amber-400", text: "text-forest-900" },
-            { bg: "bg-forest-200", text: "text-forest-800" },
-            { bg: "bg-amber-100", text: "text-amber-700" }
         ];
 
         // --- Data Definitions ---
         const electivesData = {
             A: {
                 title: "선택과목 A",
-                names: ["매체 의사소통", "기하", "사회와 문화", "한국지리 탐구", "물질과 에너지", "생명과학", "역학과 에너지", "심리", "인간과 철학"],
-                teachers: ["황인해T", "김진아T", "김형석T", "지리온", "전영진T", "박성미T", "유현영T", "김혜선 수녀님", "김동해 신부님"],
-                rooms: ["국어교과실", "2-5", "1-3", "5층 상상이룸공작실", "화학 실험실", "3-5", "2-8", "J302", "J301"]
+                names: ["주제탐구독서", "인공지능수학", "사문", "현대사회와 윤리", "물리학", "화학", "인간과 철학"],
+                teachers: ["황인해T", "박동민T", "김형석T", "여현주T", "이윤숙T", "김보련T", "김동해 신부님"],
+                rooms: ["국어교과실", "수학교과실", "AI 창의융합정보실", "3-1", "물리학 실험실", "화학 실험실", "J301"]
             },
             B: {
                 title: "선택과목 B",
-                names: ["매체 의사소통", "기하", "동아시아 역사 기행", "법과 사회", "물질과 에너지", "역학과 에너지", "정보과학 1반", "정보과학 2반", "논술"],
-                teachers: ["황인해T", "김진아T", "정기엽T", "김형석T", "전영진T", "유현영T", "정보온", "정보온", "권민영T"],
-                rooms: ["국어교과실", "2-5", "사회교과실", "1-3", "화학 실험실", "2-8", "공동교육과정실", "컴퓨터실", "2-4"]
+                names: ["주제탐구독서", "세계시민과 지리", "물리학 1반", "물리학 2반", "화학", "일본어", "중국어", "논술", "심리"],
+                teachers: ["황인해T", "지리온", "유현영T", "이윤숙T", "김보련T", "박성훈T", "권민영T", "배오현T", "김혜선 수녀님"],
+                rooms: ["국어교과실", "공동교육과정실", "2-8", "물리학 실험실", "화학 실험실", "2-2", "2-4", "영어교과실", "1-3"]
             },
             C: {
                 title: "선택과목 C",
-                names: ["기하", "물질과 에너지", "역학과 에너지", "지구과학", "교육의 이해", "논술", "심리", "철학"],
-                teachers: ["김진아T", "전영진T", "유현영T", "류혜인T", "박성훈T", "권민영T", "김혜선 수녀님", "김동해 신부님"],
-                rooms: ["2-5", "화학 실험실", "2-8", "지구과학 실험실", "AI 창의융합정보실", "2-4", "J302", "J302"]
+                names: ["정치", "현대사회와 윤리", "화학", "생명과학", "지구과학", "프로그래밍", "교육의 이해"],
+                teachers: ["김형석T", "여현주T", "김보련T", "박성미T", "류혜인T", "정보온", "박성훈T"],
+                rooms: ["AI 창의융합정보실", "3-1", "화학 실험실", "3-5", "지구과학 실험실", "컴퓨터실", "2-2"]
             },
             D: {
                 title: "선택과목 D",
-                names: ["심화 영어", "기하", "법과 사회", "윤리와 사상", "물질과 에너지", "세포와 물질대사", "역학과 에너지", "중국어 회화", "논술", "심리"],
-                teachers: ["이정현T", "김진아T", "김형석T", "여현주T", "전영진T", "임영규T", "유현영T", "권민영T", "박성훈T", "김혜선 수녀님"],
-                rooms: ["2-6", "2-5", "1-3", "3-1", "화학 실험실", "생명과학 실험실", "2-8", "2-4", "AI 창의융합정보실", "J302"]
+                names: ["세계사", "물리학", "생명과학", "프로그래밍 1반", "프로그래밍 2반", "인간과 철학", "심리"],
+                teachers: ["정기엽T", "유현영T", "박성미T", "정보온", "정보온", "김동해 신부님", "김혜선 수녀님"],
+                rooms: ["사회교과실", "2-8", "3-5", "2-7", "컴퓨터실", "J301", "2-2"]
             },
             E: {
                 title: "선택과목 E",
-                names: ["독서 토론과 글쓰기", "기하", "사회와 문화", "윤리와 사상", "물질과 에너지", "세포와 물질대사", "역학과 에너지", "지구과학", "소프트웨어와 생활", "일본어 회화"],
-                teachers: ["황인해T", "김진아T", "김형석T", "여현주T", "전영진T", "임영규T", "유현영T", "류혜인T", "하미경T", "박성훈T"],
-                rooms: ["국어교과실", "2-5", "1-3", "3-1", "화학 실험실", "생명과학 실험실", "2-8", "지구과학 실험실", "AI 심포지엄", "AI 창의융합정보실"]
+                names: ["영어발표와 토론", "세계시민과 지리", "현대사회와 윤리", "물리학", "화학", "생명과학", "프로그래밍", "교육의 이해", "철학", "논술"],
+                teachers: ["배오현T", "지리온", "여현주T", "유현영T", "김보련T", "박성미T", "정보온", "김형석T", "김동해 신부님", "한종오T"],
+                rooms: ["영어교과실", "2-7", "3-1", "2-8", "화학 실험실", "3-5", "컴퓨터실", "AI 창의융합정보실", "J301", "3-6"]
             },
             M: {
                 title: "음/미",
-                names: ["음악 연주와 창작", "미술 창작"],
-                teachers: ["김현주T", "홍현숙T"],
+                names: ["음악", "미술"],
+                teachers: ["최수미T", "홍현숙T"],
                 rooms: ["음악실", "미술실"]
             }
         };
 
         const baseSchedule = [
-            [["문학","정윤지T","2-2","Base"],["","","","A"],["체육II","은현진T","마리아홀","Base"],["","","","B"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["창체(동아리)","-","-","Base"]],
-            [["","","","A"],["","","","E"],["체육II","은현진T","마리아홀","Base"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["","","","C"],["","","","D"]],
-            [["","","","M"],["미적분I","김선정T","2-3","Base"],["영어II","이지연T","2-1","Base"],["","","","C"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["공강","박성훈T","2-2","Base"]],
-            [["","","","D"],["","","","E"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["","","","A"],["","","","M"],["","","","C"]],
-            [["","","","E"],["문학","정윤지T","2-2","Base"],["","","","D"],["영어II","이지연T","2-1","Base"],["미적분I","김선정T","2-3","Base"],["창체","-","-","Base"],["창체","-","-","Base"]]
+            [["체육I","강길재T","마리아홀","Base"],["독서와 작문","한다솜T","2-6","Base"],["대수","장경희T","2-3","Base"],["","","","C"],["","","","B"],["","","","B"],["창체(동아리)","-","-","Base"]],
+            [["","","","D"],["","","","D"],["","","","M"],["","","","A"],["영어I","이지연T","2-1","Base"],["대수","장경희T","2-3","Base"],["독서와 작문","이수환T","공동교육과정실","Base"]],
+            [["","","","C"],["","","","C"],["대수","장경희T","2-3","Base"],["영어I","김영미T","2-7","Base"],["독서와 작문","한다솜T","2-6","Base"],["","","","A"],["공강","권민영T","-","Base"]],
+            [["","","","E"],["","","","E"],["체육I","은현진T","마리아홀","Base"],["","","","B"],["","","","D"],["","","","A"],["영어I","김영미T","2-7","Base"]],
+            [["영어I","이지연T","2-1","Base"],["대수","장경희T","2-3","Base"],["","","","M"],["","","","E"],["독서와 작문","이수환T","2-7","Base"],["창체","-","-","Base"],["창체","-","-","Base"]]
         ];
 
-        const ourClassHighlights = { 0:[0,2,4,5], 1:[2,3,4], 2:[0,1,2,4], 3:[2,5], 4:[1,3,4] };
+        const ourClassHighlights = { 0:[3,4,5], 1:[0], 2:[0,1], 3:[2,3,4], 4:[2] };
 
         const timeSchedule = [
             {period:1,start:"08:40",end:"09:30"},{period:2,start:"09:40",end:"10:30"},
@@ -384,7 +356,6 @@
         let userChoices = {};
         let generatedTimetable = [];
         let clockInterval;
-        let selectedRosterId = null;
         const STORAGE_KEY = "nsdg22_student_id";
 
         const showView = (viewId) => {
@@ -397,49 +368,21 @@
             document.getElementById('loading').classList.toggle('hide', !show);
         };
 
-        // --- Roster / Login ---
-        const renderRosterGrid = (filter = "") => {
-            const grid = document.getElementById('roster-grid');
-            const empty = document.getElementById('roster-empty');
-            grid.innerHTML = '';
-            const q = filter.trim().toLowerCase();
-            const filtered = roster.filter(s => !q || s.id.includes(q) || s.name.toLowerCase().includes(q));
-            empty.classList.toggle('hide', filtered.length > 0);
-
-            filtered.forEach((s) => {
-                const idx = roster.indexOf(s);
-                const tone = AVATAR_TONES[idx % AVATAR_TONES.length];
-                const isSelected = s.id === selectedRosterId;
-                const card = document.createElement('button');
-                card.type = 'button';
-                card.dataset.id = s.id;
-                card.className = `id-card relative flex flex-col items-center gap-2 bg-white border-2 rounded-2xl py-4 px-2 ${isSelected ? 'selected' : 'border-forest-100'}`;
-                card.innerHTML = `
-                    ${isSelected ? '<div class="badge-check"><i class="fas fa-check"></i></div>' : ''}
-                    <div class="w-10 h-10 rounded-full ${tone.bg} ${tone.text} flex items-center justify-center font-display font-semibold text-base">${s.name.charAt(0)}</div>
-                    <div class="text-sm font-bold text-ink font-display">${s.name}</div>
-                    <div class="text-[10px] text-ink-faint font-mono tracking-wider">${s.id}</div>
-                `;
-                card.addEventListener('click', () => {
-                    selectedRosterId = s.id;
-                    renderRosterGrid(document.getElementById('roster-search').value);
-                    updateSelectionStatus();
-                });
-                grid.appendChild(card);
+        // --- Login (학번 + 이름 직접 입력) ---
+        const showLoginError = (msg) => {
+            const err = document.getElementById('login-error');
+            err.textContent = msg;
+            err.classList.remove('hide');
+            [document.getElementById('input-student-id'), document.getElementById('input-student-name')].forEach(el => {
+                el.classList.add('error');
+                el.parentElement.parentElement.classList.add('shake');
+                setTimeout(() => el.parentElement.parentElement.classList.remove('shake'), 350);
             });
         };
-
-        const updateSelectionStatus = () => {
-            const statusEl = document.getElementById('selection-status');
-            const btn = document.getElementById('btn-confirm-login');
-            if (selectedRosterId) {
-                const s = roster.find(r => r.id === selectedRosterId);
-                statusEl.innerHTML = `<span class="text-forest-700 font-bold">${s.name}</span> (${s.id}) 선택됨`;
-                btn.disabled = false;
-            } else {
-                statusEl.textContent = '아직 선택하지 않았어요';
-                btn.disabled = true;
-            }
+        const clearLoginError = () => {
+            document.getElementById('login-error').classList.add('hide');
+            document.getElementById('input-student-id').classList.remove('error');
+            document.getElementById('input-student-name').classList.remove('error');
         };
 
         const startAsStudent = async (studentId) => {
@@ -465,7 +408,7 @@
                     showView('dashboard-view');
                 } else {
                     document.getElementById('btn-setup-cancel').classList.add('hide');
-                    document.getElementById('setup-subtitle').textContent = `${s.name} (${s.id}) 님, 처음이시네요!`;
+                    document.getElementById('setup-subtitle').textContent = `${s.name} (${s.id})님, 처음이시네요! 선택과목을 골라주세요.`;
                     buildSetupForm();
                     showView('setup-view');
                 }
@@ -512,6 +455,7 @@
         const loadSetupDataToForm = () => {
             Object.keys(electivesData).forEach(key => {
                 const select = document.getElementById(`select-${key}`);
+                if (!select) return;
                 if (userChoices[key] !== undefined) select.value = userChoices[key];
                 else select.value = "";
             });
@@ -547,15 +491,15 @@
             };
             const aName = getChoiceName('A'), bName = getChoiceName('B'), cName = getChoiceName('C');
             const dName = getChoiceName('D'), eName = getChoiceName('E');
-            if (aName === "철학") applyOverride(0, 1, "김동해 신부님", "J301");
-     	if (aName === "심리") applyOverride(1, 0, "박성훈T", "AI 창의융합정보실");
-if (cName === "논술") applyOverride(2, 3, "권민영T", "2-4");
-            if (cName === "심리") applyOverride(2, 3, "황인해T", "국어교과실");
-            if (bName === "논술") applyOverride(2, 5, "권민영T", "2-4");
-            if (cName === "철학") applyOverride(3, 6, "양정은T", "도서관");
-            if (cName === "교육") applyOverride(1, 5, "박성훈T", "AI 창의융합정보실");
-            if (dName === "논술") applyOverride(1, 6, "김동해 신부님", "J301");
-            if (dName === "심리") applyOverride(4, 2, "김동해 신부님", "J301");
+            if (aName === "인간과 철학") applyOverride(2, 5, "권민영T", "보건교육실");
+            if (bName === "논술") applyOverride(0, 5, "전민지T", "AI 인텔리랩");
+            if (bName === "심리") applyOverride(0, 4, "양정은T", "1층 도서관");
+            if (cName === "교육의 이해") applyOverride(2, 0, "박성훈T", "2-2");
+            if (dName === "인간과 철학") applyOverride(1, 0, "권민영T", "보건교육실");
+            if (dName === "심리") applyOverride(1, 0, "박성훈T", "2-2");
+            if (eName === "교육의 이해") applyOverride(3, 0, "전민지T", "AI 인텔리랩");
+            if (eName === "인간과 철학") applyOverride(3, 0, "김동해 신부님", "J301");
+            if (eName === "논술") applyOverride(3, 1, "양정은T", "1층 도서관");
             generatedTimetable = schedule;
         };
 
@@ -570,9 +514,9 @@ if (cName === "논술") applyOverride(2, 3, "권민영T", "2-4");
             for (let p = 0; p < 7; p++) {
                 const timeStr = `${timeSchedule[p].start}~${timeSchedule[p].end}`;
                 tbody.insertAdjacentHTML('beforeend', `
-                    <div class="flex flex-col items-center justify-center bg-paper rounded-xl p-1 font-bold text-ink-faint text-xs border border-forest-100 min-h-0 font-mono">
-                        <div class="text-forest-600 text-[11px]">${p + 1}</div>
-                        <div class="text-[8px] leading-tight text-center font-medium text-ink-faint mt-0.5">${timeStr}</div>
+                    <div class="flex flex-col items-center justify-center bg-paper rounded-xl p-1 font-bold text-ink-faint text-xs border border-forest-100 min-h-0">
+                        <div class="text-forest-600 text-[11px] font-mono">${p + 1}</div>
+                        <div class="text-[8px] leading-tight text-center font-medium text-ink-faint mt-0.5 font-mono">${timeStr}</div>
                     </div>
                 `);
 
@@ -729,16 +673,22 @@ if (cName === "논술") applyOverride(2, 3, "권민영T", "2-4");
         };
 
         const initApp = () => {
-            renderRosterGrid();
-            updateSelectionStatus();
             initNoticeEditor();
 
-            document.getElementById('roster-search').addEventListener('input', (e) => {
-                renderRosterGrid(e.target.value);
+            document.getElementById('login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                clearLoginError();
+                const idVal = document.getElementById('input-student-id').value.trim();
+                const nameVal = document.getElementById('input-student-name').value.trim();
+                const match = roster.find(r => r.id === idVal && r.name === nameVal);
+                if (!match) {
+                    showLoginError('학번과 이름이 명단과 일치하지 않아요. 다시 확인해주세요.');
+                    return;
+                }
+                startAsStudent(match.id);
             });
-
-            document.getElementById('btn-confirm-login').addEventListener('click', () => {
-                if (selectedRosterId) startAsStudent(selectedRosterId);
+            [document.getElementById('input-student-id'), document.getElementById('input-student-name')].forEach(el => {
+                el.addEventListener('input', clearLoginError);
             });
 
             document.getElementById('setup-form').addEventListener('submit', async (e) => {
@@ -767,8 +717,10 @@ if (cName === "논술") applyOverride(2, 3, "권민영T", "2-4");
             });
 
             document.getElementById('btn-re-setup').addEventListener('click', () => {
+                if (!currentStudent) return;
                 document.getElementById('btn-setup-cancel').classList.remove('hide');
-                document.getElementById('setup-subtitle').textContent = currentStudent ? `${currentStudent.name} (${currentStudent.id})` : '';
+                document.getElementById('setup-subtitle').textContent = `${currentStudent.name} (${currentStudent.id})`;
+                buildSetupForm();
                 loadSetupDataToForm();
                 showView('setup-view');
             });
@@ -779,11 +731,10 @@ if (cName === "논술") applyOverride(2, 3, "권민영T", "2-4");
             document.getElementById('btn-logout').addEventListener('click', () => {
                 localStorage.removeItem(STORAGE_KEY);
                 currentStudent = null;
-                selectedRosterId = null;
                 if (clockInterval) clearInterval(clockInterval);
                 if (unsubscribeNotice) unsubscribeNotice();
-                renderRosterGrid();
-                updateSelectionStatus();
+                document.getElementById('login-form').reset();
+                clearLoginError();
                 showView('login-view');
             });
 
@@ -792,6 +743,7 @@ if (cName === "논술") applyOverride(2, 3, "권민영T", "2-4");
                     try { await signInAnonymously(auth); } catch (e) { console.error("익명 로그인 실패:", e); }
                     return;
                 }
+                if (currentStudent) return; // 이미 진행 중
                 const savedId = localStorage.getItem(STORAGE_KEY);
                 if (savedId && roster.some(r => r.id === savedId)) {
                     startAsStudent(savedId);
