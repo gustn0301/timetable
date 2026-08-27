@@ -51,7 +51,7 @@
         .pulse-current { animation: pulse-soft 2s ease-in-out infinite; }
 
         .timetable-cell { transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
-        .timetable-cell:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -8px rgba(21,27,24,0.16); z-index: 10; }
+        .timetable-cell:hover { transform: translateY(-1px); box-shadow: 0 6px 14px -6px rgba(21,27,24,0.16); z-index: 10; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -115,11 +115,11 @@
                 <form id="login-form" class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-ink-soft mb-1.5">학번</label>
-                        <input id="input-student-id" type="text" inputmode="numeric" maxlength="4" placeholder="예) 2201" class="input-field font-mono tracking-wider">
+                        <input id="input-student-id" type="text" inputmode="numeric" maxlength="4" placeholder="" class="input-field font-mono tracking-wider">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-ink-soft mb-1.5">이름</label>
-                        <input id="input-student-name" type="text" placeholder="예) 홍길동" class="input-field">
+                        <input id="input-student-name" type="text" placeholder="" class="input-field">
                     </div>
                     <p id="login-error" class="text-xs text-red-500 font-medium hide">학번과 이름이 명단과 일치하지 않아요. 다시 확인해주세요.</p>
                     <button type="submit" class="w-full bg-forest-600 hover:bg-forest-700 text-white font-bold text-sm py-3.5 rounded-xl transition shadow-sm mt-2">
@@ -159,103 +159,105 @@
 
     <!-- 3. Main Dashboard -->
     <div id="dashboard-view" class="flex-1 flex flex-col h-full bg-paper hide fade-in">
-        <header class="bg-white/90 backdrop-blur-lg border-b border-forest-100 px-6 py-3 flex justify-between items-center shrink-0 sticky top-0 z-30">
-            <h1 class="text-lg font-extrabold text-ink flex items-center gap-2.5 tracking-tight">
-                <div class="w-8 h-8 bg-forest-600 rounded-lg flex items-center justify-center shadow-sm">
-                    <i class="fas fa-book-open text-white text-xs"></i>
+        <header class="bg-white/90 backdrop-blur-lg border-b border-forest-100 px-6 py-2.5 flex justify-between items-center shrink-0 sticky top-0 z-30">
+            <h1 class="text-base font-extrabold text-ink flex items-center gap-2 tracking-tight">
+                <div class="w-7 h-7 bg-forest-600 rounded-lg flex items-center justify-center shadow-sm">
+                    <i class="fas fa-book-open text-white text-[11px]"></i>
                 </div>
-                실시간 시간표 <span class="text-ink-faint text-sm font-medium">· 2학년 2반</span>
+                실시간 시간표 <span class="text-ink-faint text-xs font-medium">· 2학년 2반</span>
             </h1>
-            <div class="flex items-center gap-2.5">
-                <span id="user-name-display" class="text-sm font-bold text-forest-700 bg-forest-50 px-3 py-1.5 rounded-lg"></span>
-                <button id="btn-re-setup" class="text-sm bg-forest-50 hover:bg-forest-100 text-forest-700 py-2 px-4 rounded-xl transition font-bold">
-                    <i class="fas fa-cog text-xs mr-1.5"></i>과목 변경
+            <div class="flex items-center gap-2">
+                <span id="user-name-display" class="text-xs font-bold text-forest-700 bg-forest-50 px-2.5 py-1 rounded-lg"></span>
+                <button id="btn-re-setup" class="text-xs bg-forest-50 hover:bg-forest-100 text-forest-700 py-1.5 px-3 rounded-xl transition font-bold">
+                    <i class="fas fa-cog text-[10px] mr-1"></i>과목 변경
                 </button>
-                <button id="btn-logout" class="text-sm text-ink-faint hover:text-red-500 py-2 px-2 transition">
+                <button id="btn-logout" class="text-sm text-ink-faint hover:text-red-500 py-1.5 px-1.5 transition">
                     <i class="fas fa-right-from-bracket"></i>
                 </button>
             </div>
         </header>
 
-        <div class="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden p-2.5 md:p-3 gap-2.5 md:gap-3">
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden p-2 gap-2">
 
-            <div class="w-full lg:w-80 flex flex-col gap-3 shrink-0">
+            <div class="w-full md:w-64 flex flex-col gap-2 shrink-0">
 
                 <!-- 지금 시각 / 다음 수업 -->
-                <div class="relative bg-forest-800 rounded-2xl p-4 md:p-6 text-white shadow-xl shadow-forest-900/20 overflow-hidden">
-                    <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/5 rounded-full"></div>
-                    <div id="current-date" class="text-forest-200 text-xs font-semibold mb-1 tracking-wide"></div>
-                    <div id="current-time" class="text-3xl md:text-4xl font-bold tracking-wider mb-3 md:mb-5 tabular font-mono">--:--:--</div>
+                <div class="relative bg-forest-800 rounded-xl p-3.5 text-white shadow-lg shadow-forest-900/20 overflow-hidden shrink-0">
+                    <div class="absolute -right-8 -top-8 w-28 h-28 bg-white/5 rounded-full"></div>
+                    <div class="flex items-baseline justify-between">
+                        <div id="current-date" class="text-forest-200 text-[10px] font-semibold tracking-wide"></div>
+                        <div id="current-time" class="text-xl font-bold tracking-wider tabular font-mono">--:--:--</div>
+                    </div>
 
-                    <div class="border-t border-white/15 pt-4">
-                        <div class="text-[10px] text-amber-300 mb-2 uppercase tracking-widest font-bold flex items-center gap-1.5">
+                    <div class="border-t border-white/15 mt-2 pt-2">
+                        <div class="text-[9px] text-amber-300 mb-1 uppercase tracking-widest font-bold flex items-center gap-1.5">
                             <div class="w-1.5 h-1.5 bg-amber-400 rounded-full"></div>
                             다음 수업 안내
                         </div>
                         <div id="next-class-info">
-                            <div class="text-base font-bold truncate">대기 중...</div>
-                            <div class="text-xs opacity-80 mt-1.5 flex items-center gap-2"><i class="fas fa-chalkboard-teacher text-[10px] w-3 text-forest-300"></i> <span>-</span></div>
-                            <div class="text-xs opacity-80 flex items-center gap-2"><i class="fas fa-map-marker-alt text-[10px] w-3 text-forest-300"></i> <span>-</span></div>
+                            <div class="text-sm font-bold truncate">대기 중...</div>
+                            <div class="text-[11px] opacity-80 mt-1 flex items-center gap-1.5"><i class="fas fa-chalkboard-teacher text-[9px] w-3 text-forest-300"></i> <span>-</span></div>
+                            <div class="text-[11px] opacity-80 flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-[9px] w-3 text-forest-300"></i> <span>-</span></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 flex-1 flex flex-col overflow-hidden min-h-[150px]">
-                    <div class="px-4 py-3 flex justify-between items-center shrink-0 border-b border-forest-50">
-                        <h3 class="font-bold text-ink text-sm flex items-center gap-2">
-                            <div class="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-bullhorn text-amber-600 text-[10px]"></i>
+                <div class="bg-white rounded-xl shadow-sm border border-forest-100 flex-1 flex flex-col overflow-hidden min-h-[80px]">
+                    <div class="px-3 py-2 flex justify-between items-center shrink-0 border-b border-forest-50">
+                        <h3 class="font-bold text-ink text-xs flex items-center gap-1.5">
+                            <div class="w-5 h-5 bg-amber-100 rounded-md flex items-center justify-center">
+                                <i class="fas fa-bullhorn text-amber-600 text-[9px]"></i>
                             </div>
                             공지사항
                         </h3>
-                        <button id="btn-edit-notice" class="text-ink-faint hover:text-forest-600 text-xs transition font-medium">
-                            <i class="fas fa-lock text-[10px] mr-1"></i>관리자
+                        <button id="btn-edit-notice" class="text-ink-faint hover:text-forest-600 text-[11px] transition font-medium">
+                            <i class="fas fa-lock text-[9px] mr-1"></i>관리자
                         </button>
                     </div>
-                    <div class="p-4 flex-1 overflow-y-auto">
-                        <div id="notice-display" class="text-ink-soft whitespace-pre-wrap text-xs leading-relaxed">공지사항을 불러오는 중...</div>
+                    <div class="p-3 flex-1 overflow-y-auto">
+                        <div id="notice-display" class="text-ink-soft whitespace-pre-wrap text-[11px] leading-relaxed">공지사항을 불러오는 중...</div>
                         <div id="notice-edit-area" class="hide flex flex-col h-full gap-2">
-                            <textarea id="notice-textarea" class="w-full flex-1 border border-forest-100 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-forest-500/20 focus:border-forest-400 resize-none transition"></textarea>
+                            <textarea id="notice-textarea" class="w-full flex-1 border border-forest-100 rounded-lg p-2 text-[11px] focus:outline-none focus:ring-2 focus:ring-forest-500/20 focus:border-forest-400 resize-none transition"></textarea>
                             <div class="flex justify-end gap-2 shrink-0">
-                                <button id="btn-cancel-notice" class="px-3 py-1.5 bg-forest-50 text-forest-700 rounded-lg text-xs hover:bg-forest-100 transition font-medium">취소</button>
-                                <button id="btn-save-notice" class="px-3 py-1.5 bg-forest-600 text-white rounded-lg text-xs hover:bg-forest-700 transition font-medium">저장</button>
+                                <button id="btn-cancel-notice" class="px-2.5 py-1 bg-forest-50 text-forest-700 rounded-lg text-[11px] hover:bg-forest-100 transition font-medium">취소</button>
+                                <button id="btn-save-notice" class="px-2.5 py-1 bg-forest-600 text-white rounded-lg text-[11px] hover:bg-forest-700 transition font-medium">저장</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-auto">
+                <div class="shrink-0">
                     <a href="https://docs.google.com/spreadsheets/d/15xbh3ieenvGWYoMegcUbWbgfhIHhjli6pBSvqdMeKgc/edit?gid=0#gid=0" target="_blank"
-                       class="block bg-amber-50 border border-amber-200/80 hover:border-amber-300 hover:shadow-md transition-all duration-300 rounded-2xl p-4 text-center group">
-                        <div class="text-amber-700 text-sm font-bold flex items-center justify-center gap-2">
-                            <i class="fas fa-external-link-alt text-xs opacity-60 group-hover:opacity-100 transition"></i>
+                       class="block bg-amber-50 border border-amber-200/80 hover:border-amber-300 hover:shadow-md transition-all duration-300 rounded-xl p-2.5 text-center group">
+                        <div class="text-amber-700 text-xs font-bold flex items-center justify-center gap-1.5">
+                            <i class="fas fa-external-link-alt text-[10px] opacity-60 group-hover:opacity-100 transition"></i>
                             시험 시간표
                         </div>
-                        <div class="text-[10px] text-amber-500 mt-1 font-mono">0630-0703</div>
+                        <div class="text-[9px] text-amber-500 mt-0.5 font-mono">0630-0703</div>
                     </a>
                 </div>
             </div>
 
-            <div class="flex-1 bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 flex flex-col overflow-hidden">
-                <div class="p-2.5 md:p-3 border-b border-forest-50 flex justify-between items-center shrink-0">
-                    <h2 class="font-extrabold text-ink text-base tracking-tight flex items-center gap-2">
-                        <i class="fas fa-th text-forest-500 text-sm"></i>
+            <div class="flex-1 bg-white rounded-xl shadow-sm border border-forest-100 flex flex-col overflow-hidden">
+                <div class="p-2 border-b border-forest-50 flex justify-between items-center shrink-0">
+                    <h2 class="font-extrabold text-ink text-sm tracking-tight flex items-center gap-1.5">
+                        <i class="fas fa-th text-forest-500 text-xs"></i>
                         이번 주 시간표
                     </h2>
-                    <div class="text-[10px] md:text-xs text-forest-700 flex items-center gap-2 bg-forest-50 px-3 py-1.5 rounded-lg font-semibold">
-                        <div class="w-2.5 h-2.5 rounded-md bg-forest-200 border border-forest-300"></div>
+                    <div class="text-[9px] text-forest-700 flex items-center gap-1.5 bg-forest-50 px-2 py-1 rounded-md font-semibold">
+                        <div class="w-2 h-2 rounded bg-forest-200 border border-forest-300"></div>
                         <span>우리반 수업 시간</span>
                     </div>
                 </div>
                 <div class="flex-1 p-1.5 overflow-hidden flex flex-col">
                     <div class="w-full h-full flex flex-col">
-                        <div class="grid grid-cols-6 gap-1 mb-1 font-bold text-center text-[11px] shrink-0">
-                            <div class="text-ink-faint py-1">교시</div>
-                            <div class="text-ink-soft py-1 rounded-lg bg-forest-50">월</div>
-                            <div class="text-ink-soft py-1 rounded-lg bg-forest-50">화</div>
-                            <div class="text-ink-soft py-1 rounded-lg bg-forest-50">수</div>
-                            <div class="text-ink-soft py-1 rounded-lg bg-forest-50">목</div>
-                            <div class="text-ink-soft py-1 rounded-lg bg-forest-50">금</div>
+                        <div class="grid grid-cols-6 gap-1 mb-1 font-bold text-center text-[10px] shrink-0">
+                            <div class="text-ink-faint py-0.5">교시</div>
+                            <div class="text-ink-soft py-0.5 rounded-md bg-forest-50">월</div>
+                            <div class="text-ink-soft py-0.5 rounded-md bg-forest-50">화</div>
+                            <div class="text-ink-soft py-0.5 rounded-md bg-forest-50">수</div>
+                            <div class="text-ink-soft py-0.5 rounded-md bg-forest-50">목</div>
+                            <div class="text-ink-soft py-0.5 rounded-md bg-forest-50">금</div>
                         </div>
                         <div id="timetable-body" class="flex-1 grid grid-cols-6 grid-rows-7 gap-1 min-h-0"></div>
                     </div>
@@ -295,55 +297,55 @@
             { id: "2219", name: "홍준명" }
         ];
 
-        // --- Data Definitions ---
+        // --- Data Definitions (2학기) ---
         const electivesData = {
             A: {
                 title: "선택과목 A",
-                names: ["주제탐구독서", "인공지능수학", "사문", "현대사회와 윤리", "물리학", "화학", "인간과 철학"],
-                teachers: ["황인해T", "박동민T", "김형석T", "여현주T", "이윤숙T", "김보련T", "김동해 신부님"],
-                rooms: ["국어교과실", "수학교과실", "AI 창의융합정보실", "3-1", "물리학 실험실", "화학 실험실", "J301"]
+                names: ["매체 의사소통", "기하", "사회와 문화", "한국지리 탐구", "물질과 에너지", "생명과학", "역학과 에너지", "심리", "인간과 철학"],
+                teachers: ["황인해T", "김진아T", "김형석T", "지리온", "전영진T", "박성미T", "유현영T", "김혜선 수녀님", "김동해 신부님"],
+                rooms: ["국어교과실", "2-5", "1-3", "5층 상상이룸공작실", "화학 실험실", "3-5", "2-8", "J302", "J301"]
             },
             B: {
                 title: "선택과목 B",
-                names: ["주제탐구독서", "세계시민과 지리", "물리학 1반", "물리학 2반", "화학", "일본어", "중국어", "논술", "심리"],
-                teachers: ["황인해T", "지리온", "유현영T", "이윤숙T", "김보련T", "박성훈T", "권민영T", "배오현T", "김혜선 수녀님"],
-                rooms: ["국어교과실", "공동교육과정실", "2-8", "물리학 실험실", "화학 실험실", "2-2", "2-4", "영어교과실", "1-3"]
+                names: ["매체 의사소통", "기하", "동아시아 역사 기행", "법과 사회", "물질과 에너지", "역학과 에너지", "정보과학 1반", "정보과학 2반", "논술"],
+                teachers: ["황인해T", "김진아T", "정기엽T", "김형석T", "전영진T", "유현영T", "정보온", "정보온", "권민영T"],
+                rooms: ["국어교과실", "2-5", "사회교과실", "1-3", "화학 실험실", "2-8", "공동교육과정실", "컴퓨터실", "2-4"]
             },
             C: {
                 title: "선택과목 C",
-                names: ["정치", "현대사회와 윤리", "화학", "생명과학", "지구과학", "프로그래밍", "교육의 이해"],
-                teachers: ["김형석T", "여현주T", "김보련T", "박성미T", "류혜인T", "정보온", "박성훈T"],
-                rooms: ["AI 창의융합정보실", "3-1", "화학 실험실", "3-5", "지구과학 실험실", "컴퓨터실", "2-2"]
+                names: ["기하", "물질과 에너지", "역학과 에너지", "지구과학", "교육의 이해", "논술", "심리", "철학"],
+                teachers: ["김진아T", "전영진T", "유현영T", "류혜인T", "박성훈T", "권민영T", "김혜선 수녀님", "김동해 신부님"],
+                rooms: ["2-5", "화학 실험실", "2-8", "지구과학 실험실", "AI 창의융합정보실", "2-4", "J302", "J302"]
             },
             D: {
                 title: "선택과목 D",
-                names: ["세계사", "물리학", "생명과학", "프로그래밍 1반", "프로그래밍 2반", "인간과 철학", "심리"],
-                teachers: ["정기엽T", "유현영T", "박성미T", "정보온", "정보온", "김동해 신부님", "김혜선 수녀님"],
-                rooms: ["사회교과실", "2-8", "3-5", "2-7", "컴퓨터실", "J301", "2-2"]
+                names: ["심화 영어", "기하", "법과 사회", "윤리와 사상", "물질과 에너지", "세포와 물질대사", "역학과 에너지", "중국어 회화", "논술", "심리"],
+                teachers: ["이정현T", "김진아T", "김형석T", "여현주T", "전영진T", "임영규T", "유현영T", "권민영T", "박성훈T", "김혜선 수녀님"],
+                rooms: ["2-6", "2-5", "1-3", "3-1", "화학 실험실", "생명과학 실험실", "2-8", "2-4", "AI 창의융합정보실", "J302"]
             },
             E: {
                 title: "선택과목 E",
-                names: ["영어발표와 토론", "세계시민과 지리", "현대사회와 윤리", "물리학", "화학", "생명과학", "프로그래밍", "교육의 이해", "철학", "논술"],
-                teachers: ["배오현T", "지리온", "여현주T", "유현영T", "김보련T", "박성미T", "정보온", "김형석T", "김동해 신부님", "한종오T"],
-                rooms: ["영어교과실", "2-7", "3-1", "2-8", "화학 실험실", "3-5", "컴퓨터실", "AI 창의융합정보실", "J301", "3-6"]
+                names: ["독서 토론과 글쓰기", "기하", "사회와 문화", "윤리와 사상", "물질과 에너지", "세포와 물질대사", "역학과 에너지", "지구시스템과학", "소프트웨어와 생활", "일본어 회화"],
+                teachers: ["황인해T", "김진아T", "김형석T", "여현주T", "전영진T", "임영규T", "유현영T", "류혜인T", "하미경T", "박성훈T"],
+                rooms: ["국어교과실", "2-5", "1-3", "3-1", "화학 실험실", "생명과학 실험실", "2-8", "지구과학 실험실", "AI 심포지엄", "AI 창의융합정보실"]
             },
             M: {
                 title: "음/미",
-                names: ["음악", "미술"],
-                teachers: ["최수미T", "홍현숙T"],
+                names: ["음악 연주와 창작", "미술 창작"],
+                teachers: ["김현주T", "홍현숙T"],
                 rooms: ["음악실", "미술실"]
             }
         };
 
         const baseSchedule = [
-            [["체육I","강길재T","마리아홀","Base"],["독서와 작문","한다솜T","2-6","Base"],["대수","장경희T","2-3","Base"],["","","","C"],["","","","B"],["","","","B"],["창체(동아리)","-","-","Base"]],
-            [["","","","D"],["","","","D"],["","","","M"],["","","","A"],["영어I","이지연T","2-1","Base"],["대수","장경희T","2-3","Base"],["독서와 작문","이수환T","공동교육과정실","Base"]],
-            [["","","","C"],["","","","C"],["대수","장경희T","2-3","Base"],["영어I","김영미T","2-7","Base"],["독서와 작문","한다솜T","2-6","Base"],["","","","A"],["공강","권민영T","-","Base"]],
-            [["","","","E"],["","","","E"],["체육I","은현진T","마리아홀","Base"],["","","","B"],["","","","D"],["","","","A"],["영어I","김영미T","2-7","Base"]],
-            [["영어I","이지연T","2-1","Base"],["대수","장경희T","2-3","Base"],["","","","M"],["","","","E"],["독서와 작문","이수환T","2-7","Base"],["창체","-","-","Base"],["창체","-","-","Base"]]
+            [["문학","정윤지T","2-2","Base"],["","","","A"],["체육II","은현진T","마리아홀","Base"],["","","","B"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["창체(동아리)","-","-","Base"]],
+            [["","","","A"],["","","","E"],["체육II","은현진T","마리아홀","Base"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["","","","C"],["","","","D"]],
+            [["","","","M"],["미적분I","김선정T","2-3","Base"],["영어II","이지연T","2-1","Base"],["","","","C"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["공강","박성훈T","2-2","Base"]],
+            [["","","","D"],["","","","E"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["","","","A"],["","","","M"],["","","","C"]],
+            [["","","","E"],["문학","정윤지T","2-2","Base"],["","","","D"],["영어II","이지연T","2-1","Base"],["미적분I","김선정T","2-3","Base"],["창체","-","-","Base"],["창체","-","-","Base"]]
         ];
 
-        const ourClassHighlights = { 0:[3,4,5], 1:[0], 2:[0,1], 3:[2,3,4], 4:[2] };
+        const ourClassHighlights = { 0:[0,2,4,5], 1:[2,3,4], 2:[0,1,2,4], 3:[2,5], 4:[1,3,4] };
 
         const timeSchedule = [
             {period:1,start:"08:40",end:"09:30"},{period:2,start:"09:40",end:"10:30"},
@@ -496,15 +498,15 @@
             };
             const aName = getChoiceName('A'), bName = getChoiceName('B'), cName = getChoiceName('C');
             const dName = getChoiceName('D'), eName = getChoiceName('E');
-            if (aName === "인간과 철학") applyOverride(2, 5, "권민영T", "보건교육실");
-            if (bName === "논술") applyOverride(0, 5, "전민지T", "AI 인텔리랩");
-            if (bName === "심리") applyOverride(0, 4, "양정은T", "1층 도서관");
-            if (cName === "교육의 이해") applyOverride(2, 0, "박성훈T", "2-2");
-            if (dName === "인간과 철학") applyOverride(1, 0, "권민영T", "보건교육실");
-            if (dName === "심리") applyOverride(1, 0, "박성훈T", "2-2");
-            if (eName === "교육의 이해") applyOverride(3, 0, "전민지T", "AI 인텔리랩");
-            if (eName === "인간과 철학") applyOverride(3, 0, "김동해 신부님", "J301");
-            if (eName === "논술") applyOverride(3, 1, "양정은T", "1층 도서관");
+            if (aName === "철학") applyOverride(0, 1, "김동해 신부님", "J301");
+            if (aName === "심리") applyOverride(1, 0, "박성훈T", "AI 창의융합정보실");
+            if (cName === "논술") applyOverride(2, 3, "권민영T", "2-4");
+            if (cName === "심리") applyOverride(2, 3, "황인해T", "국어교과실");
+            if (bName === "논술") applyOverride(2, 5, "권민영T", "2-4");
+            if (cName === "철학") applyOverride(3, 6, "양정은T", "도서관");
+            if (cName === "교육의 이해") applyOverride(1, 5, "박성훈T", "AI 창의융합정보실");
+            if (dName === "논술") applyOverride(1, 6, "김동해 신부님", "J301");
+            if (dName === "심리") applyOverride(4, 2, "김동해 신부님", "J301");
             generatedTimetable = schedule;
         };
 
@@ -519,9 +521,9 @@
             for (let p = 0; p < 7; p++) {
                 const timeStr = `${timeSchedule[p].start}~${timeSchedule[p].end}`;
                 tbody.insertAdjacentHTML('beforeend', `
-                    <div class="flex flex-col items-center justify-center bg-paper rounded-xl p-1 font-bold text-ink-faint text-xs border border-forest-100 min-h-0">
-                        <div class="text-forest-600 text-[11px] font-mono">${p + 1}</div>
-                        <div class="text-[8px] leading-tight text-center font-medium text-ink-faint mt-0.5 font-mono">${timeStr}</div>
+                    <div class="flex flex-col items-center justify-center bg-paper rounded-lg p-0.5 font-bold text-ink-faint text-xs border border-forest-100 min-h-0">
+                        <div class="text-forest-600 text-[10px] font-mono">${p + 1}</div>
+                        <div class="text-[7px] leading-tight text-center font-medium text-ink-faint mt-0.5 font-mono">${timeStr}</div>
                     </div>
                 `);
 
@@ -551,13 +553,13 @@
 
                     let innerHtml = '';
                     if (cellData[0]) {
-                        const currentDot = isCurrent ? `<div class="absolute top-1 right-1 w-1.5 h-1.5 bg-amber-500 rounded-full"></div>` : '';
+                        const currentDot = isCurrent ? `<div class="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-amber-500 rounded-full"></div>` : '';
                         innerHtml = `
                             ${currentDot}
-                            <div class="font-bold text-[11px] ${textClass} truncate w-full text-center mb-0.5" title="${cellData[0]}">${cellData[0]}</div>
-                            <div class="flex justify-between items-center w-full px-0.5 mt-auto gap-1">
-                                <div class="text-[8px] text-ink-faint truncate font-medium">${cellData[1].replace('T','').replace(' 신부님','').replace(' 수녀님','')}</div>
-                                <div class="text-[8px] text-ink-faint truncate max-w-[55%]">${cellData[2]}</div>
+                            <div class="font-bold text-[10px] ${textClass} truncate w-full text-center leading-tight" title="${cellData[0]}">${cellData[0]}</div>
+                            <div class="flex justify-between items-center w-full px-0.5 gap-1">
+                                <div class="text-[7px] text-ink-faint truncate font-medium">${cellData[1].replace('T','').replace(' 신부님','').replace(' 수녀님','')}</div>
+                                <div class="text-[7px] text-ink-faint truncate max-w-[55%]">${cellData[2]}</div>
                             </div>
                         `;
                     } else {
@@ -565,7 +567,7 @@
                     }
 
                     tbody.insertAdjacentHTML('beforeend', `
-                        <div class="timetable-cell relative flex flex-col items-center justify-center rounded-lg border p-1 h-full min-h-[28px] ${bgClass} ${borderExtra}">
+                        <div class="timetable-cell relative flex flex-col items-center justify-center rounded-lg border p-0.5 h-full min-h-[26px] ${bgClass} ${borderExtra}">
                             ${innerHtml}
                         </div>
                     `);
@@ -625,10 +627,10 @@
                 const cellData = generatedTimetable[dayIdx][nextPeriodIdx];
                 if (cellData && cellData[0]) {
                     infoContainer.innerHTML = `
-                        <div class="text-[10px] text-amber-300 mb-1 font-medium">${nextPeriodIdx+1}교시 · ${statusText}</div>
-                        <div class="text-lg font-extrabold truncate tracking-tight">${cellData[0]}</div>
-                        <div class="text-xs opacity-80 mt-1.5 flex items-center gap-2"><i class="fas fa-chalkboard-teacher text-[10px] w-3 text-forest-300"></i> <span>${cellData[1]}</span></div>
-                        <div class="text-xs opacity-80 flex items-center gap-2"><i class="fas fa-map-marker-alt text-[10px] w-3 text-forest-300"></i> <span>${cellData[2]}</span></div>
+                        <div class="text-[9px] text-amber-300 mb-0.5 font-medium">${nextPeriodIdx+1}교시 · ${statusText}</div>
+                        <div class="text-sm font-extrabold truncate tracking-tight">${cellData[0]}</div>
+                        <div class="text-[11px] opacity-80 mt-1 flex items-center gap-1.5"><i class="fas fa-chalkboard-teacher text-[9px] w-3 text-forest-300"></i> <span>${cellData[1]}</span></div>
+                        <div class="text-[11px] opacity-80 flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-[9px] w-3 text-forest-300"></i> <span>${cellData[2]}</span></div>
                     `;
                 } else {
                     infoContainer.innerHTML = `<div class="text-sm font-bold mt-1 opacity-80">다음 시간표 정보 없음</div>`;
@@ -686,10 +688,6 @@
             const loginForm = document.getElementById('login-form');
             const idInput = document.getElementById('input-student-id');
             const nameInput = document.getElementById('input-student-name');
-
-            if (!loginForm || !idInput || !nameInput) {
-                console.error('로그인 폼 요소를 찾을 수 없습니다. HTML이 최신 버전인지 확인해주세요.', { loginForm, idInput, nameInput });
-            }
 
             if (loginForm) {
                 loginForm.addEventListener('submit', (e) => {
