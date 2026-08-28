@@ -179,10 +179,10 @@
 
         <div class="flex-1 flex flex-col lg:flex-row overflow-hidden p-2.5 gap-2.5 min-h-0">
 
-            <div class="w-full lg:w-72 flex flex-row lg:flex-col gap-2.5 shrink-0">
+            <div class="w-full lg:w-72 flex flex-col gap-2 shrink-0 lg:overflow-y-auto">
 
                 <!-- 지금 시각 / 다음 수업 -->
-                <div class="relative bg-forest-800 rounded-2xl p-4 text-white shadow-xl shadow-forest-900/20 overflow-hidden flex-1 lg:flex-none">
+                <div class="relative bg-forest-800 rounded-2xl p-4 text-white shadow-xl shadow-forest-900/20 overflow-hidden shrink-0">
                     <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/5 rounded-full"></div>
                     <div id="current-date" class="text-forest-200 text-xs font-semibold mb-1 tracking-wide"></div>
                     <div id="current-time" class="text-2xl lg:text-3xl font-bold tracking-wider mb-3 tabular font-mono">--:--:--</div>
@@ -200,7 +200,29 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 flex-1 lg:flex-1 flex flex-col overflow-hidden min-h-[100px] lg:min-h-[120px]">
+                <!-- 급식 알리미 -->
+                <div class="bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 shrink-0 overflow-hidden">
+                    <div class="px-2 py-1.5 flex items-center justify-between border-b border-forest-50 gap-1">
+                        <button id="meal-prev" type="button" class="w-6 h-6 shrink-0 flex items-center justify-center rounded-lg text-ink-faint hover:bg-forest-50 hover:text-forest-600 transition">
+                            <i class="fas fa-chevron-left text-[10px]"></i>
+                        </button>
+                        <h3 class="font-bold text-ink text-xs flex items-center gap-1.5 min-w-0">
+                            <i class="fas fa-utensils text-forest-600 text-[10px] shrink-0"></i>
+                            <span id="meal-title" class="truncate">불러오는 중...</span>
+                        </h3>
+                        <button id="meal-next" type="button" class="w-6 h-6 shrink-0 flex items-center justify-center rounded-lg text-ink-faint hover:bg-forest-50 hover:text-forest-600 transition">
+                            <i class="fas fa-chevron-right text-[10px]"></i>
+                        </button>
+                    </div>
+                    <div class="px-3 pt-1.5 flex justify-end">
+                        <span id="meal-calorie" class="text-[10px] text-ink-faint font-mono"></span>
+                    </div>
+                    <div class="px-3 pb-2.5 max-h-16 overflow-y-auto">
+                        <div id="meal-content" class="text-[10px] text-ink-soft leading-relaxed">불러오는 중...</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 flex-1 flex flex-col overflow-hidden min-h-[90px]">
                     <div class="px-4 py-2.5 flex justify-between items-center shrink-0 border-b border-forest-50">
                         <h3 class="font-bold text-ink text-sm flex items-center gap-2">
                             <div class="w-6 h-6 bg-amber-100 rounded-lg flex items-center justify-center">
@@ -356,6 +378,128 @@
         let generatedTimetable = [];
         let clockInterval;
         const STORAGE_KEY = "nsdg22_student_id";
+
+        // --- 급식 알리미 (NEIS 오픈 API, 조식/중식/석식 + 좌우 이동) ---
+        const NEIS_API_KEY = "dbbc06ac4f824cd4a7cfa7233a6331f6";
+        const NEIS_OFFICE_CODE = "N10"; // 충청남도교육청
+        const NEIS_SCHOOL_CODE = "8140085"; // 논산대건고등학교
+        const MEAL_NAMES = { '1': '조식', '2': '중식', '3': '석식' };
+        const MEAL_ORDER = ['1', '2', '3'];
+
+        let mealState = null;       // { date: Date, mealCode: '1'|'2'|'3' } 현재 화면에 보이는 급식
+        let mealManual = false;     // 화살표로 직접 넘긴 상태인지 여부 (true면 자동 전환 멈춤)
+        let mealCache = new Map();  // "YYYYMMDD-mealCode" -> { status: 'loading'|'done', data }
+
+        const fmtYYYYMMDD = (d) => {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}${m}${day}`;
+        };
+        const mealKey = (date, mealCode) => `${fmtYYYYMMDD(date)}-${mealCode}`;
+
+        // 오전 8시→중식, 오후 1시30분→석식, 오후 8시→다음날 조식 순으로 자동 전환
+        const computeAutoMealState = (now) => {
+            const minutesNow = now.getHours() * 60 + now.getMinutes();
+            const date = new Date(now);
+            date.setHours(0, 0, 0, 0);
+            let mealCode;
+            if (minutesNow >= 20 * 60) {                 // 20:00 이후 → 다음날 조식
+                date.setDate(date.getDate() + 1);
+                mealCode = '1';
+            } else if (minutesNow < 8 * 60) {             // 00:00~08:00 → (오늘) 조식
+                mealCode = '1';
+            } else if (minutesNow < 13 * 60 + 30) {       // 08:00~13:30 → 중식
+                mealCode = '2';
+            } else {                                      // 13:30~20:00 → 석식
+                mealCode = '3';
+            }
+            return { date, mealCode };
+        };
+
+        const shiftMealState = (state, direction) => {
+            let idx = MEAL_ORDER.indexOf(state.mealCode) + direction;
+            const date = new Date(state.date);
+            if (idx > 2) { idx = 0; date.setDate(date.getDate() + 1); }
+            if (idx < 0) { idx = 2; date.setDate(date.getDate() - 1); }
+            return { date, mealCode: MEAL_ORDER[idx] };
+        };
+
+        const fetchMealFromNeis = async (dateStr, mealCode) => {
+            const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=${NEIS_API_KEY}&Type=json&ATPT_OFCDC_SC_CODE=${NEIS_OFFICE_CODE}&SD_SCHUL_CODE=${NEIS_SCHOOL_CODE}&MLSV_YMD=${dateStr}&MMEAL_SC_CODE=${mealCode}`;
+            try {
+                const res = await fetch(url);
+                const json = await res.json();
+                if (!json.mealServiceDietInfo) return null; // 해당 날짜·급식에 정보 없음
+                const row = json.mealServiceDietInfo[1].row[0];
+                const menu = (row.DDISH_NM || "")
+                    .replace(/\([0-9.\s]+\)/g, '')
+                    .split('<br/>')
+                    .map(s => s.trim())
+                    .filter(Boolean);
+                return { menu, calorie: row.CAL_INFO || "" };
+            } catch (e) {
+                console.error("급식 정보 불러오기 실패:", e);
+                return null;
+            }
+        };
+
+        const renderMealWidget = () => {
+            const titleEl = document.getElementById('meal-title');
+            const contentEl = document.getElementById('meal-content');
+            const calEl = document.getElementById('meal-calorie');
+            if (!mealState || !titleEl || !contentEl || !calEl) return;
+
+            titleEl.textContent = `${mealState.date.getMonth() + 1}월 ${mealState.date.getDate()}일 ${MEAL_NAMES[mealState.mealCode]}`;
+
+            const entry = mealCache.get(mealKey(mealState.date, mealState.mealCode));
+            if (!entry || entry.status === 'loading') {
+                contentEl.textContent = "불러오는 중...";
+                calEl.textContent = "";
+                return;
+            }
+            if (entry.data === null) {
+                contentEl.textContent = "급식 정보가 없어요 (주말·공휴일이거나 아직 업로드 전이에요).";
+                calEl.textContent = "";
+                return;
+            }
+            contentEl.innerHTML = entry.data.menu.map(item => `<div>• ${item}</div>`).join('');
+            calEl.textContent = entry.data.calorie;
+        };
+
+        const loadMealForState = async (state) => {
+            const key = mealKey(state.date, state.mealCode);
+            if (!mealCache.has(key)) mealCache.set(key, { status: 'loading', data: null });
+            renderMealWidget();
+            if (mealCache.get(key).status === 'done') return; // 이미 불러온 데이터는 재요청 안 함
+
+            const result = await fetchMealFromNeis(fmtYYYYMMDD(state.date), state.mealCode);
+            mealCache.set(key, { status: 'done', data: result });
+            if (mealState && mealKey(mealState.date, mealState.mealCode) === key) renderMealWidget();
+        };
+
+        // 화살표 버튼: 이전/다음 급식으로 수동 이동
+        const goToMeal = (direction) => {
+            if (!mealState) return;
+            mealManual = true;
+            mealState = shiftMealState(mealState, direction);
+            loadMealForState(mealState);
+        };
+
+        // 매초 시계 갱신 시 호출: 자동 모드일 때만 시간대에 맞춰 급식을 전환
+        const tickMealAuto = (now) => {
+            if (!mealState) {
+                mealState = computeAutoMealState(now);
+                loadMealForState(mealState);
+                return;
+            }
+            if (mealManual) return; // 사용자가 직접 넘긴 상태면 자동 전환 멈춤
+            const auto = computeAutoMealState(now);
+            if (mealKey(auto.date, auto.mealCode) !== mealKey(mealState.date, mealState.mealCode)) {
+                mealState = auto;
+                loadMealForState(mealState);
+            }
+        };
 
         const showView = (viewId) => {
             ['login-view','setup-view','dashboard-view'].forEach(id => {
@@ -577,6 +721,7 @@
             const ss = String(now.getSeconds()).padStart(2,'0');
             document.getElementById('current-time').textContent = `${hh}:${mm}:${ss}`;
             updateNextClassInfo(now);
+            tickMealAuto(now);
         };
 
         const timeToMinutes = (timeStr) => {
@@ -674,6 +819,9 @@
         const initApp = () => {
             initNoticeEditor();
 
+            document.getElementById('meal-prev').addEventListener('click', () => goToMeal(-1));
+            document.getElementById('meal-next').addEventListener('click', () => goToMeal(1));
+
             document.getElementById('login-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 clearLoginError();
@@ -730,6 +878,7 @@
             document.getElementById('btn-logout').addEventListener('click', () => {
                 localStorage.removeItem(STORAGE_KEY);
                 currentStudent = null;
+                mealManual = false; // 다음 로그인 때는 다시 자동 모드로 시작
                 if (clockInterval) clearInterval(clockInterval);
                 if (unsubscribeNotice) unsubscribeNotice();
                 document.getElementById('login-form').reset();
