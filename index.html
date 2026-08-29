@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2학년 2반 시간표</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#186049">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="2-2 시간표">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📘</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -240,19 +247,25 @@
             </div>
 
             <div class="flex-1 bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 flex flex-col overflow-hidden min-h-0">
-                <div class="p-3 border-b border-forest-50 flex justify-between items-center shrink-0">
-                    <h2 class="font-extrabold text-ink text-base tracking-tight flex items-center gap-2">
+                <div class="p-3 border-b border-forest-50 flex justify-between items-center shrink-0 gap-2">
+                    <h2 class="font-extrabold text-ink text-base tracking-tight flex items-center gap-2 shrink-0">
                         <i class="fas fa-th text-forest-500 text-sm"></i>
-                        이번 주 시간표
+                        <span id="timetable-title">이번 주 시간표</span>
                     </h2>
-                    <div class="text-[10px] md:text-xs text-forest-700 flex items-center gap-2 bg-forest-50 px-3 py-1.5 rounded-lg font-semibold">
-                        <div class="w-2.5 h-2.5 rounded-md bg-forest-200 border border-forest-300"></div>
-                        <span>우리반 수업 시간</span>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <div class="hidden md:flex text-[10px] md:text-xs text-forest-700 items-center gap-2 bg-forest-50 px-3 py-1.5 rounded-lg font-semibold">
+                            <div class="w-2.5 h-2.5 rounded-md bg-forest-200 border border-forest-300"></div>
+                            <span>우리반 수업 시간</span>
+                        </div>
+                        <button id="btn-view-toggle" type="button" class="text-[10px] md:text-xs text-forest-700 flex items-center gap-1.5 bg-forest-50 hover:bg-forest-100 px-3 py-1.5 rounded-lg font-semibold transition">
+                            <i id="view-toggle-icon" class="fas fa-calendar-day text-[10px]"></i>
+                            <span id="view-toggle-label">오늘만 보기</span>
+                        </button>
                     </div>
                 </div>
                 <div class="flex-1 p-2 overflow-y-auto flex flex-col min-h-0">
                     <div class="w-full h-full flex flex-col min-h-0">
-                        <div class="grid grid-cols-6 gap-1 mb-1 font-bold text-center text-xs shrink-0">
+                        <div id="day-header-row" class="grid grid-cols-6 gap-1 mb-1 font-bold text-center text-xs shrink-0">
                             <div class="text-ink-faint py-0.5">교시</div>
                             <div class="text-ink-soft py-0.5 rounded-lg bg-forest-50">월</div>
                             <div class="text-ink-soft py-0.5 rounded-lg bg-forest-50">화</div>
@@ -299,6 +312,14 @@
                 <div class="p-4 max-h-64 overflow-y-auto">
                     <div id="meal-content" class="text-sm text-ink-soft leading-relaxed">불러오는 중...</div>
                 </div>
+                <div class="px-4 pb-4 flex items-center justify-center gap-3 border-t border-forest-50 pt-3">
+                    <button id="meal-like-btn" type="button" class="flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm">
+                        <span>👍</span><span id="meal-like-count">0</span>
+                    </button>
+                    <button id="meal-dislike-btn" type="button" class="flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm">
+                        <span>👎</span><span id="meal-dislike-count">0</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -307,7 +328,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDoNB8ITbgNoB8pVVbBqFV-aK3DGmMtTLc",
@@ -383,6 +404,15 @@
 
         const ourClassHighlights = { 0:[0,2,4,5], 1:[2,3,4], 2:[0,1,2,4], 3:[2,5], 4:[1,3,4] };
 
+        // 선택과목 A~E 파스텔 색상 (빨-주-노-초-파)
+        const electiveColorMap = {
+            A: { bg: 'bg-rose-50',    border: 'border-rose-200',    text: 'text-rose-900' },
+            B: { bg: 'bg-orange-50',  border: 'border-orange-200',  text: 'text-orange-900' },
+            C: { bg: 'bg-yellow-50',  border: 'border-yellow-200',  text: 'text-yellow-900' },
+            D: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-900' },
+            E: { bg: 'bg-sky-50',     border: 'border-sky-200',     text: 'text-sky-900' }
+        };
+
 
         const timeSchedule = [
             {period:1,start:"08:40",end:"09:30"},{period:2,start:"09:40",end:"10:30"},
@@ -396,6 +426,9 @@
         let generatedTimetable = [];
         let clockInterval;
         const STORAGE_KEY = "nsdg22_student_id";
+        const VIEW_MODE_KEY = "nsdg22_view_mode";
+        const DAY_NAMES = ['월', '화', '수', '목', '금'];
+        let viewMode = localStorage.getItem(VIEW_MODE_KEY) === 'today' ? 'today' : 'week';
 
         // --- 급식 알리미 (NEIS 오픈 API, 조식/중식/석식 + 좌우 이동) ---
         const NEIS_API_KEY = "dbbc06ac4f824cd4a7cfa7233a6331f6";
@@ -489,11 +522,82 @@
             const key = mealKey(state.date, state.mealCode);
             if (!mealCache.has(key)) mealCache.set(key, { status: 'loading', data: null });
             renderMealWidget();
+            subscribeMealReaction(state);
             if (mealCache.get(key).status === 'done') return; // 이미 불러온 데이터는 재요청 안 함
 
             const result = await fetchMealFromNeis(fmtYYYYMMDD(state.date), state.mealCode);
             mealCache.set(key, { status: 'done', data: result });
             if (mealState && mealKey(mealState.date, mealState.mealCode) === key) renderMealWidget();
+        };
+
+        // --- 급식 좋아요/싫어요 반응 (반 전체 공유, 학번당 1표) ---
+        let unsubscribeMealReaction = null;
+        let currentMealReaction = { likes: 0, dislikes: 0, myVote: null };
+
+        const renderMealReaction = () => {
+            const likeCountEl = document.getElementById('meal-like-count');
+            const dislikeCountEl = document.getElementById('meal-dislike-count');
+            const likeBtn = document.getElementById('meal-like-btn');
+            const dislikeBtn = document.getElementById('meal-dislike-btn');
+            if (!likeCountEl || !dislikeCountEl || !likeBtn || !dislikeBtn) return;
+
+            likeCountEl.textContent = currentMealReaction.likes;
+            dislikeCountEl.textContent = currentMealReaction.dislikes;
+
+            likeBtn.className = currentMealReaction.myVote === 'like'
+                ? 'flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm bg-forest-600 border-forest-600 text-white'
+                : 'flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm bg-white border-forest-100 text-ink-soft hover:bg-forest-50';
+            dislikeBtn.className = currentMealReaction.myVote === 'dislike'
+                ? 'flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm bg-red-500 border-red-500 text-white'
+                : 'flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm bg-white border-forest-100 text-ink-soft hover:bg-forest-50';
+        };
+
+        const subscribeMealReaction = (state) => {
+            if (unsubscribeMealReaction) unsubscribeMealReaction();
+            const key = mealKey(state.date, state.mealCode);
+            const reactionRef = doc(db, 'mealReactions', key);
+            unsubscribeMealReaction = onSnapshot(reactionRef, (snap) => {
+                const data = snap.exists() ? snap.data() : { likes: 0, dislikes: 0, voters: {} };
+                const voters = data.voters || {};
+                currentMealReaction = {
+                    likes: data.likes || 0,
+                    dislikes: data.dislikes || 0,
+                    myVote: currentStudent ? (voters[currentStudent.id] || null) : null
+                };
+                renderMealReaction();
+            });
+        };
+
+        // 같은 버튼 다시 누르면 투표 취소, 반대 버튼을 누르면 표를 옮김
+        const voteMeal = async (type) => {
+            if (!mealState || !currentStudent) return;
+            const key = mealKey(mealState.date, mealState.mealCode);
+            const reactionRef = doc(db, 'mealReactions', key);
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const snap = await transaction.get(reactionRef);
+                    const data = snap.exists() ? snap.data() : { likes: 0, dislikes: 0, voters: {} };
+                    const voters = { ...(data.voters || {}) };
+                    const prevVote = voters[currentStudent.id] || null;
+                    let likes = data.likes || 0;
+                    let dislikes = data.dislikes || 0;
+
+                    if (prevVote === type) {
+                        if (type === 'like') likes = Math.max(0, likes - 1);
+                        else dislikes = Math.max(0, dislikes - 1);
+                        delete voters[currentStudent.id];
+                    } else {
+                        if (prevVote === 'like') likes = Math.max(0, likes - 1);
+                        if (prevVote === 'dislike') dislikes = Math.max(0, dislikes - 1);
+                        if (type === 'like') likes += 1;
+                        else dislikes += 1;
+                        voters[currentStudent.id] = type;
+                    }
+                    transaction.set(reactionRef, { likes, dislikes, voters });
+                });
+            } catch (e) {
+                console.error("급식 반응 저장 실패:", e);
+            }
         };
 
         // 화살표 버튼: 이전/다음 급식으로 수동 이동
@@ -561,7 +665,7 @@
                 if (snap.exists() && snap.data().choices) {
                     userChoices = snap.data().choices;
                     generatePersonalTimetable();
-                    renderTimetable();
+                    applyViewMode();
                     setupNoticeBoard();
                     updateClock();
                     if (clockInterval) clearInterval(clockInterval);
@@ -664,6 +768,36 @@
             generatedTimetable = schedule;
         };
 
+        const renderDayHeader = () => {
+            const headerRow = document.getElementById('day-header-row');
+            const titleEl = document.getElementById('timetable-title');
+            const now = new Date();
+            const todayDayIdx = now.getDay() - 1;
+
+            if (viewMode === 'today') {
+                headerRow.className = 'grid grid-cols-2 gap-1 mb-1 font-bold text-center text-xs shrink-0';
+                const label = (todayDayIdx >= 0 && todayDayIdx <= 4)
+                    ? `오늘 · ${DAY_NAMES[todayDayIdx]}요일`
+                    : '오늘 (주말)';
+                headerRow.innerHTML = `
+                    <div class="text-ink-faint py-0.5">교시</div>
+                    <div class="text-forest-700 py-0.5 rounded-lg bg-forest-50">${label}</div>
+                `;
+                titleEl.textContent = '오늘 시간표';
+            } else {
+                headerRow.className = 'grid grid-cols-6 gap-1 mb-1 font-bold text-center text-xs shrink-0';
+                headerRow.innerHTML = `
+                    <div class="text-ink-faint py-0.5">교시</div>
+                    <div class="text-ink-soft py-0.5 rounded-lg bg-forest-50">월</div>
+                    <div class="text-ink-soft py-0.5 rounded-lg bg-forest-50">화</div>
+                    <div class="text-ink-soft py-0.5 rounded-lg bg-forest-50">수</div>
+                    <div class="text-ink-soft py-0.5 rounded-lg bg-forest-50">목</div>
+                    <div class="text-ink-soft py-0.5 rounded-lg bg-forest-50">금</div>
+                `;
+                titleEl.textContent = '이번 주 시간표';
+            }
+        };
+
         const renderTimetable = () => {
             const tbody = document.getElementById('timetable-body');
             tbody.innerHTML = '';
@@ -671,6 +805,27 @@
             const now = new Date();
             const todayDayIdx = now.getDay() - 1;
             const currentMins = now.getHours() * 60 + now.getMinutes();
+
+            const isTodayMode = viewMode === 'today';
+
+            // 오늘 모드인데 주말이면 시간표 대신 안내 문구만 표시
+            if (isTodayMode && (todayDayIdx < 0 || todayDayIdx > 4)) {
+                tbody.className = 'flex-1 flex items-center justify-center min-h-0';
+                tbody.innerHTML = `
+                    <div class="text-center text-ink-faint">
+                        <i class="fas fa-mug-hot text-2xl mb-2 block"></i>
+                        <div class="text-sm font-bold">오늘은 등교일이 아니에요</div>
+                        <div class="text-xs mt-1">주간 보기로 전체 시간표를 확인해보세요</div>
+                    </div>
+                `;
+                return;
+            }
+
+            tbody.className = isTodayMode
+                ? 'flex-1 grid grid-cols-2 grid-rows-7 gap-1 min-h-0'
+                : 'flex-1 grid grid-cols-6 grid-rows-7 gap-1 min-h-0';
+
+            const daysToRender = isTodayMode ? [todayDayIdx] : [0, 1, 2, 3, 4];
 
             for (let p = 0; p < 7; p++) {
                 const timeStr = `${timeSchedule[p].start}~${timeSchedule[p].end}`;
@@ -681,8 +836,9 @@
                     </div>
                 `);
 
-                for (let d = 0; d < 5; d++) {
+                for (const d of daysToRender) {
                     const cellData = generatedTimetable[d][p];
+                    const cellType = cellData[3];
                     const isHighlighted = ourClassHighlights[d] && ourClassHighlights[d].includes(p);
 
                     let isCurrent = false;
@@ -697,6 +853,10 @@
                         bgClass = 'bg-amber-50 border-amber-300';
                         textClass = 'text-amber-900';
                         borderExtra = 'pulse-current ring-1 ring-amber-200';
+                    } else if (electiveColorMap[cellType]) {
+                        const c = electiveColorMap[cellType];
+                        bgClass = `${c.bg} ${c.border}`;
+                        textClass = c.text;
                     } else if (isHighlighted) {
                         bgClass = 'bg-forest-50 border-forest-200';
                         textClass = 'text-forest-900';
@@ -727,6 +887,15 @@
                     `);
                 }
             }
+        };
+
+        const applyViewMode = () => {
+            const label = document.getElementById('view-toggle-label');
+            const icon = document.getElementById('view-toggle-icon');
+            if (label) label.textContent = viewMode === 'today' ? '주간 보기' : '오늘만 보기';
+            if (icon) icon.className = viewMode === 'today' ? 'fas fa-calendar-week text-[10px]' : 'fas fa-calendar-day text-[10px]';
+            renderDayHeader();
+            renderTimetable();
         };
 
         const updateClock = () => {
@@ -839,6 +1008,8 @@
 
             document.getElementById('meal-prev').addEventListener('click', () => goToMeal(-1));
             document.getElementById('meal-next').addEventListener('click', () => goToMeal(1));
+            document.getElementById('meal-like-btn').addEventListener('click', () => voteMeal('like'));
+            document.getElementById('meal-dislike-btn').addEventListener('click', () => voteMeal('dislike'));
 
             document.getElementById('btn-meal-toggle').addEventListener('click', () => {
                 document.getElementById('meal-modal').classList.remove('hide');
@@ -848,6 +1019,12 @@
             });
             document.getElementById('meal-modal-backdrop').addEventListener('click', () => {
                 document.getElementById('meal-modal').classList.add('hide');
+            });
+
+            document.getElementById('btn-view-toggle').addEventListener('click', () => {
+                viewMode = viewMode === 'today' ? 'week' : 'today';
+                localStorage.setItem(VIEW_MODE_KEY, viewMode);
+                applyViewMode();
             });
 
             document.getElementById('login-form').addEventListener('submit', (e) => {
@@ -877,7 +1054,7 @@
                     const ref = doc(db, 'students', currentStudent.id);
                     await setDoc(ref, { studentId: currentStudent.id, name: currentStudent.name, choices, updatedAt: new Date() }, { merge: true });
                     generatePersonalTimetable();
-                    renderTimetable();
+                    applyViewMode();
                     setupNoticeBoard();
                     updateClock();
                     showView('dashboard-view');
@@ -909,6 +1086,7 @@
                 mealManual = false; // 다음 로그인 때는 다시 자동 모드로 시작
                 if (clockInterval) clearInterval(clockInterval);
                 if (unsubscribeNotice) unsubscribeNotice();
+                if (unsubscribeMealReaction) unsubscribeMealReaction();
                 document.getElementById('login-form').reset();
                 clearLoginError();
                 showView('login-view');
@@ -930,6 +1108,13 @@
         };
 
         initApp();
+
+        // --- PWA: 서비스워커 등록 (오프라인에서도 마지막으로 불러온 화면 표시) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch((e) => console.error('서비스워커 등록 실패:', e));
+            });
+        }
     </script>
 </body>
 </html>
