@@ -752,8 +752,10 @@
                 }
             }
             const getChoiceName = (key) => electivesData[key].names[userChoices[key]];
+            // 독서로 대체되는 시간도 원래 있던 선택과목 알파벳(A~E) 색을 그대로 유지
             const applyOverride = (day, period, tName, roomName) => {
-                schedule[day][period] = ["독서", tName, roomName, "Override"];
+                const originalType = schedule[day][period][3];
+                schedule[day][period] = ["독서", tName, roomName, originalType];
             };
             const aName = getChoiceName('A'), bName = getChoiceName('B'), cName = getChoiceName('C');
             const dName = getChoiceName('D'), eName = getChoiceName('E');
