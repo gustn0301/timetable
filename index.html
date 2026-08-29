@@ -855,6 +855,7 @@
                     const isHighlighted = ourClassHighlights[d] && ourClassHighlights[d].includes(p);
 
                     let bgClass, textClass;
+                    let borderWidth = 'border';
                     if (electiveColorMap[cellType]) {
                         const c = electiveColorMap[cellType];
                         bgClass = `${c.bg} ${c.border}`;
@@ -862,6 +863,7 @@
                     } else if (isHighlighted) {
                         bgClass = 'bg-forest-50 border-forest-200';
                         textClass = 'text-forest-900';
+                        borderWidth = 'border-2';
                     } else {
                         bgClass = 'bg-white border-forest-50';
                         textClass = 'text-ink';
@@ -882,7 +884,7 @@
                     }
 
                     tbody.insertAdjacentHTML('beforeend', `
-                        <div class="timetable-cell relative flex flex-col items-center justify-center rounded-lg border p-1 h-full min-h-[28px] ${bgClass}" data-day="${d}" data-period="${p}" data-base-bg="${bgClass}" data-base-text="${textClass}">
+                        <div class="timetable-cell relative flex flex-col items-center justify-center rounded-lg ${borderWidth} p-1 h-full min-h-[28px] ${bgClass}" data-day="${d}" data-period="${p}" data-base-bg="${bgClass}" data-base-text="${textClass}" data-base-border="${borderWidth}">
                             ${innerHtml}
                         </div>
                     `);
@@ -916,7 +918,7 @@
                     if (dot) dot.classList.remove('hide');
                     if (title) title.className = 'cell-title font-bold text-[10px] text-amber-900 truncate w-full text-center mb-0.5';
                 } else {
-                    cell.className = `timetable-cell relative flex flex-col items-center justify-center rounded-lg border p-1 h-full min-h-[28px] ${cell.dataset.baseBg}`;
+                    cell.className = `timetable-cell relative flex flex-col items-center justify-center rounded-lg ${cell.dataset.baseBorder || 'border'} p-1 h-full min-h-[28px] ${cell.dataset.baseBg}`;
                     if (dot) dot.classList.add('hide');
                     if (title) title.className = `cell-title font-bold text-[10px] ${cell.dataset.baseText} truncate w-full text-center mb-0.5`;
                 }
