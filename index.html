@@ -876,10 +876,10 @@
                     if (cellData[0]) {
                         innerHtml = `
                             <div class="current-dot hide absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
-                            <div class="cell-title font-bold text-[10px] ${textClass} truncate w-full text-center mb-0.5" title="${cellData[0]}">${cellData[0]}</div>
+                            <div class="cell-title font-bold text-[12px] leading-tight ${textClass} truncate w-full text-center mb-1" title="${cellData[0]}">${cellData[0]}</div>
                             <div class="flex justify-between items-center w-full px-0.5 mt-auto gap-1">
-                                <div class="text-[7px] text-ink-faint truncate font-medium">${cellData[1].replace('T','').replace(' 신부님','').replace(' 수녀님','')}</div>
-                                <div class="text-[7px] text-ink-faint truncate max-w-[55%]">${cellData[2]}</div>
+                                <div class="text-[9px] text-ink-faint truncate font-medium">${cellData[1].replace('T','').replace(' 신부님','').replace(' 수녀님','')}</div>
+                                <div class="text-[9px] text-ink-faint truncate max-w-[55%]">${cellData[2]}</div>
                             </div>
                         `;
                     } else {
@@ -887,7 +887,7 @@
                     }
 
                     tbody.insertAdjacentHTML('beforeend', `
-                        <div class="timetable-cell relative flex flex-col items-center justify-center rounded-lg ${borderWidth} p-1 h-full min-h-[28px] ${bgClass}" data-day="${d}" data-period="${p}" data-base-bg="${bgClass}" data-base-text="${textClass}" data-base-border="${borderWidth}">
+                        <div class="timetable-cell relative flex flex-col items-center justify-center rounded-lg ${borderWidth} p-1 h-full min-h-[38px] ${bgClass}" data-day="${d}" data-period="${p}" data-base-bg="${bgClass}" data-base-text="${textClass}" data-base-border="${borderWidth}">
                             ${innerHtml}
                         </div>
                     `);
@@ -917,13 +917,13 @@
                 const title = cell.querySelector('.cell-title');
 
                 if (isCurrent) {
-                    cell.className = 'timetable-cell relative flex flex-col items-center justify-center rounded-lg border p-1 h-full min-h-[28px] bg-amber-50 border-amber-300 pulse-current ring-1 ring-amber-200';
+                    cell.className = 'timetable-cell relative flex flex-col items-center justify-center rounded-lg border p-1 h-full min-h-[38px] bg-amber-50 border-amber-300 pulse-current ring-1 ring-amber-200';
                     if (dot) dot.classList.remove('hide');
-                    if (title) title.className = 'cell-title font-bold text-[10px] text-amber-900 truncate w-full text-center mb-0.5';
+                    if (title) title.className = 'cell-title font-bold text-[12px] leading-tight text-amber-900 truncate w-full text-center mb-1';
                 } else {
-                    cell.className = `timetable-cell relative flex flex-col items-center justify-center rounded-lg ${cell.dataset.baseBorder || 'border'} p-1 h-full min-h-[28px] ${cell.dataset.baseBg}`;
+                    cell.className = `timetable-cell relative flex flex-col items-center justify-center rounded-lg ${cell.dataset.baseBorder || 'border'} p-1 h-full min-h-[38px] ${cell.dataset.baseBg}`;
                     if (dot) dot.classList.add('hide');
-                    if (title) title.className = `cell-title font-bold text-[10px] ${cell.dataset.baseText} truncate w-full text-center mb-0.5`;
+                    if (title) title.className = `cell-title font-bold text-[12px] leading-tight ${cell.dataset.baseText} truncate w-full text-center mb-1`;
                 }
             });
         };
