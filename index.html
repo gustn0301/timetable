@@ -195,9 +195,6 @@
                     <div id="current-date" class="text-forest-200 text-xs font-semibold mb-1 tracking-wide"></div>
                     <div class="flex items-center justify-between gap-2 mb-3">
                         <div id="current-time" class="text-2xl lg:text-3xl font-bold tracking-wider tabular font-mono">--:--:--</div>
-                        <button id="btn-meal-toggle" type="button" class="relative z-10 w-9 h-9 shrink-0 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-amber-300 transition">
-                            <i class="fas fa-utensils text-sm"></i>
-                        </button>
                     </div>
 
                     <div class="border-t border-white/15 pt-3">
@@ -212,6 +209,14 @@
                         </div>
                     </div>
                 </div>
+
+                <button id="btn-meal-toggle" type="button" class="bg-amber-50 border border-amber-200/80 hover:border-amber-300 hover:shadow-md transition-all duration-300 rounded-2xl p-3 text-center group shrink-0">
+                    <div class="text-amber-700 text-sm font-bold flex items-center justify-center gap-2">
+                        <i class="fas fa-utensils text-xs opacity-60 group-hover:opacity-100 transition"></i>
+                        급식 확인하기
+                    </div>
+                    <div id="meal-card-subtitle" class="text-[10px] text-amber-500 mt-1 font-mono">불러오는 중...</div>
+                </button>
 
                 <div class="bg-white rounded-2xl shadow-lg shadow-ink/5 border border-forest-100 flex-1 flex flex-col overflow-hidden min-h-[90px]">
                     <div class="px-4 py-2.5 flex justify-between items-center shrink-0 border-b border-forest-50">
@@ -286,39 +291,39 @@
     <div id="meal-modal" class="fixed inset-0 z-40 hide">
         <div id="meal-modal-backdrop" class="absolute inset-0 bg-ink/40 backdrop-blur-sm"></div>
         <div class="relative h-full flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden slide-up">
-                <div class="px-4 py-3 flex items-center justify-between border-b border-forest-50">
-                    <h3 class="font-bold text-ink text-sm flex items-center gap-2">
-                        <div class="w-6 h-6 bg-forest-100 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-utensils text-forest-600 text-[10px]"></i>
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md overflow-hidden slide-up">
+                <div class="px-5 py-4 flex items-center justify-between border-b border-forest-50 bg-forest-50/50">
+                    <h3 class="font-extrabold text-ink text-base flex items-center gap-2.5">
+                        <div class="w-9 h-9 bg-forest-600 rounded-xl flex items-center justify-center shadow-sm">
+                            <i class="fas fa-utensils text-white text-sm"></i>
                         </div>
                         급식 정보
                     </h3>
-                    <button id="btn-meal-close" type="button" class="text-ink-faint hover:text-ink transition w-7 h-7 flex items-center justify-center rounded-lg hover:bg-forest-50">
-                        <i class="fas fa-times text-sm"></i>
+                    <button id="btn-meal-close" type="button" aria-label="닫기" class="text-ink-faint hover:text-ink transition w-9 h-9 flex items-center justify-center rounded-xl hover:bg-forest-100">
+                        <i class="fas fa-times text-base"></i>
                     </button>
                 </div>
-                <div class="px-3 py-2.5 flex items-center justify-between border-b border-forest-50 gap-1">
-                    <button id="meal-prev" type="button" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-ink-faint hover:bg-forest-50 hover:text-forest-600 transition">
-                        <i class="fas fa-chevron-left text-xs"></i>
+                <div class="px-3 py-3 flex items-center justify-between border-b border-forest-50 gap-1">
+                    <button id="meal-prev" type="button" aria-label="이전 급식" class="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl text-forest-700 bg-forest-50 hover:bg-forest-100 active:scale-95 transition">
+                        <i class="fas fa-chevron-left text-sm"></i>
                     </button>
                     <div class="text-center min-w-0">
-                        <div id="meal-title" class="font-bold text-ink text-sm truncate">불러오는 중...</div>
-                        <div id="meal-calorie" class="text-[10px] text-ink-faint font-mono mt-0.5"></div>
+                        <div id="meal-title" class="font-extrabold text-ink text-lg sm:text-xl truncate">불러오는 중...</div>
+                        <span id="meal-calorie" class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-forest-50 text-forest-700 text-xs sm:text-sm font-bold font-mono"></span>
                     </div>
-                    <button id="meal-next" type="button" class="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-ink-faint hover:bg-forest-50 hover:text-forest-600 transition">
-                        <i class="fas fa-chevron-right text-xs"></i>
+                    <button id="meal-next" type="button" aria-label="다음 급식" class="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl text-forest-700 bg-forest-50 hover:bg-forest-100 active:scale-95 transition">
+                        <i class="fas fa-chevron-right text-sm"></i>
                     </button>
                 </div>
-                <div class="p-4 max-h-64 overflow-y-auto">
-                    <div id="meal-content" class="text-sm text-ink-soft leading-relaxed">불러오는 중...</div>
+                <div class="p-5 max-h-80 overflow-y-auto">
+                    <div id="meal-content" class="text-base sm:text-lg text-ink font-medium leading-loose"></div>
                 </div>
-                <div class="px-4 pb-4 flex items-center justify-center gap-3 border-t border-forest-50 pt-3">
-                    <button id="meal-like-btn" type="button" class="flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm">
-                        <span>👍</span><span id="meal-like-count">0</span>
+                <div class="px-4 pb-5 flex items-center justify-center gap-3 border-t border-forest-50 pt-4">
+                    <button id="meal-like-btn" type="button" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border transition font-extrabold text-base">
+                        <span class="text-lg">👍</span><span id="meal-like-count">0</span>
                     </button>
-                    <button id="meal-dislike-btn" type="button" class="flex items-center gap-1.5 px-4 py-2 rounded-xl border transition font-bold text-sm">
-                        <span>👎</span><span id="meal-dislike-count">0</span>
+                    <button id="meal-dislike-btn" type="button" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border transition font-extrabold text-base">
+                        <span class="text-lg">👎</span><span id="meal-dislike-count">0</span>
                     </button>
                 </div>
             </div>
@@ -384,7 +389,7 @@
             E: {
                 title: "선택과목 E",
                 names: ["독서 토론과 글쓰기", "기하", "사회와 문화", "윤리와 사상", "물질과 에너지", "세포와 물질대사", "역학과 에너지", "지구시스템과학", "소프트웨어와 생활", "일본어 회화"],
-                teachers: ["황인해T", "김진아T", "김형석T", "여현주T", "전영진T", "임영규T", "유현영T", "류혜인T", "하미경T", "박성훈T"],
+                teachers: ["황인해T", "김진아T", "김형석T", "여현주T", "임영규T", "유현영T", "류혜인T", "하미경T", "박성훈T"],
                 rooms: ["국어교과실", "2-5", "1-3", "3-1", "화학 실험실", "생명과학 실험실", "2-8", "지구과학 실험실", "AI 심포지엄", "AI 창의융합정보실"]
             },
             M: {
@@ -502,7 +507,10 @@
             const calEl = document.getElementById('meal-calorie');
             if (!mealState || !titleEl || !contentEl || !calEl) return;
 
-            titleEl.textContent = `${mealState.date.getMonth() + 1}월 ${mealState.date.getDate()}일 ${MEAL_NAMES[mealState.mealCode]}`;
+            const label = `${mealState.date.getMonth() + 1}월 ${mealState.date.getDate()}일 ${MEAL_NAMES[mealState.mealCode]}`;
+            titleEl.textContent = label;
+            const cardSubtitleEl = document.getElementById('meal-card-subtitle');
+            if (cardSubtitleEl) cardSubtitleEl.textContent = label;
 
             const entry = mealCache.get(mealKey(mealState.date, mealState.mealCode));
             if (!entry || entry.status === 'loading') {
@@ -515,7 +523,7 @@
                 calEl.textContent = "";
                 return;
             }
-            contentEl.innerHTML = entry.data.menu.map(item => `<div>• ${item}</div>`).join('');
+            contentEl.innerHTML = entry.data.menu.map(item => `<div class="mb-1.5 last:mb-0 flex gap-2"><span class="text-forest-400">•</span><span>${item}</span></div>`).join('');
             calEl.textContent = entry.data.calorie;
         };
 
