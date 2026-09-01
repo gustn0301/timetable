@@ -455,14 +455,14 @@
         };
 
         const baseSchedule = [
-            [["문학","정윤지T","2-2","Base"],["","","","A"],["체육II","은현진T","마리아홀","Base"],["","","","B"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["창체(동아리)","-","-","Base"]],
+            [["문학","정윤지T","2-2","Base"],["","","","A"],["체육II","유환웅T","마리아홀","Base"],["","","","B"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["창체(동아리)","-","-","Base"]],
             [["","","","A"],["","","","E"],["체육II","은현진T","마리아홀","Base"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["","","","C"],["","","","D"]],
             [["","","","M"],["미적분I","김선정T","2-3","Base"],["영어II","이지연T","2-1","Base"],["","","","C"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["공강","박성훈T","2-2","Base"]],
             [["","","","D"],["","","","E"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["","","","A"],["","","","M"],["","","","C"]],
             [["","","","E"],["문학","정윤지T","2-2","Base"],["","","","D"],["영어II","이지연T","2-1","Base"],["미적분I","김선정T","2-3","Base"],["창체","-","-","Base"],["창체","-","-","Base"]]
         ];
 
-        const ourClassHighlights = { 0:[0,2,4,5], 1:[2,3,4], 2:[0,1,2,4], 3:[2,5], 4:[1,3,4] };
+        const ourClassHighlights = { 0:[0,1,4], 1:[1,2,4], 2:[3,4,5], 3:[0,1,2,5], 4:[0,1,4] };
 
         // 선택과목 A~E 색상 (빨-주-노-초-파, 채도를 낮춘 무난한 톤 + 글자는 중립색 유지)
         const electiveColorMap = {
@@ -1076,7 +1076,6 @@
                     const isHighlighted = ourClassHighlights[d] && ourClassHighlights[d].includes(p);
 
                     let bgClass, textClass;
-                    let borderWidth = 'border';
                     if (electiveColorMap[cellType]) {
                         const c = electiveColorMap[cellType];
                         bgClass = `${c.bg} ${c.border}`;
@@ -1084,11 +1083,12 @@
                     } else if (isHighlighted) {
                         bgClass = 'bg-forest-50 border-forest-200';
                         textClass = 'text-forest-900';
-                        borderWidth = 'border-2';
                     } else {
                         bgClass = 'bg-white border-forest-50';
                         textClass = 'text-ink';
                     }
+                    // 우리반 수업 시간은 선택과목 색과 겹쳐도 두꺼운 윤곽선으로 항상 표시
+                    const borderWidth = isHighlighted ? 'border-2' : 'border';
 
                     let innerHtml = '';
                     if (cellData[0]) {
