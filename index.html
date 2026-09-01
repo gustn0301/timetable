@@ -1073,22 +1073,17 @@
                 for (const d of daysToRender) {
                     const cellData = generatedTimetable[d][p];
                     const cellType = cellData[3];
-                    const isHighlighted = ourClassHighlights[d] && ourClassHighlights[d].includes(p);
 
                     let bgClass, textClass;
                     if (electiveColorMap[cellType]) {
                         const c = electiveColorMap[cellType];
                         bgClass = `${c.bg} ${c.border}`;
                         textClass = c.text;
-                    } else if (isHighlighted) {
-                        bgClass = 'bg-forest-50 border-forest-200';
-                        textClass = 'text-forest-900';
                     } else {
                         bgClass = 'bg-white border-forest-50';
                         textClass = 'text-ink';
                     }
-                    // 우리반 수업 시간은 선택과목 색과 겹쳐도 두꺼운 윤곽선으로 항상 표시
-                    const borderWidth = isHighlighted ? 'border-2' : 'border';
+                    const borderWidth = 'border';
 
                     let innerHtml = '';
                     if (cellData[0]) {
@@ -1174,6 +1169,9 @@
             return h * 60 + m;
         };
 
+        // 우리반 수업 시간(체육 등 학급 전체가 함께 듣는 시간)인지 확인
+        const isOurClassPeriod = (dayIdx, periodIdx) => ourClassHighlights[dayIdx] && ourClassHighlights[dayIdx].includes(periodIdx);
+
         const updateNextClassInfo = (now) => {
             const dayIdx = now.getDay() - 1;
             const currentMins = now.getHours() * 60 + now.getMinutes();
@@ -1202,20 +1200,27 @@
                 return;
             }
             if (nextPeriodIdx === -2) {
-                infoContainer.innerHTML = `<div class="text-sm font-bold mt-1 opacity-80">마지막 교시 진행중</div>`;
+                const ourClassNote = isOurClassPeriod(dayIdx, 6)
+                    ? `<div class="text-[10px] text-amber-200 mt-2 font-bold flex items-center gap-1"><i class="fas fa-star text-[9px]"></i> 7교시에는 우리 반에 수업이 있어요!</div>`
+                    : '';
+                infoContainer.innerHTML = `<div class="text-sm font-bold mt-1 opacity-80">마지막 교시 진행중</div>${ourClassNote}`;
                 return;
             }
             if (nextPeriodIdx >= 0 && generatedTimetable.length > 0) {
                 const cellData = generatedTimetable[dayIdx][nextPeriodIdx];
+                const ourClassNote = isOurClassPeriod(dayIdx, nextPeriodIdx)
+                    ? `<div class="text-[10px] text-amber-200 mt-2 font-bold flex items-center gap-1"><i class="fas fa-star text-[9px]"></i> ${nextPeriodIdx + 1}교시에는 우리 반에 수업이 있어요!</div>`
+                    : '';
                 if (cellData && cellData[0]) {
                     infoContainer.innerHTML = `
                         <div class="text-[10px] text-amber-300 mb-1 font-medium">${nextPeriodIdx+1}교시 · ${statusText}</div>
                         <div class="text-lg font-extrabold truncate tracking-tight">${cellData[0]}</div>
                         <div class="text-xs opacity-80 mt-1.5 flex items-center gap-2"><i class="fas fa-chalkboard-teacher text-[10px] w-3 text-forest-300"></i> <span>${cellData[1]}</span></div>
                         <div class="text-xs opacity-80 flex items-center gap-2"><i class="fas fa-map-marker-alt text-[10px] w-3 text-forest-300"></i> <span>${cellData[2]}</span></div>
+                        ${ourClassNote}
                     `;
                 } else {
-                    infoContainer.innerHTML = `<div class="text-sm font-bold mt-1 opacity-80">다음 시간표 정보 없음</div>`;
+                    infoContainer.innerHTML = `<div class="text-sm font-bold mt-1 opacity-80">다음 시간표 정보 없음</div>${ourClassNote}`;
                 }
             }
         };
