@@ -437,13 +437,13 @@
             D: {
                 title: "선택과목 D",
                 names: ["심화 영어", "기하", "법과 사회", "윤리와 사상", "물질과 에너지", "세포와 물질대사", "역학과 에너지", "중국어 회화", "논술", "심리"],
-                teachers: ["이정현T", "김진아T", "김형석T", "여현주T", "전영진T", "임영규T", "유현영T", "권민영T", "박성훈T", "김혜선 수녀님"],
+                teachers: ["이정현T", "김진아T", "김형석T", "여현주T", "전영진T", "이상은T", "유현영T", "권민영T", "박성훈T", "김혜선 수녀님"],
                 rooms: ["2-6", "2-5", "1-3", "3-1", "화학 실험실", "생명과학 실험실", "2-8", "2-4", "AI 창의융합정보실", "J302"]
             },
             E: {
                 title: "선택과목 E",
                 names: ["독서 토론과 글쓰기", "기하", "사회와 문화", "윤리와 사상", "물질과 에너지", "세포와 물질대사", "역학과 에너지", "지구시스템과학", "소프트웨어와 생활", "일본어 회화"],
-                teachers: ["황인해T", "김진아T", "김형석T", "여현주T", "전영진T", "임영규T", "유현영T", "류혜인T", "하미경T", "박성훈T"],
+                teachers: ["황인해T", "김진아T", "김형석T", "여현주T", "전영진T", "이상은T", "유현영T", "류혜인T", "하미경T", "박성훈T"],
                 rooms: ["국어교과실", "2-5", "1-3", "3-1", "화학 실험실", "생명과학 실험실", "2-8", "지구과학 실험실", "AI 심포지엄", "AI 창의융합정보실"]
             },
             M: {
@@ -455,11 +455,11 @@
         };
 
         const baseSchedule = [
-            [["문학","정윤지T","2-2","Base"],["","","","A"],["체육II","유환웅T","마리아홀","Base"],["","","","B"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["창체(동아리)","-","-","Base"]],
+            [["문학","정윤지T","영어교과실","Base"],["","","","A"],["체육II","유환웅T","마리아홀","Base"],["","","","B"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["창체(동아리)","-","-","Base"]],
             [["","","","A"],["","","","E"],["체육II","은현진T","마리아홀","Base"],["미적분I","김선정T","2-3","Base"],["영어II","김영미T","2-7","Base"],["","","","C"],["","","","D"]],
             [["","","","M"],["미적분I","김선정T","2-3","Base"],["영어II","이지연T","2-1","Base"],["","","","C"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["공강","박성훈T","2-2","Base"]],
             [["","","","D"],["","","","E"],["문학","이수환T","공동교육과정실","Base"],["","","","B"],["","","","A"],["","","","M"],["","","","C"]],
-            [["","","","E"],["문학","정윤지T","2-2","Base"],["","","","D"],["영어II","이지연T","2-1","Base"],["미적분I","김선정T","2-3","Base"],["창체","-","-","Base"],["창체","-","-","Base"]]
+            [["","","","E"],["문학","정윤지T","영어교과실","Base"],["","","","D"],["영어II","이지연T","2-1","Base"],["미적분I","김선정T","2-3","Base"],["창체","-","-","Base"],["창체","-","-","Base"]]
         ];
 
         const ourClassHighlights = { 0:[0,1,4], 1:[1,2,4], 2:[3,4,5], 3:[0,1,2,5], 4:[0,1,4] };
@@ -1073,6 +1073,7 @@
                 for (const d of daysToRender) {
                     const cellData = generatedTimetable[d][p];
                     const cellType = cellData[3];
+                    const isOurClass = isOurClassPeriod(d, p);
 
                     let bgClass, textClass;
                     if (electiveColorMap[cellType]) {
@@ -1087,7 +1088,11 @@
 
                     let innerHtml = '';
                     if (cellData[0]) {
+                        const starIcon = isOurClass
+                            ? `<i class="fas fa-star absolute top-0.5 left-0.5 text-[8px] text-amber-400"></i>`
+                            : '';
                         innerHtml = `
+                            ${starIcon}
                             <div class="current-dot hide absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-amber-500 rounded-full"></div>
                             <div class="cell-title font-bold text-[12px] leading-tight ${textClass} truncate w-full text-center mb-1" title="${cellData[0]}">${cellData[0]}</div>
                             <div class="flex justify-between items-center w-full px-0.5 mt-auto gap-1">
